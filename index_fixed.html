@@ -1,0 +1,2500 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplikasi Perkasa</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        nav { background-color: #002244; padding: 1em; color: white; text-align: center; }
+        nav a { margin: 0 1em; color: white; text-decoration: none; font-weight: bold; cursor: pointer; }
+        section { display: none; padding: 2em; }
+        section.active { display: block; }
+    </style>
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <a onclick="showSection('quiz')">Quiz SKD</a>
+        <a onclick="showSection('tes')">Tes Psikologi</a>
+        <a onclick="showSection('kalkulator')">Kalkulator Jasmani</a>
+    </nav>
+
+<section id="quiz">
+<!-- Quiz SKD Perkasa.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binjas Perkasa - Simulasi CAT SKD 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Optional: Add a favicon for better UX -->
+    <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>" /> -->
+
+    <style>
+        /* Global & Reset */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden; /* Ensure rounded corners are respected */
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        button {
+            background-color: #007bff; /* Primary Blue */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translateY(0);
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 800px; /* Constrain width for better readability */
+        }
+        #splash-screen p, #splash-screen ul {
+            font-size: 1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #555;
+            text-align: left; /* Align text left for lists and general paragraphs */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #splash-screen ul {
+            list-style: disc inside;
+            padding-left: 20px;
+        }
+        #splash-screen li {
+            margin-bottom: 8px;
+        }
+
+        /* Name Input Section */
+        .name-input-section {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f9fbfd;
+        }
+        .name-input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .name-input-section input[type="text"] {
+            width: calc(100% - 22px); /* Account for padding */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        /* File Upload Section */
+        .file-upload-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px dashed #a0a0a0;
+            border-radius: 10px;
+            background-color: #f9fbfd;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .file-upload-section input[type="file"] {
+            display: block;
+            margin: 15px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .file-upload-section h3 {
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+        .file-upload-section button {
+            background-color: #28a745; /* Green for upload */
+        }
+        .file-upload-section button:hover {
+            background-color: #218838;
+        }
+        #csv-load-status {
+            margin-top: 10px;
+            font-size: 0.95em;
+            font-weight: 500;
+            line-height: 1.4;
+            color: #333; /* Default text color */
+        }
+        #csv-load-status.error {
+            color: #dc3545; /* Red for errors */
+        }
+        #csv-load-status.warning {
+            color: #ffc107; /* Yellow for warnings */
+        }
+        #csv-load-status.success {
+            color: #28a745; /* Green for success */
+        }
+
+
+        /* Exam Container */
+        #exam-container {
+            display: none; /* Hidden by default */
+            width: 100%;
+            flex-direction: row; /* For side-by-side layout */
+            gap: 25px;
+            min-height: 600px; /* Min height to prevent jumping */
+        }
+
+        .main-exam-area {
+            flex: 3; /* Takes 3/4 of the space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            width: 100%;
+        }
+
+        .timer-display {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #e74c3c;
+            background-color: #ffebe9;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .question-counter {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        .question-area {
+            background-color: #fcfcfc;
+            border: 1px solid #e9e9e9;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            flex-grow: 1; /* Takes remaining vertical space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-media {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .question-media img, .question-media audio {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .question-media audio {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .options-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .options-container label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            font-size: 1.05em;
+            padding: 14px 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            background-color: #fff;
+        }
+
+        .options-container label:hover {
+            background-color: #eef7ff;
+            border-color: #b0d8f7;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 15px;
+            margin-top: 3px;
+            transform: scale(1.2);
+            accent-color: #007bff;
+            flex-shrink: 0;
+        }
+
+        .options-container input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        .exam-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .nav-buttons button {
+            background-color: #6c757d; /* Gray */
+        }
+        .nav-buttons button:hover {
+            background-color: #5a6268;
+        }
+        .finish-button {
+            background-color: #dc3545; /* Red */
+        }
+        .finish-button:hover {
+            background-color: #c82333;
+        }
+        .doubt-button {
+            background-color: #ffc107; /* Yellow */
+            color: #333;
+        }
+        .doubt-button:hover {
+            background-color: #e0a800;
+        }
+
+        /* Question Palette Sidebar */
+        .question-palette-sidebar {
+            flex: 1; /* Takes 1/4 of the space */
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            box-sizing: border-box;
+            max-height: 70vh; /* Limit height */
+            overflow-y: auto; /* Scrollable */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: sticky; /* Keep it in view */
+            top: 30px; /* Aligned with container top */
+        }
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .palette-item {
+            width: 48px;
+            height: 48px;
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .palette-item:hover {
+            background-color: #dee2e6;
+            border-color: #c0c4c8;
+            transform: scale(1.05);
+        }
+        .palette-item.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            font-weight: bold;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+        .palette-item.answered {
+            background-color: #28a745; /* Green */
+            color: white;
+            border-color: #28a745;
+        }
+        .palette-item.doubt {
+            background-color: #ffc107; /* Yellow */
+            color: #333;
+            border-color: #ffc107;
+        }
+        /* Tooltip for palette items */
+        .palette-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%; /* Above the item */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        .palette-item:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Result Screen */
+        #result-screen {
+            display: none; /* Hidden by default */
+            text-align: center;
+            padding: 40px 20px;
+        }
+        #result-screen h2 {
+            color: #2c3e50; /* Changed to match primary heading color */
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        #result-screen h3.user-info {
+            color: #3498db;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+        }
+        #result-screen table {
+            width: 80%;
+            margin: 0 auto 30px;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        #result-screen th, #result-screen td {
+            border: 1px solid #eee;
+            padding: 15px;
+            text-align: left;
+        }
+        #result-screen th {
+            background-color: #f5f7fa;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        #result-screen td {
+            font-size: 1em;
+            color: #444;
+        }
+        #result-screen .status-pass {
+            color: #28a745;
+            font-weight: bold;
+        }
+        #result-screen .status-fail {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        #result-screen .overall-status {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background-color: #e6ffe6;
+            color: #1a7e3d;
+            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+        }
+        #result-screen .overall-status.fail {
+            background-color: #ffe6e6;
+            color: #b3243a;
+            box-shadow: 0 4px 12px rgba(179, 36, 58, 0.1);
+        }
+        #result-screen .download-button {
+            background-color: #17a2b8; /* Info blue */
+            margin-top: 20px;
+        }
+        #result-screen .download-button:hover {
+            background-color: #138496;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .container {
+                max-width: 100%;
+                margin: 15px auto;
+                padding: 15px;
+            }
+            #exam-container {
+                flex-direction: column;
+            }
+            .question-palette-sidebar {
+                max-height: unset;
+                position: static;
+                margin-top: 25px;
+            }
+            #result-screen table {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 98%;
+                padding: 10px;
+            }
+            .exam-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .exam-footer {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-buttons, .finish-button, .doubt-button {
+                width: 100%;
+                text-align: center;
+            }
+            .nav-buttons button, .finish-button, .doubt-button {
+                width: calc(100% - 16px);
+                margin: 5px 8px;
+            }
+            .question-text {
+                font-size: 1.1em;
+            }
+            .options-container label {
+                font-size: 1em;
+            }
+            .palette-grid {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+                gap: 6px;
+            }
+            .palette-item {
+                width: 40px;
+                height: 40px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+    <!-- MathJax CDN for rendering mathematical formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']], // \( ... \) for inline math
+                displayMath: [['\\[', '\\]']], // \[ ... \] for block math
+                processEscapes: true, // Process escaped characters like \$
+                packages: {'[+]': ['ams', 'color']} // Load amsmath and color packages
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore', // Class to ignore HTML
+                processHtmlClass: 'tex2jax_process' // Class to process HTML
+            },
+            startup: {
+                typeset: false // Disable initial typesetting on page load, we'll call it manually
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Splash Screen -->
+        <div id="splash-screen">
+            <h1>Binjas Perkasa - Simulasi CAT SKD 2025</h1>
+            <p>Selamat datang di aplikasi simulasi Computer Assisted Test (CAT) untuk Seleksi Kompetensi Dasar (SKD) Calon Pegawai Negeri Sipil. Aplikasi ini dirancang untuk membantu Anda berlatih dan memahami format ujian TWK, TIU, dan TKP sesuai standar terbaru.</p>
+            
+            <div class="name-input-section">
+                <label for="user-name-input">Masukkan Nama Anda:</label>
+                <input type="text" id="user-name-input" placeholder="Contoh: Budi Santoso" required>
+            </div>
+
+            <div class="file-upload-section">
+                <h3>Unggah Soal dari File CSV</h3>
+                <input type="file" id="csv-file-input" accept=".csv">
+                <button id="load-csv-button">Muat Soal dari CSV</button>
+                <p id="csv-load-status"></p>
+                <p style="font-size: 0.85em; text-align: center; color: #777;">
+                    **Format CSV yang diharapkan:**<br>
+                    `id,type,question,optionA,optionB,optionC,optionD,optionE,correctAnswer/scoreA,scoreB,scoreC,scoreD,scoreE,mediaUrl,mediaType`<br>
+                    Untuk soal matematika, gunakan sintaks LaTeX (misal: `\(x^2\)` atau `\[\frac{1}{2}\]`).<br>
+                    Parser akan otomatis meng-unescape backslash ganda (`\\`) menjadi tunggal (`\`).
+                </p>
+            </div>
+
+            <p><strong>Peraturan Ujian:</strong></p>
+            <ul>
+                <li>Total Soal: 110 (TWK 30, TIU 35, TKP 45)</li>
+                <li>Waktu Ujian: 100 menit</li>
+                <li><strong>Penilaian TWK & TIU:</strong> Jawaban Benar = 5 poin, Salah/Kosong = 0 poin.</li>
+                <li><strong>Penilaian TKP:</strong> Setiap pilihan memiliki bobot nilai 1-5 poin, Kosong = 0 poin.</li>
+                <li><strong>Fitur Ragu-ragu:</strong> Anda bisa menandai soal jika ragu. Soal ragu-ragu akan berwarna kuning di panel soal.</li>
+                <li><strong>Nilai Ambang Batas (Passing Grade):</strong></li>
+                <ul>
+                    <li>TWK: 65</li>
+                    <li>TIU: 80</li>
+                    <li>TKP: 166</li>
+                </ul>
+            </ul>
+            <p>Anda dapat memulai ujian meskipun jumlah soal di CSV tidak mencapai total 110. Ujian akan menggunakan soal yang tersedia, diprioritaskan berdasarkan jumlah yang dibutuhkan per kategori.</p>
+            <button id="start-button" disabled>Mulai Ujian</button>
+        </div>
+
+        <!-- Exam Container -->
+        <div id="exam-container">
+            <div class="main-exam-area">
+                <div class="exam-header">
+                    <div class="timer-display" id="timer-display">Waktu: 00:00:00</div>
+                    <div class="question-counter" id="question-counter">Soal 0 dari 0</div>
+                </div>
+
+                <div class="question-area">
+                    <div class="question-media" id="question-media">
+                        <!-- Media (image/audio) will be loaded here by JavaScript -->
+                    </div>
+                    <div class="question-text" id="question-text"></div>
+                    <div class="options-container" id="options-container">
+                        <!-- Options will be loaded here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="exam-footer">
+                    <div class="nav-buttons">
+                        <button id="prev-button" disabled>&lt;&lt; Sebelumnya</button>
+                        <button id="doubt-button" class="doubt-button">Ragu-ragu</button>
+                        <button id="next-button">Selanjutnya &gt;&gt;</button>
+                    </div>
+                    <button id="finish-button" class="finish-button">Selesai Ujian</button>
+                </div>
+            </div>
+
+            <div class="question-palette-sidebar">
+                <h3>Panel Soal</h3>
+                <div class="palette-grid" id="palette-grid">
+                    <!-- Question numbers will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen">
+            <h2>Hasil Ujian SKD Anda</h2>
+            <h3 class="user-info" id="result-user-name"></h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kategori Tes</th>
+                        <th>Skor Anda</th>
+                        <th>Skor Maksimal</th>
+                        <th>Passing Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TWK</td>
+                        <td id="score-twk"></td>
+                        <td id="max-twk"></td>
+                        <td id="pg-twk"></td>
+                        <td id="status-twk"></td>
+                    </tr>
+                    <tr>
+                        <td>TIU</td>
+                        <td id="score-tiu"></td>
+                        <td id="max-tiu"></td>
+                        <td id="pg-tiu"></td>
+                        <td id="status-tiu"></td>
+                    </tr>
+                    <tr>
+                        <td>TKP</td>
+                        <td id="score-tkp"></td>
+                        <td id="max-tkp"></td>
+                        <td id="pg-tkp"></td>
+                        <td id="status-tkp"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 class="overall-status" id="overall-status"></h3>
+            <button id="download-pdf-button" class="download-button">Unduh Hasil (PDF)</button>
+            <button onclick="location.reload()">Ulangi Ujian</button>
+        </div>
+    </div>
+
+    <!-- html2pdf.js library via CDN -->
+    <!-- PENTING: Jika ingin file ini sepenuhnya OFFLINE, unduh file ini:
+         https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+         dan tempelkan seluruh isinya ke dalam tag <script> di sini,
+         menggantikan baris CDN ini. Ukuran file lumayan besar (~2.3 MB).
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        // --- Global Variables ---
+        let allQuestions = []; // This will be populated from CSV
+        let shuffledQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // { questionId: { selected: 'A', isDoubt: true/false } }
+        let timerSeconds = 100 * 60; // 100 minutes in seconds
+        let timerInterval;
+        let examRunning = false;
+        let userName = ''; // To store user's name
+
+        const passingGrades = {
+            TWK: 65,
+            TIU: 80,
+            TKP: 166
+        };
+
+        const questionCounts = { // Actual counts after questions are loaded and filtered
+            TWK: 0,
+            TIU: 0,
+            TKP: 0
+        };
+
+        const REQUIRED_TWK = 30;
+        const REQUIRED_TIU = 35;
+        const REQUIRED_TKP = 45;
+
+        // --- DOM Elements ---
+        const splashScreen = document.getElementById('splash-screen');
+        const examContainer = document.getElementById('exam-container');
+        const resultScreen = document.getElementById('result-screen');
+        const startButton = document.getElementById('start-button');
+        const timerDisplay = document.getElementById('timer-display');
+        const questionCounter = document.getElementById('question-counter');
+        const questionMedia = document.getElementById('question-media');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const doubtButton = document.getElementById('doubt-button');
+        const finishButton = document.getElementById('finish-button');
+        const paletteGrid = document.getElementById('palette-grid');
+
+        // CSV upload elements
+        const csvFileInput = document.getElementById('csv-file-input');
+        const loadCsvButton = document.getElementById('load-csv-button');
+        const csvLoadStatus = document.getElementById('csv-load-status');
+
+        // Name input element
+        const userNameInput = document.getElementById('user-name-input');
+        const resultUserNameDisplay = document.getElementById('result-user-name');
+        const downloadPdfButton = document.getElementById('download-pdf-button');
+
+
+        // --- Helper Functions ---
+        function shuffleArray(array) {
+            // This function is still here, but not used for ordering questions for the exam.
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // --- CSV Parsing Function (More Robust) ---
+        // This parser handles commas within double quotes and escaped double quotes ("")
+        // It implements a state machine approach for better reliability.
+        // It also unescapes double backslashes (\\) to single backslashes (\) for MathJax.
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+            const questions = [];
+
+            let startIndex = 0;
+            // Check for header row to skip it. A header usually starts with 'id,type,'
+            if (lines.length > 0 && lines[0].startsWith('id,type,')) { 
+                startIndex = 1;
+            }
+
+            for (let index = startIndex; index < lines.length; index++) {
+                const line = lines[index];
+                const values = [];
+                let currentVal = "";
+                let inQuote = false;
+
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+
+                    if (char === '"') {
+                        // If inside a quote and next char is also a quote, it's an escaped quote ("")
+                        if (inQuote && i + 1 < line.length && line[i+1] === '"') {
+                            currentVal += '"'; // Add a single quote
+                            i++; // Skip the next character as it's part of the escape sequence
+                        } else {
+                            inQuote = !inQuote; // Toggle quote state (enter/exit quote)
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        // If comma found outside quotes, push current value and reset
+                        values.push(currentVal.trim());
+                        currentVal = "";
+                    } else {
+                        // Add character to current value
+                        currentVal += char;
+                    }
+                }
+                values.push(currentVal.trim()); // Push the last value after the loop finishes
+
+                // --- Apply unescaping for MathJax here ---
+                // Replace all occurrences of double backslash (\\) with a single backslash (\)
+                // This prepares the string for MathJax, which expects single backslashes for commands
+                const processedValues = values.map(val => val.replace(/\\\\/g, '\\'));
+
+
+                // --- Validation and Object Construction ---
+                // A valid question needs at least: id, type, question, 5 options, and correct answer/scoreA (9 columns)
+                // If a line results in fewer than 9 columns, it's considered invalid.
+                if (processedValues.length < 9) { 
+                    console.warn(`Baris ${index + 1} tidak valid (kolom kurang dari minimum 9), dilewati: ${line}`);
+                    continue; // Skip this malformed line
+                }
+
+                const question = {
+                    id: processedValues[0],
+                    type: processedValues[1].toUpperCase(), // Ensure type is consistent (e.g., "TWK" not "twk")
+                    question: processedValues[2],
+                    options: {} // Initialize options object
+                };
+
+                const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+                // Populate options A-E (columns 3 to 7 in CSV)
+                for (let i = 0; i < optionLetters.length; i++) {
+                    const optKey = optionLetters[i];
+                    const optionIndex = i + 3; // Options start from 4th column (index 3)
+                    // Use a fallback to empty string if option column is missing/undefined
+                    question.options[optKey] = processedValues[optionIndex] !== undefined ? processedValues[optionIndex] : '';
+                }
+
+                // Handle correct answer (for TWK/TIU) or TKP scores
+                // Column 8 contains either the correct answer letter or score for option A
+                if (question.type === 'TWK' || question.type === 'TIU') {
+                    question.correctAnswer = processedValues[8]; 
+                } else if (question.type === 'TKP') {
+                    // For TKP, columns 8 to 12 contain scores for options A to E
+                    for (let i = 0; i < optionLetters.length; i++) {
+                        const optKey = optionLetters[i];
+                        const scoreIndex = i + 8; // Scores start from 9th column (index 8)
+                        const score = parseInt(processedValues[scoreIndex]);
+                        question.options[optKey] = {
+                            text: question.options[optKey], // Retain the option text
+                            score: isNaN(score) ? 0 : score // Parse score, default to 0 if not a number
+                        };
+                    }
+                }
+
+                // Handle optional media (columns 13 and 14)
+                if (processedValues[13] && processedValues[14]) {
+                    question.mediaUrl = processedValues[13];
+                    question.mediaType = processedValues[14];
+                }
+
+                questions.push(question);
+            }
+            return questions;
+        }
+
+
+        // --- Exam Functions ---
+        function startExam() {
+            userName = userNameInput.value.trim();
+            if (userName === '') {
+                alert('Mohon masukkan nama Anda terlebih dahulu.');
+                userNameInput.focus();
+                return;
+            }
+
+            if (allQuestions.length === 0) {
+                alert("Harap unggah file CSV berisi soal terlebih dahulu.");
+                return;
+            }
+
+            // Filter questions by type
+            const rawTWK = allQuestions.filter(q => q.type === 'TWK');
+            const rawTIU = allQuestions.filter(q => q.type === 'TIU');
+            const rawTKP = allQuestions.filter(q => q.type === 'TKP');
+
+            // Determine how many questions to take for the exam (min of required vs available)
+            const numTWK = Math.min(REQUIRED_TWK, rawTWK.length);
+            const numTIU = Math.min(REQUIRED_TIU, rawTIU.length);
+            const numTKP = Math.min(REQUIRED_TKP, rawTKP.length);
+
+            // Store actual counts for result calculation
+            questionCounts.TWK = numTWK;
+            questionCounts.TIU = numTIU;
+            questionCounts.TKP = numTKP;
+
+            // Take slices of questions (maintaining their original order from CSV within each category)
+            const twkQuestionsForExam = rawTWK.slice(0, numTWK); 
+            const tiuQuestionsForExam = rawTIU.slice(0, numTIU); 
+            const tkpQuestionsForExam = rawTKP.slice(0, numTKP); 
+
+            // Combine questions in the desired order: TWK -> TIU -> TKP
+            shuffledQuestions = [...twkQuestionsForExam, ...tiuQuestionsForExam, ...tkpQuestionsForExam];
+
+            // Removed the blocking alert here. The check for total questions should allow starting
+            // even if fewer than 110 questions are available, as per request.
+            if (shuffledQuestions.length === 0) {
+                alert("Tidak ada soal yang valid setelah pemrosesan atau soal yang diunggah tidak mencukupi. Periksa format CSV Anda.");
+                return;
+            }
+
+            splashScreen.style.display = 'none';
+            examContainer.style.display = 'flex';
+            examRunning = true;
+            
+            renderQuestionPalette();
+            loadQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function updateTimer() {
+            timerDisplay.textContent = `Waktu: ${formatTime(timerSeconds)}`;
+
+            if (timerSeconds <= 0) {
+                clearInterval(timerInterval);
+                if (examRunning) {
+                    alert('Waktu ujian habis!');
+                    endExam();
+                }
+            } else {
+                timerSeconds--;
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function saveAnswer() {
+            // Ensure there's a current question before trying to save
+            if (!shuffledQuestions[currentQuestionIndex]) return;
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            const selectedOption = optionsContainer.querySelector('input[name="option"]:checked');
+            // Get current state or initialize it if not set
+            const currentAnswerState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
+
+            userAnswers[currentQuestion.id] = {
+                selected: selectedOption ? selectedOption.value : null, // Store selected option value (A, B, etc.)
+                isDoubt: currentAnswerState.isDoubt // Preserve existing doubt status
+            };
+            updatePaletteStatus(currentQuestionIndex); // Update palette color
+        }
+
+        function toggleDoubt() {
+            // Ensure there's a current question before toggling doubt
+            if (!shuffledQuestions[currentQuestionIndex]) return;
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            // Get current state or initialize it if not set
+            const currentAnswerState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
+            
+            currentAnswerState.isDoubt = !currentAnswerState.isDoubt; // Toggle doubt status
+            userAnswers[currentQuestion.id] = currentAnswerState; // Update userAnswers
+            updatePaletteStatus(currentQuestionIndex); // Update palette color
+            // Change button text based on current doubt status
+            doubtButton.textContent = currentAnswerState.isDoubt ? 'Batalkan Ragu-ragu' : 'Ragu-ragu';
+        }
+
+        function loadQuestion(index) {
+            // Validate index
+            if (index < 0 || index >= shuffledQuestions.length) return;
+
+            saveAnswer(); // Always save the current question's answer before moving
+            currentQuestionIndex = index; // Update current question index
+
+            const questionData = shuffledQuestions[currentQuestionIndex];
+            // Get current answer state for the loaded question
+            const currentAnswerState = userAnswers[questionData.id] || { selected: null, isDoubt: false };
+
+            // Update UI elements
+            questionCounter.textContent = `Soal ${currentQuestionIndex + 1} dari ${shuffledQuestions.length} (${questionData.type})`;
+            questionText.textContent = questionData.question;
+            optionsContainer.innerHTML = ''; // Clear old options
+            questionMedia.innerHTML = ''; // Clear old media
+
+            // Load media if mediaUrl and mediaType are present in questionData
+            if (questionData.mediaUrl && questionData.mediaType) {
+                if (questionData.mediaType === 'image') {
+                    const img = document.createElement('img');
+                    img.src = questionData.mediaUrl;
+                    img.alt = 'Gambar Soal'; // Alt text for accessibility
+                    questionMedia.appendChild(img);
+                } else if (questionData.mediaType === 'audio') {
+                    const audio = document.createElement('audio');
+                    audio.controls = true; // Show audio controls
+                    const source = document.createElement('source');
+                    source.src = questionData.mediaUrl;
+                    source.type = 'audio/mpeg'; // Assuming MP3, adjust if other formats are used
+                    audio.appendChild(source);
+                    questionMedia.appendChild(audio);
+                }
+            }
+
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            optionLetters.forEach(key => {
+                const optionValue = questionData.options[key];
+                
+                let optionText = '';
+                // Handle different structures for TKP (object with text/score) and TWK/TIU (string)
+                if (questionData.type === 'TKP') {
+                    optionText = optionValue && optionValue.text !== undefined ? optionValue.text : '';
+                } else {
+                    optionText = optionValue !== undefined ? optionValue : '';
+                }
+
+                // Only create radio button if option text is not empty
+                if (optionText === '') return; 
+
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option'; // Same name for all options in a question to make them mutually exclusive
+                input.value = key; // Value is 'A', 'B', etc.
+
+                const span = document.createElement('span');
+                span.textContent = `${key}. ${optionText}`;
+
+                label.appendChild(input);
+                label.appendChild(span);
+                optionsContainer.appendChild(label);
+
+                // Check the radio button if it was previously selected
+                if (currentAnswerState.selected === key) {
+                    input.checked = true;
+                }
+            });
+
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.disabled = currentQuestionIndex === shuffledQuestions.length - 1;
+            doubtButton.textContent = currentAnswerState.isDoubt ? 'Batalkan Ragu-ragu' : 'Ragu-ragu';
+
+            updatePaletteActiveState(); // Update active state in palette
+
+            // --- MathJax Typesetting ---
+            // Tell MathJax to process the newly loaded content in questionText and optionsContainer
+            // This is crucial for rendering LaTeX math
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                // Ensure we typeset the specific elements where content has changed
+                MathJax.typesetPromise([questionText, optionsContainer]).catch(function (err) {
+                    console.error('MathJax typesetting failed:', err);
+                });
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function confirmFinish() {
+            saveAnswer(); // Ensure current question's answer is saved
+
+            // Count unanswered and doubtful questions for confirmation message
+            const unansweredCount = shuffledQuestions.filter(q => !userAnswers[q.id] || userAnswers[q.id].selected === null).length;
+            const doubtCount = shuffledQuestions.filter(q => userAnswers[q.id] && userAnswers[q.id].isDoubt).length;
+
+            let confirmationMessage = 'Apakah Anda yakin ingin mengakhiri ujian?';
+            if (unansweredCount > 0) {
+                confirmationMessage += `\nAnda masih memiliki ${unansweredCount} soal yang belum dijawab.`;
+            }
+            if (doubtCount > 0) {
+                confirmationMessage += `\nAnda masih memiliki ${doubtCount} soal yang ditandai ragu-ragu.`;
+            }
+            confirmationMessage += '\nAnda tidak bisa kembali setelah ini.';
+
+            if (confirm(confirmationMessage)) {
+                endExam();
+            }
+        }
+
+        function endExam() {
+            clearInterval(timerInterval); // Stop the timer
+            examRunning = false; // Set exam state
+            examContainer.style.display = 'none'; // Hide exam UI
+            resultScreen.style.display = 'block'; // Show result UI
+            calculateAndDisplayResults(); // Populate results
+        }
+
+        function calculateAndDisplayResults() {
+            let scoreTWK = 0;
+            let scoreTIU = 0;
+            let scoreTKP = 0;
+
+            // Calculate max possible scores based on actual questions loaded
+            let maxTWK = questionCounts.TWK * 5;
+            let maxTIU = questionCounts.TIU * 5;
+            let maxTKP = questionCounts.TKP * 5;
+
+            shuffledQuestions.forEach(q => {
+                const answerState = userAnswers[q.id];
+                const selectedOption = answerState ? answerState.selected : null;
+
+                if (q.type === 'TWK') {
+                    if (selectedOption === q.correctAnswer) {
+                        scoreTWK += 5;
+                    }
+                } else if (q.type === 'TIU') {
+                    if (selectedOption === q.correctAnswer) {
+                        scoreTIU += 5;
+                    }
+                } else if (q.type === 'TKP') {
+                    if (selectedOption && q.options[selectedOption] && typeof q.options[selectedOption].score === 'number') {
+                        scoreTKP += q.options[selectedOption].score;
+                    }
+                }
+            });
+
+            const totalScore = scoreTWK + scoreTIU + scoreTKP;
+
+            // Display results in the table
+            resultUserNameDisplay.textContent = `Nama Peserta: ${userName}`;
+            document.getElementById('score-twk').textContent = scoreTWK;
+            document.getElementById('max-twk').textContent = maxTWK;
+            document.getElementById('pg-twk').textContent = passingGrades.TWK;
+
+            document.getElementById('score-tiu').textContent = scoreTIU;
+            document.getElementById('max-tiu').textContent = maxTIU;
+            document.getElementById('pg-tiu').textContent = passingGrades.TIU;
+
+            document.getElementById('score-tkp').textContent = scoreTKP;
+            document.getElementById('max-tkp').textContent = maxTKP;
+            document.getElementById('pg-tkp').textContent = passingGrades.TKP;
+
+            // Determine pass/fail status for each category
+            const statusTWK = scoreTWK >= passingGrades.TWK;
+            const statusTIU = scoreTIU >= passingGrades.TIU;
+            const statusTKP = scoreTKP >= passingGrades.TKP;
+
+            document.getElementById('status-twk').textContent = statusTWK ? 'Lulus' : 'Tidak Lulus';
+            document.getElementById('status-twk').className = statusTWK ? 'status-pass' : 'status-fail';
+
+            document.getElementById('status-tiu').textContent = statusTIU ? 'Lulus' : 'Tidak Lulus';
+            document.getElementById('status-tiu').className = statusTIU ? 'status-pass' : 'status-fail';
+
+            document.getElementById('status-tkp').textContent = statusTKP ? 'Lulus' : 'Tidak Lulus';
+            document.getElementById('status-tkp').className = statusTKP ? 'status-pass' : 'status-fail';
+
+            // Determine overall status
+            const overallStatusEl = document.getElementById('overall-status');
+            if (statusTWK && statusTIU && statusTKP) {
+                overallStatusEl.textContent = `SELAMAT! Anda Dinyatakan LULUS SKD dengan Total Skor ${totalScore}!`;
+                overallStatusEl.className = 'overall-status status-pass'; // Green style
+            } else {
+                overallStatusEl.textContent = `MAAF, Anda Dinyatakan TIDAK LULUS SKD. Total Skor Anda ${totalScore}.`;
+                overallStatusEl.className = 'overall-status status-fail'; // Red style
+            }
+
+            // --- MathJax Typesetting for Results Screen ---
+            // If there's math on the results screen (e.g., in overall status or if you add more details)
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([resultScreen]).catch(function (err) {
+                    console.error('MathJax typesetting failed on result screen:', err);
+                });
+            }
+        }
+
+        // --- Question Palette Functions ---
+        function renderQuestionPalette() {
+            paletteGrid.innerHTML = ''; // Clear existing palette items
+            shuffledQuestions.forEach((q, index) => {
+                const item = document.createElement('div');
+                item.classList.add('palette-item');
+                item.textContent = index + 1; // Display question number
+                item.dataset.index = index; // Store index for navigation
+                item.dataset.tooltip = `${q.type} - Soal ${index + 1}`; // Tooltip on hover
+                item.addEventListener('click', () => loadQuestion(index)); // Event listener for direct jump
+                paletteGrid.appendChild(item);
+                userAnswers[q.id] = userAnswers[q.id] || { selected: null, isDoubt: false };
+                updatePaletteStatus(index); // Set initial color based on state
+            });
+            updatePaletteActiveState(); // Set active color for current question
+        }
+
+        function updatePaletteActiveState() {
+            const paletteItems = document.querySelectorAll('.palette-item');
+            paletteItems.forEach((item, index) => {
+                item.classList.remove('active'); // Remove active class from all
+                if (index === currentQuestionIndex) {
+                    item.classList.add('active'); // Add active class to current question
+                }
+            });
+        }
+
+        function updatePaletteStatus(index) {
+            const item = paletteGrid.querySelector(`.palette-item[data-index="${index}"]`);
+            if (item) {
+                const questionId = shuffledQuestions[index].id;
+                const answerState = userAnswers[questionId];
+
+                item.classList.remove('answered', 'doubt'); // Clear current status classes
+
+                if (answerState && answerState.isDoubt) {
+                    item.classList.add('doubt'); // Apply yellow for doubt
+                } else if (answerState && answerState.selected !== null) {
+                    item.classList.add('answered'); // Apply green for answered
+                }
+                // No specific class for 'skipped' (unanswered and not doubtful), it retains default style.
+            }
+        }
+
+        // --- PDF Download Function ---
+        function downloadPdfResult() {
+            // Get the element to convert (the result screen)
+            const element = document.getElementById('result-screen');
+            
+            // Clone the element to remove interactive elements (buttons) from the PDF output
+            const clone = element.cloneNode(true);
+            const buttonsToRemove = clone.querySelectorAll('button');
+            buttonsToRemove.forEach(button => button.remove()); // Remove all buttons from the cloned element
+
+            // Get current date for filename
+            const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+            // Use html2pdf to generate and download the PDF
+            // Ensure html2pdf.js is loaded from CDN or embedded script
+            if (typeof html2pdf === 'undefined') {
+                alert("Kesalahan: Library PDF belum dimuat. Periksa koneksi internet atau embed script.");
+                console.error("html2pdf.js is not loaded.");
+                return;
+            }
+
+            html2pdf(clone, {
+                margin: 10,
+                filename: `Hasil_SKD_${userName.replace(/\s/g, '_')}_${date}.pdf`, // Dynamic filename
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true }, // Scale up for better quality
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // A4 portrait format
+            });
+        }
+
+        // --- Event Listeners ---
+        startButton.addEventListener('click', startExam);
+        prevButton.addEventListener('click', prevQuestion);
+        nextButton.addEventListener('click', nextQuestion);
+        doubtButton.addEventListener('click', toggleDoubt);
+        finishButton.addEventListener('click', confirmFinish);
+        downloadPdfButton.addEventListener('click', downloadPdfResult); // New listener for PDF button
+
+        // CSV Upload Listener
+        loadCsvButton.addEventListener('click', () => {
+            const file = csvFileInput.files[0];
+            if (!file) {
+                csvLoadStatus.textContent = "Pilih file CSV terlebih dahulu.";
+                csvLoadStatus.classList.add('error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    allQuestions = parseCSV(e.target.result);
+                    if (allQuestions.length > 0) {
+                        // Check actual loaded counts
+                        const actualTWK = allQuestions.filter(q => q.type === 'TWK').length;
+                        const actualTIU = allQuestions.filter(q => q.type === 'TIU').length;
+                        const actualTKP = allQuestions.filter(q => q.type === 'TKP').length;
+
+                        let warnings = [];
+                        if (actualTWK < REQUIRED_TWK) warnings.push(`TWK: ${actualTWK}/${REQUIRED_TWK}`);
+                        if (actualTIU < REQUIRED_TIU) warnings.push(`TIU: ${actualTIU}/${REQUIRED_TIU}`);
+                        if (actualTKP < REQUIRED_TKP) warnings.push(`TKP: ${actualTKP}/${REQUIRED_TKP}`);
+
+                        let statusMessage = `Berhasil memuat ${allQuestions.length} soal dari CSV.`;
+                        csvLoadStatus.classList.remove('error', 'warning');
+                        csvLoadStatus.classList.add('success');
+
+                        if (warnings.length > 0) {
+                            statusMessage += ` (Perhatian: Jumlah soal kurang dari standar: ${warnings.join(', ')})`;
+                            csvLoadStatus.classList.remove('success');
+                            csvLoadStatus.classList.add('warning');
+                        } else if (actualTWK > REQUIRED_TWK || actualTIU > REQUIRED_TIU || actualTKP > REQUIRED_TKP) {
+                            statusMessage += ` (Catatan: Jumlah soal lebih dari standar, akan diambil ${REQUIRED_TWK} TWK, ${REQUIRED_TIU} TIU, ${REQUIRED_TKP} TKP.)`;
+                             csvLoadStatus.classList.remove('success');
+                             csvLoadStatus.classList.add('warning'); // Use warning for "too many" as well
+                        }
+
+                        csvLoadStatus.textContent = statusMessage;
+                        startButton.disabled = false;
+                        startButton.textContent = "Mulai Ujian";
+
+                    } else {
+                        csvLoadStatus.textContent = "Tidak ada soal yang valid ditemukan di CSV. Periksa format file Anda.";
+                        csvLoadStatus.classList.remove('success', 'warning');
+                        csvLoadStatus.classList.add('error');
+                        startButton.disabled = true;
+                        startButton.textContent = "Mulai Ujian (Soal Tidak Cukup)";
+                    }
+                } catch (error) {
+                    csvLoadStatus.textContent = `Gagal memproses CSV: ${error.message}. Periksa format file dan lihat console log untuk detail.`;
+                    csvLoadStatus.classList.remove('success', 'warning');
+                    csvLoadStatus.classList.add('error');
+                    console.error("Error parsing CSV:", error);
+                    startButton.disabled = true;
+                    startButton.textContent = "Mulai Ujian (Error Soal)";
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Initial setup on page load
+        window.onload = () => {
+            startButton.disabled = true;
+            startButton.textContent = "Mulai Ujian (Unggah Soal Dulu)";
+            userNameInput.focus();
+        };
+
+    </script>
+</body>
+</html>
+</section>
+
+<section id="tes">
+<!-- Tes Psikologi Kecermatan Perkasa.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <!-- Menggunakan URL logo PNG yang diberikan -->
+    <link rel="icon" type="image/png" href="https://drive.google.com/uc?id=16qgbGKC9PBVFtIIevRUTaJScA9GzXAKI&export=download" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Binjas Perkasa: Tes Kecermatan CAT Polri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animasi fade-in sederhana */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        /* Custom styles untuk Bar Chart */
+        .chart-bar-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 100%; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+        }
+        .chart-bar {
+            width: 100%;
+            transition: height 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+        }
+        .bar-correct { background-color: #16a34a; }
+        .bar-incorrect { 
+            background-color: #dc2626; 
+            /* Menambahkan pemisah visual antara benar dan salah */
+            border-top: 1px solid rgba(255, 255, 255, 0.2); 
+        }
+
+        /* Gaya untuk Y-Axis */
+        .y-axis-labels-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end; /* Align numbers to the right */
+            width: 40px; /* Fixed width for labels */
+            height: 100%;
+            position: relative; 
+            padding-right: 5px; 
+            box-sizing: border-box; 
+            font-size: 0.75rem; /* Ukuran font label default */
+        }
+        .y-axis-label {
+            color: #64748b; /* Warna teks label */
+            position: relative; 
+            white-space: nowrap; 
+        }
+        /* Penyesuaian posisi Y-axis labels agar pas dengan garis */
+        .y-axis-label:first-child {
+            transform: translateY(-50%); 
+        }
+        .y-axis-label:last-child {
+            transform: translateY(50%); 
+        }
+        /* Garis horizontal kecil untuk setiap label di Y-axis */
+        .y-axis-label::after {
+            content: '';
+            position: absolute;
+            right: -5px; 
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px; 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-900">
+    <div class="min-h-screen text-white flex flex-col items-center p-4">
+        <!-- Header diperlebar -->
+        <header class="w-full py-4 mb-6">
+            <div class="flex items-center justify-center gap-3 sm:gap-4">
+                <img src="https://drive.google.com/uc?id=16qgbGKC9PBVFtIIevRUTaJScA9GzXAKI&export=download" alt="Logo Binjas Perkasa" class="w-20 h-20 object-contain" />
+                <div class="text-left">
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide uppercase">CAT Polri - Tes Kecermatan</h1>
+                    <h2 class="text-lg sm:text-xl font-semibold text-yellow-300">BINJAS PERKASA</h2>
+                </div>
+            </div>
+        </header>
+        <main class="w-full flex-grow flex items-start justify-center">
+            <!-- Kontainer aplikasi diperlebar -->
+            <div id="app-container" class="w-full bg-white text-slate-800 rounded-xl shadow-2xl p-6 md:p-10">
+                <!-- Konten aplikasi akan dirender di sini oleh JavaScript -->
+            </div>
+        </main>
+        <footer class="text-center py-4 mt-6 text-slate-400 text-sm">
+            <p>&copy; 2024 Binjas Perkasa. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // =================================================================================
+        // KONSTANTA
+        // =================================================================================
+        const TOTAL_ROUNDS = 10;
+        const ROUND_DURATION_SECONDS = 60;
+        const BREAK_DURATION_SECONDS = 5;
+        const PRE_TEST_COUNTDOWN_SECONDS = 5; 
+        const EXAMPLE_TEMPLATES = ["MAV5G", "T2NB9", "F7KPL", "X39TG", "RQZ6B", "L0MN2", "W7RVA", "KJH3Q", "9AZX2", "MB7CQ"];
+        const NUM_QUESTIONS_PER_ROUND = 50;
+        const NUM_OPTIONS = 5;
+
+        // =================================================================================
+        // UTILITAS
+        // =================================================================================
+        const shuffle = (array) => {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        };
+
+        // =================================================================================
+        // LOGIKA ANALISIS KINERJA
+        // =================================================================================
+        const calculateAverage = (arr) => arr.length === 0 ? 0 : arr.reduce((acc, val) => acc + val, 0) / arr.length;
+        const calculateStdDev = (arr) => {
+            const n = arr.length;
+            if (n < 2) return 0;
+            const mean = calculateAverage(arr);
+            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
+            return Math.sqrt(variance);
+        };
+
+        const getSpeedAnalysis = (avgAnswered) => {
+            if (avgAnswered >= 30) return { level: 'Sangat Cepat', description: 'Kecepatan kerja Anda luar biasa, mampu memproses informasi dan menjawab dengan sangat efisien.' };
+            if (avgAnswered >= 20) return { level: 'Cepat', description: 'Anda memiliki kecepatan kerja di atas rata-rata. Ini adalah aset penting dalam tes berbasis waktu.' };
+            if (avgAnswered >= 10) return { level: 'Cukup', description: 'Kecepatan kerja Anda berada pada tingkat yang memadai. Latihan dapat membantu meningkatkannya.' };
+            return { level: 'Perlu Ditingkatkan', description: 'Kecepatan Anda masih bisa dioptimalkan. Fokus pada pengenalan pola untuk mempercepat respons.' };
+        };
+
+        const getAccuracyAnalysis = (totalCorrect, totalAnswered) => {
+            if (totalAnswered === 0) return { level: 'N/A', description: 'Tidak ada jawaban yang tercatat untuk dianalisis.' };
+            const accuracyPercentage = (totalCorrect / totalAnswered) * 100;
+            if (accuracyPercentage >= 95) return { level: 'Sangat Teliti', description: 'Tingkat ketelitian Anda sangat tinggi. Anda mampu bekerja cepat tanpa mengorbankan kualitas.' };
+            if (accuracyPercentage >= 85) return { level: 'Teliti', description: 'Anda mampu menjaga ketelitian dengan baik. Pertahankan fokus untuk meminimalkan kesalahan kecil.' };
+            if (accuracyPercentage >= 75) return { level: 'Cukup Teliti', description: 'Ketelitian Anda cukup, namun ada ruang untuk perbaikan. Periksa kembali sebelum memilih.' };
+            return { level: 'Perlu Ditingkatkan', description: 'Banyak terjadi kesalahan. Coba untuk sedikit lebih tenang dan fokus pada ketepatan jawaban.' };
+        };
+
+        const getEnduranceAnalysis = (answeredPerRound) => {
+            const totalRounds = answeredPerRound.length;
+            if (totalRounds < 4) return { level: 'N/A', description: 'Data tidak cukup untuk menganalisis daya tahan.' };
+            const firstHalf = answeredPerRound.slice(0, Math.floor(totalRounds / 2));
+            const secondHalf = answeredPerRound.slice(Math.ceil(totalRounds / 2));
+            const avgFirstHalf = calculateAverage(firstHalf);
+            const avgSecondHalf = calculateAverage(secondHalf);
+            if (avgSecondHalf >= avgFirstHalf * 0.95) return { level: 'Sangat Baik', description: 'Daya tahan Anda luar biasa. Anda mampu menjaga atau bahkan meningkatkan performa di bawah tekanan waktu yang lama.' };
+            if (avgSecondHalf >= avgFirstHalf * 0.85) return { level: 'Baik', description: 'Anda memiliki daya tahan yang baik, hanya terjadi sedikit penurunan performa seiring berjalannya waktu.' };
+            if (avgSecondHalf >= avgFirstHalf * 0.75) return { level: 'Cukup', description: 'Terlihat adanya tanda-tanda kelelahan. Performa Anda cenderung menurun pada paruh akhir tes.' };
+            return { level: 'Perlu Ditingkatkan', description: 'Terjadi penurunan performa yang signifikan. Latih konsentrasi dan stamina untuk menjaga stabilitas kerja.' };
+        };
+
+        const getConsistencyAnalysis = (answeredPerRound) => {
+            const avg = calculateAverage(answeredPerRound);
+            if (avg === 0) return { level: 'N/A', description: 'Tidak ada jawaban yang tercatat.' };
+            const stdDev = calculateStdDev(answeredPerRound);
+            const coefficientOfVariation = (stdDev / avg) * 100;
+            if (coefficientOfVariation <= 15) return { level: 'Sangat Stabil', description: 'Ritme kerja Anda sangat konsisten. Ini menunjukkan tingkat fokus dan stabilitas emosi yang tinggi.' };
+            if (coefficientOfVariation <= 25) return { level: 'Cukup Stabil', description: 'Ritme kerja Anda cukup konsisten, meskipun ada sedikit fluktuasi antar ronde.' };
+            return { level: 'Kurang Stabil', description: 'Performa Anda cenderung naik-turun. Latih untuk menjaga ritme kerja yang lebih stabil di setiap ronde.' };
+        };
+
+        const analyzePerformance = (results) => {
+            const totalAnswered = results.reduce((sum, r) => sum + r.answered, 0);
+            const totalCorrect = results.reduce((sum, r) => sum + r.correct, 0);
+            const answeredPerRound = results.map(r => r.answered);
+            const avgAnswered = calculateAverage(answeredPerRound);
+            return {
+                speed: getSpeedAnalysis(avgAnswered),
+                accuracy: getAccuracyAnalysis(totalCorrect, totalAnswered),
+                endurance: getEnduranceAnalysis(answeredPerRound),
+                consistency: getConsistencyAnalysis(answeredPerRound),
+            };
+        };
+
+        // =================================================================================
+        // KELAS LOGIKA TES
+        // =================================================================================
+        class TestLogic {
+            constructor(onUpdate, onFinish, onBreakStart, onBreakEnd) {
+                this.onUpdate = onUpdate;
+                this.onFinish = onFinish;
+                this.onBreakStart = onBreakStart;
+                this.onBreakEnd = onBreakEnd;
+
+                this.isActive = false;
+                this.isBreak = false;
+                this.currentRound = 0;
+                this.timeLeft = ROUND_DURATION_SECONDS;
+                this.breakTimeLeft = BREAK_DURATION_SECONDS;
+                this.questions = [];
+                this.currentQuestionIndex = 0;
+                this.roundStats = { correct: 0, incorrect: 0 };
+                this.allRoundResults = [];
+                this.roundTimerId = null;
+                this.breakTimerId = null;
+            }
+
+            generateQuestionsForRound(roundIndex) {
+                const template = EXAMPLE_TEMPLATES[roundIndex % EXAMPLE_TEMPLATES.length];
+                this.questions = [];
+                for (let i = 0; i < NUM_QUESTIONS_PER_ROUND; i++) {
+                    const allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                    const missingIndex = Math.floor(Math.random() * template.length);
+                    const jawaban = template[missingIndex];
+                    const soalArray = template.split('');
+                    soalArray.splice(missingIndex, 1);
+                    const soal = shuffle(soalArray).join('');
+                    const optionsSet = new Set([jawaban]);
+                    while (optionsSet.size < NUM_OPTIONS) {
+                        const randomChar = allChars[Math.floor(Math.random() * allChars.length)];
+                        if (!optionsSet.has(randomChar) && !template.includes(randomChar)) { 
+                            optionsSet.add(randomChar);
+                        }
+                    }
+                    this.questions.push({ soal, jawaban, contoh: template, options: shuffle(Array.from(optionsSet)) });
+                }
+            }
+            
+            startNewRound() {
+                this.isBreak = false;
+                this.timeLeft = ROUND_DURATION_SECONDS;
+                this.roundStats = { correct: 0, incorrect: 0 };
+                this.currentQuestionIndex = 0;
+                this.generateQuestionsForRound(this.currentRound);
+                this.onBreakEnd(); 
+                this.startRoundTimer();
+            }
+            
+            startBreak() {
+                this.isBreak = true;
+                this.breakTimeLeft = BREAK_DURATION_SECONDS;
+                this.onBreakStart(this.breakTimeLeft); 
+                this.breakTimerId = setInterval(() => {
+                    this.breakTimeLeft--;
+                    this.onBreakStart(this.breakTimeLeft); 
+                    if (this.breakTimeLeft <= 0) {
+                        clearInterval(this.breakTimerId);
+                        this.currentRound++;
+                        this.startNewRound();
+                    }
+                }, 1000);
+            }
+
+            startTest() {
+                this.isActive = true;
+                this.allRoundResults = [];
+                this.currentRound = 0;
+                this.startNewRound();
+            }
+            
+            startRoundTimer() {
+                this.roundTimerId = setInterval(() => {
+                    this.timeLeft--;
+                    this.onUpdate({ 
+                        timeLeft: this.timeLeft,
+                        currentRound: this.currentRound,
+                        currentQuestion: this.questions[this.currentQuestionIndex] 
+                    });
+                    if (this.timeLeft <= 0) {
+                        this.endRound();
+                    }
+                }, 1000);
+            }
+            
+            stopTimers() {
+                clearInterval(this.roundTimerId);
+                clearInterval(this.breakTimerId);
+                this.roundTimerId = null;
+                this.breakTimerId = null;
+            }
+
+            endRound() {
+                this.stopTimers();
+                const newResult = {
+                    round: this.currentRound + 1,
+                    answered: this.roundStats.correct + this.roundStats.incorrect,
+                    correct: this.roundStats.correct,
+                    incorrect: this.roundStats.incorrect,
+                };
+                this.allRoundResults.push(newResult);
+
+                if (this.currentRound + 1 >= TOTAL_ROUNDS) {
+                    this.endTestManually(); 
+                } else {
+                    this.startBreak();
+                }
+            }
+
+            endTestManually() {
+                this.stopTimers();
+                this.isActive = false;
+
+                const lastRoundResult = this.allRoundResults.find(r => r.round === this.currentRound + 1);
+                if (!lastRoundResult) { 
+                    const finalResult = {
+                        round: this.currentRound + 1,
+                        answered: this.roundStats.correct + this.roundStats.incorrect,
+                        correct: this.roundStats.correct,
+                        incorrect: this.roundStats.incorrect,
+                    };
+                    this.allRoundResults.push(finalResult);
+                }
+                
+                this.onFinish(this.allRoundResults);
+            }
+
+            handleAnswer(selectedAnswer) {
+                if (this.isBreak || !this.isActive) return;
+
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                if (selectedAnswer.toUpperCase() === currentQuestion.jawaban.toUpperCase()) {
+                    this.roundStats.correct++;
+                } else {
+                    this.roundStats.incorrect++;
+                }
+                
+                if (this.currentQuestionIndex >= this.questions.length - 1) {
+                    this.endRound();
+                } else {
+                    this.currentQuestionIndex++;
+                    this.onUpdate({ 
+                        timeLeft: this.timeLeft,
+                        currentRound: this.currentRound,
+                        currentQuestion: this.questions[this.currentQuestionIndex] 
+                    });
+                }
+            }
+        }
+
+        // =================================================================================
+        // TEMPLATE HTML
+        // =================================================================================
+        const renderWelcomeScreenHTML = () => `
+            <div class="text-center animate-fade-in">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang!</h2>
+                <p class="text-slate-600 mb-6">Silakan masukkan nama lengkap Anda untuk memulai tes.</p>
+                <form id="name-form" class="flex flex-col items-center gap-4">
+                    <input id="name-input" type="text" placeholder="Nama Lengkap" class="w-full max-w-sm px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition" required />
+                    <button type="submit" class="w-full max-w-sm bg-slate-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105">
+                        Mulai Tes
+                    </button>
+                </form>
+            </div>
+        `;
+
+        const renderInstructionScreenHTML = (playerName) => {
+            const ruleItem = (icon, text) => `
+                <li class="flex items-center gap-4 p-3 bg-slate-100 rounded-lg">
+                    <div class="flex-shrink-0 text-slate-500">${icon}</div>
+                    <span class="text-slate-700">${text}</span>
+                </li>
+            `;
+            // Helper function to render a single example question block for instructions
+            const renderExampleQuestionBlock = (contoh, soal, jawaban, options) => {
+                return `
+                    <div class="space-y-4 p-4 bg-white rounded-lg border-2 border-slate-300 text-center">
+                        <div>
+                            <p class="font-bold text-red-600">CONTOH LENGKAP</p>
+                            <!-- Ukuran teks Contoh Lengkap diperkecil dan disamakan -->
+                            <div class="mt-1 p-2 bg-white border-2 border-slate-800 text-2xl md:text-3xl font-mono tracking-[0.5em] inline-block rounded-lg shadow-md">${contoh}</div>
+                        </div>
+                        <div>
+                            <p class="font-bold text-orange-500">SOAL</p>
+                            <!-- Ukuran teks Soal diperkecil dan disamakan -->
+                            <div class="mt-1 p-2 bg-white border-2 border-slate-800 text-2xl md:text-3xl font-mono tracking-[0.5em] inline-block rounded-lg shadow-md">${soal}</div>
+                        </div>
+                        <div class="w-full flex justify-center flex-wrap gap-3 pt-4">
+                            ${options.map(option => `
+                                <!-- Ukuran tombol dan teks opsi diperkecil dan disamakan -->
+                                <button class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl font-bold border-2 border-slate-800 rounded-lg bg-white ${option === jawaban ? 'bg-green-100 border-green-500' : ''} shadow-lg pointer-events-none">${option}</button>
+                            `).join('')}
+                        </div>
+                        <p class="text-lg text-slate-700 mt-4">Karakter yang hilang adalah: <span class="font-bold text-green-600">${jawaban}</span></p>
+                        <p class="text-sm text-slate-600 italic">Karena '${jawaban}' adalah karakter yang ada pada 'CONTOH LENGKAP' namun tidak ada pada 'SOAL'.</p>
+                    </div>
+                `;
+            };
+
+            return `
+            <div class="text-center animate-fade-in flex flex-col items-center">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+                    Instruksi Tes Kecermatan, <span class="text-yellow-500">${playerName}</span>
+                </h2>
+                <p class="text-slate-600 mb-6 font-semibold">Harap baca instruksi berikut dengan seksama:</p>
+                <div class="text-left w-full space-y-4 mb-8 bg-slate-100 p-6 rounded-lg shadow-inner">
+                    <p class="font-bold text-slate-800">Tujuan Tes:</p>
+                    <ul class="list-disc list-inside text-slate-700 space-y-2 ml-4">
+                        <li>Mengukur kecepatan dan ketelitian Anda dalam memproses informasi visual.</li>
+                    </ul>
+
+                    <p class="font-bold text-slate-800">Cara Mengerjakan:</p>
+                    <ul class="list-decimal list-inside text-slate-700 space-y-2 ml-4">
+                        <li>Setiap soal akan menampilkan sebuah <strong class="font-bold text-red-600">'CONTOH LENGKAP'</strong> (serangkaian karakter) dan sebuah <strong class="font-bold text-orange-500">'SOAL'</strong> (serangkaian karakter yang mirip dengan contoh, namun ada satu karakter yang hilang).</li>
+                        <li>Tugas Anda adalah menemukan <strong class="font-bold text-green-600">karakter yang hilang</strong> dari 'CONTOH LENGKAP' agar 'SOAL' menjadi lengkap kembali.</li>
+                        <li>Pilih jawaban (karakter yang hilang) dari 5 opsi yang tersedia di bagian bawah.</li>
+                        <li>Jawablah <strong class="font-bold">secepat dan seteliti mungkin</strong>.</li>
+                    </ul>
+
+                    <p class="font-bold text-slate-800">Contoh Pengerjaan:</p>
+                    ${renderExampleQuestionBlock("XYZ98", "XZ98", "Y", ["K", "Y", "P", "Q", "Z"])}
+
+                    <p class="font-bold text-slate-800">Struktur Tes:</p>
+                    <ul class="list-disc list-inside text-slate-700 space-y-2 ml-4">
+                        <li>Tes terdiri dari <strong class="font-bold text-slate-900">${TOTAL_ROUNDS} Ronde</strong>.</li>
+                        <li>Setiap ronde berlangsung selama <strong class="font-bold text-slate-900">${ROUND_DURATION_SECONDS} detik</strong>.</li>
+                        <li>Akan ada istirahat singkat <strong class="font-bold text-slate-900">${BREAK_DURATION_SECONDS} detik</strong> antar ronde.</li>
+                    </ul>
+                    <p class="text-slate-700 mt-4 italic">Perhatikan waktu dan pertahankan konsentrasi. Selamat mengerjakan!</p>
+                </div>
+                <button id="begin-test-btn" class="w-full max-w-sm bg-slate-800 text-white font-bold py-4 px-6 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105 shadow-lg">
+                    SAYA SIAP, MULAI TES
+                </button>
+            </div>
+            `;
+        };
+
+        const renderPreTestCountdownScreenHTML = (timeLeft) => `
+            <div class="text-center p-8 bg-blue-100 border-4 border-dashed border-blue-400 rounded-xl animate-fade-in">
+                <h2 class="text-2xl font-bold text-slate-800">PERHATIAN!</h2>
+                <p class="text-slate-600 mt-2 mb-4">Tes akan dimulai dalam:</p>
+                <div id="pre-test-countdown-display" class="text-6xl font-bold text-slate-900 my-4">${timeLeft}</div>
+                <svg class="animate-spin h-8 w-8 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+        
+        const renderTestScreenHTML = (playerName) => `
+            <div class="flex flex-col items-center">
+              <div class="w-full grid grid-cols-2 sm:grid-cols-3 gap-4 text-center mb-6 p-4 bg-slate-100 rounded-lg shadow-inner">
+                <div class="sm:col-span-1 col-span-2 sm:text-left">
+                  <p class="text-sm font-semibold text-slate-500">Peserta</p>
+                  <p class="text-lg font-bold text-slate-800 truncate">${playerName}</p>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-slate-500">Ronde</p>
+                  <p id="round-info" class="text-lg font-bold text-slate-800">1 / ${TOTAL_ROUNDS}</p>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-slate-500">Waktu</p>
+                  <p id="timer-info" class="text-lg font-bold text-red-600">0:00</p>
+                </div>
+              </div>
+        
+              <div id="question-content-wrapper" class="w-full flex flex-col items-center space-y-6">
+                <div id="example-container">
+                    <p class="text-center font-bold text-red-600">CONTOH LENGKAP</p>
+                    <!-- Ukuran teks Contoh Lengkap diperbesar dan disamakan -->
+                    <div id="example-text" class="mt-1 p-4 bg-white border-2 border-slate-800 text-4xl md:text-5xl font-mono tracking-[0.5em] text-center rounded-lg shadow-md"></div>
+                </div>
+                <div id="question-container">
+                    <p class="text-center font-bold text-orange-500">SOAL</p>
+                    <!-- Ukuran teks Soal diperbesar dan disamakan -->
+                    <div id="question-text" class="mt-1 p-4 bg-white border-2 border-slate-800 text-4xl md:text-5xl font-mono tracking-[0.5em] text-center rounded-lg shadow-md"></div>
+                </div>
+                <div id="options-container" class="w-full flex justify-center flex-wrap gap-3 pt-4">
+                    <!-- Opsi jawaban akan dirender di sini -->
+                </div>
+                <div id="round-complete-message" class="hidden text-center p-8">
+                    <h2 class="text-2xl font-bold text-slate-800">Ronde Selesai!</h2>
+                    <p class="text-slate-600 mt-2">Anda telah menyelesaikan semua soal di ronde ini.</p>
+                </div>
+              </div>
+              
+              <div id="action-buttons" class="mt-8 pt-6 border-t border-slate-200 w-full flex flex-col sm:flex-row justify-center items-center gap-4">
+                  <button id="next-round-btn" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition">
+                    Lanjut Ronde Berikutnya
+                  </button>
+                  <button id="end-test-btn" class="w-full sm:w-auto px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition">
+                    Akhiri Tes
+                  </button>
+              </div>
+            </div>
+        `;
+
+        const renderBreakScreenHTML = (timeLeft) => `
+            <div class="text-center p-8 bg-yellow-100 border-4 border-dashed border-yellow-400 rounded-xl animate-fade-in">
+                <h2 class="text-2xl font-bold text-slate-800">ISTIRAHAT</h2>
+                <p class="text-slate-600 mt-2">Ronde berikutnya akan dimulai dalam:</p>
+                <div id="break-countdown-display" class="text-6xl font-bold text-slate-900 my-4">${timeLeft}</div>
+                <svg class="animate-spin h-8 w-8 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+
+        const renderResultsScreenHTML = (playerName, results) => {
+            const totalStats = results.reduce(
+                (acc, round) => {
+                    acc.answered += round.answered;
+                    acc.correct += round.correct;
+                    acc.incorrect += round.incorrect;
+                    return acc;
+                }, { answered: 0, correct: 0, incorrect: 0 }
+            );
+
+            const performanceReport = analyzePerformance(results);
+            const levelColorClasses = {
+                'Sangat Cepat': 'bg-blue-100 text-blue-800', 'Cepat': 'bg-blue-100 text-blue-800',
+                'Sangat Teliti': 'bg-green-100 text-green-800', 'Teliti': 'bg-green-100 text-green-800',
+                'Sangat Baik': 'bg-purple-100 text-purple-800', 'Baik': 'bg-purple-100 text-purple-800',
+                'Sangat Stabil': 'bg-indigo-100 text-indigo-800', 'Cukup Stabil': 'bg-indigo-100 text-indigo-800',
+                'Cukup': 'bg-yellow-100 text-yellow-800', 'Cukup Teliti': 'bg-yellow-100 text-yellow-800',
+                'Perlu Ditingkatkan': 'bg-red-100 text-red-800', 'Kurang Stabil': 'bg-red-100 text-red-800',
+                'N/A': 'bg-slate-100 text-slate-800',
+            };
+            const aspectCard = (title, aspect, icon) => `
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-start gap-4">
+                  <div class="flex-shrink-0 text-slate-500">${icon}</div>
+                  <div>
+                    <h4 class="font-bold text-slate-700">${title}</h4>
+                    <span class="inline-block px-2 py-0.5 text-sm font-semibold rounded-full mt-1 mb-2 ${levelColorClasses[aspect.level] || 'bg-slate-100 text-slate-800'}">
+                      ${aspect.level}
+                    </span>
+                    <p class="text-slate-600 text-sm">${aspect.description}</p>
+                  </div>
+                </div>
+            `;
+            
+            const maxAnswered = Math.max(...results.map(r => r.answered), 1); 
+            const numYAxisLabels = 5; 
+            let yAxisLabelsHtml = '';
+            for (let i = numYAxisLabels - 1; i >= 0; i--) { 
+                const value = Math.round(maxAnswered * (i / (numYAxisLabels - 1)));
+                yAxisLabelsHtml += `<span class="y-axis-label">${value}</span>`;
+            }
+
+            const chartHTML = `
+                <div class="chart-container-with-yaxis" style="display: flex; align-items: flex-end; width: 100%; height: 300px;">
+                    <div class="y-axis-labels-container">
+                         ${yAxisLabelsHtml}
+                    </div>
+                    <div class="w-full h-full bg-slate-50/50 p-4 rounded-lg flex gap-2 border border-slate-200 relative overflow-hidden" style="flex-grow: 1;">
+                        ${results.map(r => {
+                            const currentRoundBarHeightPercent = (r.answered / maxAnswered) * 100;
+                            
+                            const correctPortionPercent = r.answered > 0 ? (r.correct / r.answered) * 100 : 0;
+                            const incorrectPortionPercent = r.answered > 0 ? (r.incorrect / r.answered) * 100 : 0;
+
+                            return `
+                                <div class="flex-1 flex flex-col items-center justify-end">
+                                    <div class="chart-bar-container w-full h-full flex flex-col justify-end">
+                                        <div class="chart-bar" 
+                                             title="Benar: ${r.correct}\nSalah: ${r.incorrect}"
+                                             style="height: ${currentRoundBarHeightPercent}%; 
+                                                    min-height: ${r.answered > 0 ? '5px' : '2px'};">
+                                            <div class="bar-incorrect" 
+                                                 style="height: ${incorrectPortionPercent}%; 
+                                                        min-height: ${r.incorrect > 0 && incorrectPortionPercent > 0 ? '1px' : '0px'};"></div>
+                                            <div class="bar-correct" 
+                                                 style="height: ${correctPortionPercent}%; 
+                                                        min-height: ${r.correct > 0 && correctPortionPercent > 0 ? '1px' : '0px'};"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-medium text-slate-500 mt-2">R${r.round}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                <div class="flex justify-center items-center gap-6 mt-4 text-sm">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-green-600"></div><span>Benar</span></div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-red-600"></div><span>Salah</span></div>
+                </div>
+            `;
+
+            return `
+            <div class="animate-fade-in">
+                <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2">Hasil Tes</h2>
+                <p class="text-center text-slate-600 text-lg mb-6">Peserta: <span class="font-bold">${playerName}</span></p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
+                    <div class="bg-slate-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-slate-500">Total Jawaban</p><p class="text-3xl font-bold text-slate-800">${totalStats.answered}</p></div>
+                    <div class="bg-green-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-green-700">Jawaban Benar</p><p class="text-3xl font-bold text-green-600">${totalStats.correct}</p></div>
+                    <div class="bg-red-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-red-700">Jawaban Salah</p><p class="text-3xl font-bold text-red-600">${totalStats.incorrect}</p></div>
+                </div>
+                
+                <div class="my-8">
+                   <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Analisis Kinerja Psikologis</h3>
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${aspectCard('Kecepatan (Speed)', performanceReport.speed, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>')}
+                        ${aspectCard('Ketelitian (Accuracy)', performanceReport.accuracy, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>')}
+                        ${aspectCard('Daya Tahan (Endurance)', performanceReport.endurance, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.69v4.99" /></svg>')}
+                        ${aspectCard('Konsistensi (Consistency)', performanceReport.consistency, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h12M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-12a2.25 2.25 0 01-2.25-2.25V3z" /></svg>')}
+                   </div>
+                </div>
+
+                <div class="mb-8">
+                  <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Grafik Hasil per Ronde</h3>
+                  ${chartHTML}
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Detail per Ronde</h3>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200"><table class="min-w-full divide-y divide-slate-200 text-center"><thead class="bg-slate-100"><tr><th class="px-6 py-3 text-xs font-medium text-slate-600 uppercase tracking-wider">Ronde</th><th class="px-6 py-3 text-xs font-medium text-slate-600 uppercase tracking-wider">Jumlah</th><th class="px-6 py-3 text-xs font-medium text-green-700 uppercase tracking-wider">Benar</th><th class="px-6 py-3 text-xs font-medium text-red-700 uppercase tracking-wider">Salah</th></tr></thead><tbody class="bg-white divide-y divide-slate-200">
+                        ${results.map(r => `<tr><td class="px-6 py-4 whitespace-nowrap font-medium text-slate-800">${r.round}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-slate-800">${r.answered}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-green-600">${r.correct}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">${r.incorrect}</td></tr>`).join('')}
+                    </tbody></table></div>
+                </div>
+                
+                <div class="text-center">
+                    <button id="restart-btn" class="bg-slate-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105">
+                        Coba Lagi
+                    </button>
+                </div>
+            </div>
+            `;
+        };
+
+        // =================================================================================
+        // LOGIKA & STATE APLIKASI
+        // =================================================================================
+        let gameState = 'welcome'; 
+        let playerName = '';
+        let finalResults = [];
+        let testLogicInstance = null; 
+        let lastRenderedQuestionSoal = null; 
+        let breakCountdownElement = null; 
+        let optionsContainerClickHandler = null; 
+
+        let preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
+        let preTestCountdownTimerId = null; 
+        let preTestCountdownDisplayElement = null; 
+
+        const appContainer = document.getElementById('app-container');
+
+        const handleStartTest = (name) => {
+            playerName = name;
+            gameState = 'instructions'; 
+            renderApp();
+        };
+
+        const handleBeginTest = () => {
+            gameState = 'pre-test-countdown';
+            finalResults = []; 
+            renderApp(); 
+            startPreTestCountdown(); 
+        };
+
+        const startPreTestCountdown = () => {
+            preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
+
+            preTestCountdownTimerId = setInterval(() => {
+                preTestCountdownTimeLeft--;
+                if (preTestCountdownDisplayElement) {
+                    preTestCountdownDisplayElement.textContent = preTestCountdownTimeLeft;
+                }
+
+                if (preTestCountdownTimeLeft <= 0) {
+                    clearInterval(preTestCountdownTimerId);
+                    preTestCountdownTimerId = null; 
+                    preTestCountdownDisplayElement = null; 
+                    
+                    gameState = 'test'; 
+                    testLogicInstance = new TestLogic(onUpdate, handleFinishTest, onBreakStart, onBreakEnd);
+                    testLogicInstance.startTest(); 
+                }
+            }, 1000);
+        };
+
+        const handleFinishTest = (results) => {
+            finalResults = results;
+            gameState = 'results';
+            if (testLogicInstance) {
+                testLogicInstance.stopTimers();
+            }
+            if (preTestCountdownTimerId) { 
+                clearInterval(preTestCountdownTimerId);
+                preTestCountdownTimerId = null;
+            }
+            testLogicInstance = null; 
+            renderApp();
+        };
+
+        const handleRestart = () => {
+            playerName = '';
+            finalResults = [];
+            gameState = 'welcome';
+            if (testLogicInstance) {
+                testLogicInstance.stopTimers();
+            }
+            if (preTestCountdownTimerId) { 
+                clearInterval(preTestCountdownTimerId);
+                preTestCountdownTimerId = null;
+            }
+            testLogicInstance = null; 
+            lastRenderedQuestionSoal = null; 
+            breakCountdownElement = null; 
+            optionsContainerClickHandler = null; 
+            preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
+            renderApp();
+        };
+
+        const onUpdate = ({ timeLeft, currentRound, currentQuestion }) => {
+            const timerInfoElement = document.getElementById('timer-info');
+            const roundInfoElement = document.getElementById('round-info');
+            const exampleTextElement = document.getElementById('example-text');
+            const questionTextElement = document.getElementById('question-text');
+            const optionsContainerElement = document.getElementById('options-container');
+            const questionContentWrapper = document.getElementById('question-content-wrapper');
+            const roundCompleteMessage = document.getElementById('round-complete-message');
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            if (timerInfoElement) timerInfoElement.textContent = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+            if (roundInfoElement) roundInfoElement.textContent = `${currentRound + 1} / ${TOTAL_ROUNDS}`;
+
+            if (currentQuestion && currentQuestion.soal !== lastRenderedQuestionSoal) {
+                if (roundCompleteMessage) roundCompleteMessage.classList.add('hidden');
+                if (questionContentWrapper) questionContentWrapper.style.display = 'flex'; 
+
+                if (exampleTextElement) exampleTextElement.textContent = currentQuestion.contoh;
+                if (questionTextElement) questionTextElement.textContent = currentQuestion.soal;
+
+                if (optionsContainerElement) {
+                    optionsContainerElement.innerHTML = currentQuestion.options.map(option => `
+                        <button data-answer="${option}" class="option-btn w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl font-bold border-2 border-slate-800 rounded-lg bg-white hover:bg-yellow-200 transition-all duration-150 transform hover:scale-110 active:scale-100 shadow-lg">${option}</button>
+                    `).join('');
+                }
+                lastRenderedQuestionSoal = currentQuestion.soal; 
+            } else if (!currentQuestion && lastRenderedQuestionSoal !== 'round-finished') {
+                if (questionContentWrapper) questionContentWrapper.style.display = 'none'; 
+                if (roundCompleteMessage) roundCompleteMessage.classList.remove('hidden'); 
+                lastRenderedQuestionSoal = 'round-finished'; 
+            }
+        };
+
+        const onBreakStart = (timeLeft) => {
+            if (gameState !== 'break') {
+                appContainer.innerHTML = renderBreakScreenHTML(timeLeft);
+                breakCountdownElement = document.getElementById('break-countdown-display');
+                gameState = 'break'; 
+            }
+            if (breakCountdownElement) {
+                breakCountdownElement.textContent = timeLeft;
+            }
+        };
+        
+        const onBreakEnd = () => {
+            gameState = 'test'; 
+            renderApp(); 
+            lastRenderedQuestionSoal = null; 
+            breakCountdownElement = null; 
+        };
+
+        const renderApp = () => {
+            appContainer.innerHTML = ''; 
+
+            switch (gameState) {
+                case 'welcome':
+                    appContainer.innerHTML = renderWelcomeScreenHTML();
+                    document.getElementById('name-form').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const nameInput = document.getElementById('name-input');
+                        if (nameInput.value.trim()) {
+                            handleStartTest(nameInput.value.trim());
+                        }
+                    });
+                    break;
+                case 'instructions': 
+                    appContainer.innerHTML = renderInstructionScreenHTML(playerName);
+                    document.getElementById('begin-test-btn').addEventListener('click', handleBeginTest);
+                    break;
+                case 'pre-test-countdown': 
+                    appContainer.innerHTML = renderPreTestCountdownScreenHTML(preTestCountdownTimeLeft);
+                    preTestCountdownDisplayElement = document.getElementById('pre-test-countdown-display');
+                    break;
+                case 'test':
+                    appContainer.innerHTML = renderTestScreenHTML(playerName);
+
+                    const optionsContainerElement = document.getElementById('options-container');
+
+                    if (optionsContainerElement && optionsContainerClickHandler) {
+                        optionsContainerElement.removeEventListener('click', optionsContainerClickHandler);
+                    }
+
+                    optionsContainerClickHandler = (e) => {
+                        const clickedBtn = e.target.closest('.option-btn'); 
+                        if (clickedBtn && testLogicInstance) { 
+                            testLogicInstance.handleAnswer(clickedBtn.dataset.answer);
+                        }
+                    };
+
+                    if (optionsContainerElement) {
+                        optionsContainerElement.addEventListener('click', optionsContainerClickHandler);
+                    }
+
+                    const nextRoundBtn = document.getElementById('next-round-btn');
+                    const endTestBtn = document.getElementById('end-test-btn');
+                    if (nextRoundBtn) {
+                        nextRoundBtn.addEventListener('click', () => {
+                            if (testLogicInstance) testLogicInstance.endRound();
+                        });
+                    }
+                    if (endTestBtn) {
+                        endTestBtn.addEventListener('click', () => {
+                            if (testLogicInstance) testLogicInstance.endTestManually();
+                        });
+                    }
+                    
+                    if (testLogicInstance) {
+                        testLogicInstance.onUpdate({
+                            timeLeft: testLogicInstance.timeLeft,
+                            currentRound: testLogicInstance.currentRound,
+                            currentQuestion: testLogicInstance.questions[testLogicInstance.currentQuestionIndex]
+                        });
+                    }
+                    break;
+                case 'results':
+                    appContainer.innerHTML = renderResultsScreenHTML(playerName, finalResults);
+                    document.getElementById('restart-btn').addEventListener('click', handleRestart);
+                    break;
+                case 'break':
+                    break;
+            }
+        };
+
+        // =================================================================================
+        // INISIALISASI
+        // =================================================================================
+        renderApp();
+    </script>
+</body>
+</html>
+</section>
+
+<section id="kalkulator">
+<!-- Kalkulator Jasmani Perkasa.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binjas Perkasa - Kalkulator Samapta Final</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --polri-color: #5d4037; --polri-accent: #daa520;
+            --tni-color: #166534; --tni-accent: #4ade80;
+            --primary-color: var(--polri-color); --accent-color: var(--polri-accent);
+            --bg-color: #fdfaf6; --card-bg: #ffffff; --text-dark: #374151;
+            --text-light: #6b7280; --border-color: #e5e7eb; --success-color: #15803d; --danger-color: #b91c1c;  
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 2rem 1rem; display: flex; justify-content: center; }
+        body.tni-mode { --primary-color: var(--tni-color); --accent-color: var(--tni-accent); }
+
+        .container { max-width: 800px; width: 100%; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: clamp(1.5rem, 4vw, 2rem); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+        .card-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.75rem; color: var(--primary-color); transition: color 0.3s; }
+        .card-header svg { stroke: var(--primary-color); transition: stroke 0.3s; }
+        
+        header { text-align: center; padding: 0; margin-bottom: 2rem; }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin: 0; color: var(--text-dark); }
+        header p { color: var(--text-light); font-size: 1.1rem; margin-top: 0.25rem; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+        @media (min-width: 640px) { .form-grid { grid-template-columns: 1fr 1fr; } .grid-col-span-2 { grid-column: span 2 / span 2; } }
+        
+        .form-group label { display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--text-dark); transition: all 0.2s ease; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+
+        .toggle-group { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .btn { width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; margin-top: 1.5rem; }
+        .btn:hover { background-color: var(--accent-color); color: var(--text-dark); }
+        
+        #results h2 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dark); text-align: left; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+        .result-item { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; text-align: center; }
+        .result-item .name { font-weight: 500; color: var(--text-light); font-size: 0.8rem; display: block; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .result-item .score { font-weight: 700; font-size: 2rem; display: block; color: var(--primary-color); transition: color 0.3s; }
+        
+        .summary-grid { margin-top: 2rem; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 640px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+
+        .final-score { background: var(--primary-color); color: white; padding: 1.5rem; border-radius: 12px; text-align: center; transition: background-color 0.3s ease; }
+        .final-score .name { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.25rem; text-transform: uppercase; }
+        .final-score .score { font-size: 2.5rem; font-weight: 700; }
+        #result-gabungan.final-score { background: var(--accent-color); color: var(--text-dark); }
+
+        #status-kelulusan { padding: 1rem; border-radius: 12px; font-size: 1.2rem; font-weight: 700; margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        #status-kelulusan.ms { background-color: #f0fdf4; color: var(--success-color); }
+        #status-kelulusan.tms { background-color: #fef2f2; color: var(--danger-color); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><h1>Binjas Perkasa</h1><p id="subtitle">Kalkulator Kesamaptaan Jasmani</p></header>
+        <div class="card">
+            <form id="samapta-form" onsubmit="return false;">
+                <div class="card-header" id="header-peserta"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Data Peserta</span></div>
+                <div class="form-grid" style="margin-top: 1.5rem;">
+                    <div class="form-group"><label for="institusi">Institusi</label><select id="institusi" onchange="updateUI()"><option value="polri">Polri</option><option value="tni">TNI</option></select></div>
+                    <div class="form-group"><label for="gender">Jenis Kelamin</label><select id="gender" onchange="updateUI()"><option value="pria">Pria</option><option value="wanita">Wanita</option></select></div>
+                </div>
+                <div class="card-header" style="margin-top:2rem"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-2.1 2.1-2.1 5.6 0 7.7 2.1 2.1 5.6 2.1 7.7 0l1.4-1.4c.5-.5.5-1.2 0-1.7l-5.6-5.6c-.5-.5-1.2-.5-1.7 0L4.5 16.5z"></path><path d="m14 8 3-3-3-3"></path><path d="m20 11-3-3 3-3"></path><path d="m17 5 4 4"></path><path d="m21 9-4 4"></path></svg><span>Samapta A & B</span></div>
+                <div class="form-grid" style="margin-top: 1.5rem;">
+                    <div class="form-group"><label for="lari">Lari 12 Menit (meter)</label><input type="number" id="lari" placeholder="cth: 3000"></div>
+                    <div class="form-group"><label id="label-pullup" for="pullup">Pull-up/Chinning (rep)</label><input type="number" id="pullup" placeholder="cth: 12"></div>
+                    <div class="form-group"><label for="situp">Sit-up 1 Menit (rep)</label><input type="number" id="situp" placeholder="cth: 40"></div>
+                    <div class="form-group"><label for="pushup">Push-up 1 Menit (rep)</label><input type="number" id="pushup" placeholder="cth: 40"></div>
+                    <div class="form-group grid-col-span-2"><label id="label-shuttle" for="shuttle">Shuttle Run (detik)</label><input type="number" step="0.1" id="shuttle" placeholder="cth: 17.5"></div>
+                </div>
+                <div class="card-header" style="margin-top:2rem"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v8"></path><path d="M12 2v4"></path><path d="m4.93 4.93 2.83 2.83"></path><path d="m16.24 16.24 2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="m4.93 19.07 2.83-2.83"></path><path d="m16.24 7.76 2.83-2.83"></path></svg><span>Tes Opsional</span></div>
+                <div class="form-grid" style="margin-top: 1.5rem;">
+                     <div class="toggle-group"><label for="include-renang" style="margin: 0; cursor: pointer; font-weight:600;">Sertakan Renang</label><label class="switch"><input type="checkbox" id="include-renang" onchange="updateUI()"><span class="slider"></span></label></div>
+                     <div class="toggle-group"><label for="include-lunges" style="margin: 0; cursor: pointer; font-weight:600;">Sertakan Lunges</label><label class="switch"><input type="checkbox" id="include-lunges" onchange="updateUI()"><span class="slider"></span></label></div>
+                     <div class="grid-col-span-2 hidden" id="renang-container">
+                        <div class="form-group hidden" id="renang-gaya-container" style="margin-top: 1rem;">
+                            <label for="renang-gaya">Gaya Renang (TNI)</label>
+                            <select id="renang-gaya"><option value="dada">Gaya Dada</option><option value="bebas">Gaya Bebas</option></select>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;"><label id="label-renang" for="renang">Waktu Renang (detik)</label><input type="number" step="0.01" id="renang" placeholder="cth: 50.00"></div>
+                     </div>
+                     <div class="form-group grid-col-span-2 hidden" id="lunges-group"><label for="lunges">Lunges 1 Menit (rep)</label><input type="number" id="lunges" placeholder="cth: 45"></div>
+                </div>
+                <button class="btn" onclick="calculateScore()">HITUNG NILAI SAYA</button>
+            </form>
+        </div>
+        <div id="results" class="card hidden">
+            <div class="card-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg><span>Rincian Hasil Penilaian</span></div>
+            <div class="results-grid">
+                <div class="result-item"><span class="name">Nilai Lari</span><span class="score" id="rincian-lari">0</span></div>
+                <div class="result-item"><span class="name" id="rincian-label-pullup">Nilai Pull-up</span><span class="score" id="rincian-pullup">0</span></div>
+                <div class="result-item"><span class="name">Nilai Sit-up</span><span class="score" id="rincian-situp">0</span></div>
+                <div class="result-item"><span class="name">Nilai Push-up</span><span class="score" id="rincian-pushup">0</span></div>
+                <div class="result-item"><span class="name">Nilai Shuttle Run</span><span class="score" id="rincian-shuttle">0</span></div>
+                <div class="result-item hidden" id="result-lunges"><span class="name">Nilai Lunges</span><span class="score" id="rincian-lunges">0</span></div>
+                <div class="result-item hidden" id="result-renang"><span class="name" id="name-renang">Nilai Renang</span><span class="score" id="rincian-renang">0</span></div>
+            </div>
+            <div class="summary-grid">
+                <div class="final-score"><div class="name">NILAI AKHIR (A & B)</div><div class="score" id="nilai-akhir">0.00</div></div>
+                <div class="final-score hidden" id="result-gabungan"><div class="name">NILAI GABUNGAN</div><div class="score" id="nilai-gabungan">0.00</div></div>
+            </div>
+            <div id="status-kelulusan"></div>
+        </div>
+    </div>
+    <script>
+        const scoreTables = {
+            polri: {
+                pria: {
+                    lari: [[3444,100],[3422,99],[3401,98],[3380,97],[3359,96],[3338,95],[3317,94],[3296,93],[3275,92],[3253,91],[3232,90],[3211,89],[3190,88],[3169,87],[3148,86],[3127,85],[3105,84],[3084,83],[3062,82],[3041,81],[3021,80],[2999,79],[2978,78],[2957,77],[2936,76],[2914,75],[2893,74],[2872,73],[2851,72],[2830,71],[2809,70],[2788,69],[2767,68],[2746,67],[2725,66],[2703,65],[2682,64],[2661,63],[2639,62],[2618,61],[2597,60],[2576,59],[2555,58],[2534,57],[2513,56],[2491,55],[2470,54],[2449,53],[2428,52],[2407,51],[2386,50],[2364,49],[2343,48],[2322,47],[2301,46],[2280,45],[2259,44],[2237,43],[2216,42],[2195,41],[2174,40],[2153,39],[2132,38],[2111,37],[2090,36],[2069,35],[2048,34],[2026,33],[2005,32],[1984,31],[1962,30],[1941,29],[1920,28],[1899,27],[1878,26],[1857,25],[1836,24],[1814,23],[1793,22],[1772,21],[1750,20],[1729,19],[1708,18],[1687,17],[1666,16],[1645,15],[1625,14],[1603,13],[1582,12],[1561,11],[1539,10],[1518,9],[1497,8],[1476,7],[1455,6],[1434,5],[1413,4],[1392,3],[1371,2],[1349,1]],
+                    pullup: [[17,100],[16,94],[15,88],[14,82],[13,76],[12,70],[11,64],[10,58],[9,52],[8,46],[7,40],[6,32],[5,26],[4,20],[3,14],[2,8],[1,4]],
+                    situp: [[40,100],[39,96],[38,92],[37,88],[36,84],[35,80],[34,76],[33,72],[32,68],[31,64],[30,60],[29,56],[28,52],[27,48],[26,44],[25,41],[24,38],[23,35],[22,32],[21,30],[20,28],[19,26],[18,24],[17,22],[16,20],[15,18],[14,16],[13,14],[12,12],[11,10],[10,8],[9,6],[8,4],[7,2],[6,1]],
+                    pushup: [[42,100],[41,97],[40,94],[39,91],[38,88],[37,85],[36,82],[35,79],[34,76],[33,73],[32,70],[31,67],[30,64],[29,61],[28,58],[27,55],[26,52],[25,50],[24,48],[23,46],[22,44],[21,42],[20,40],[19,38],[18,36],[17,34],[16,32],[15,29],[14,26],[13,23],[12,21],[11,19],[10,17],[9,15],[8,13],[7,11],[6,9],[5,7],[4,5],[3,3],[2,2],[1,1]],
+                    shuttle: [[16.2,100],[16.3,99],[16.4,98],[16.5,97],[16.6,96],[16.7,95],[16.8,94],[16.9,92],[17.0,90],[17.1,88],[17.2,86],[17.3,84],[17.4,82],[17.5,80],[17.6,78],[17.7,76],[17.8,74],[17.9,72],[18.0,70],[18.1,68],[18.2,66],[18.3,64],[18.4,62],[18.5,60],[18.6,58],[18.7,56],[18.8,54],[18.9,52],[19.0,51],[19.1,49],[19.2,47],[19.3,45],[19.4,43],[19.5,41], true],
+                    lunges: [[54,100],[53,95],[52,90],[51,85],[50,80],[49,75],[48,70],[47,65],[46,60],[45,55],[44,50],[43,45],[42,41],[41,37],[40,33],[39,29],[38,25],[37,21],[36,17],[35,13],[34,9],[33,5],[32,1]],
+                    renang: [[14.0,100],[14.7,99],[15.4,98],[16.1,97],[16.8,96],[17.5,95],[18.2,94],[18.9,93],[19.6,92],[20.3,91],[21.0,90],[21.7,89],[22.4,88],[23.1,87],[23.8,86],[24.5,85],[25.2,84],[25.9,83],[26.6,82],[27.3,81],[28.0,80],[28.7,79],[29.4,78],[30.1,77],[30.8,76],[31.5,75],[32.2,74],[32.9,73],[33.6,72],[34.3,71],[35.0,70],[35.7,69],[36.4,68],[37.1,67],[37.8,66],[38.5,65],[39.2,64],[39.9,63],[40.6,62],[41.3,61],[42.0,60],[42.7,59],[43.4,58],[44.1,57],[44.8,56],[45.5,55],[46.2,54],[46.9,53],[47.6,52],[48.3,51],[49.0,50],[49.7,49],[50.4,48],[51.1,47],[51.8,46],[52.5,45],[53.2,44],[53.9,43],[54.6,42],[55.0,41], true]
+                },
+                wanita: {
+                    chinning: [[72,100],[71,97],[70,95],[69,92],[68,90],[67,87],[66,85],[65,82],[64,80],[63,77],[62,75],[61,72],[60,70],[59,67],[58,65],[57,62],[56,60],[55,57],[54,55],[53,52],[52,50],[51,47],[50,45],[49,42],[48,40],[47,37],[46,35],[45,32],[44,30],[43,27],[42,25],[41,22],[40,20],[39,17],[38,15],[37,12],[36,10],[35,7],[34,5],[33,2],[32,1]],
+                    situp: [[50,100],[49,96],[48,93],[47,91],[46,87],[45,84],[44,82],[43,78],[42,75],[41,73],[40,69],[39,66],[38,64],[37,60],[36,57],[35,55],[34,51],[33,48],[32,46],[31,42],[30,39],[29,37],[28,33],[27,29],[26,26],[25,24],[24,21],[23,19],[22,15],[21,12],[20,10],[19,6],[18,3],[17,1]],
+                    pushup: [[37,100],[36,97],[35,93],[34,90],[33,86],[32,83],[31,79],[30,76],[29,72],[28,69],[27,65],[26,62],[25,58],[24,55],[23,51],[22,48],[21,44],[20,41],[19,37],[18,34],[17,30],[16,27],[15,23],[14,20],[13,16],[12,13],[11,9],[10,6],[9,2],[8,1]],
+                    lari: [[3095,100],[3084,99],[3062,98],[3041,97],[3020,96],[2999,95],[2978,94],[2957,93],[2936,92],[2914,91],[2893,90],[2872,89],[2851,88],[2830,87],[2809,86],[2788,85],[2767,84],[2746,83],[2725,82],[2703,81],[2682,80],[2661,79],[2639,78],[2618,77],[2597,76],[2576,75],[2555,74],[2534,73],[2513,72],[2491,71],[2470,70],[2449,69],[2428,68],[2407,67],[2385,66],[2364,65],[2343,64],[2322,63],[2301,62],[2280,61],[2259,60],[2237,59],[2216,58],[2195,57],[2174,56],[2153,55],[2132,54],[2111,53],[2090,52],[2069,51],[2048,50],[2026,49],[2005,48],[1984,47],[1962,46],[1941,45],[1920,44],[1899,43],[1878,42],[1857,41]],
+                    shuttle: [[17.6,100],[17.7,99],[17.8,98],[17.9,97],[18.0,96],[18.1,95],[18.2,94],[18.3,93],[18.4,92],[18.5,91],[18.6,90],[18.7,89],[18.8,88],[18.9,87],[19.0,86],[19.1,85],[19.2,84],[19.3,83],[19.4,82],[19.5,81],[19.6,80],[19.7,79],[19.8,78],[19.9,77],[20.0,76],[20.1,75],[20.2,74],[20.3,73],[20.4,72],[20.5,71],[20.6,70],[20.7,69],[20.8,68],[20.9,67],[21.0,66],[21.1,65],[21.2,64],[21.3,63],[21.4,62],[21.5,61],[21.6,60],[21.7,59],[21.8,58],[21.9,57],[22.0,56],[22.1,55],[22.2,54],[22.3,53],[22.4,52],[22.5,51],[22.6,50],[22.7,49],[22.8,48],[22.9,47],[23.0,46],[23.1,45],[23.2,44],[23.3,43],[23.4,42],[23.5,41], true],
+                    lunges: [[45,100],[44,95],[43,90],[42,85],[41,80],[40,75],[39,70],[38,65],[37,60],[36,55],[35,50],[34,45],[33,41],[32,37],[31,33],[30,29],[29,25],[28,21],[27,17],[26,13],[25,9],[24,5],[23,1]],
+                    renang: [[20.0,100],[20.7,99],[21.3,98],[22.0,97],[22.7,96],[23.4,95],[24.0,94],[24.7,93],[25.4,92],[26.0,91],[26.7,90],[27.4,89],[28.0,88],[28.7,87],[29.4,86],[30.1,85],[30.7,84],[31.4,83],[32.1,82],[32.7,81],[33.4,80],[34.1,79],[34.7,78],[35.4,77],[36.1,76],[36.8,75],[37.4,74],[38.1,73],[38.8,72],[39.4,71],[40.1,70],[40.8,69],[41.4,68],[42.1,67],[42.8,66],[43.5,65],[44.1,64],[44.8,63],[45.5,62],[46.1,61],[46.8,60],[47.5,59],[48.1,58],[48.8,57],[49.5,56],[50.2,55],[50.8,54],[51.5,53],[52.2,52],[52.8,51],[53.5,50],[54.2,49],[54.8,48],[55.5,47],[56.2,46],[56.9,45],[57.5,44],[58.2,43],[58.9,42],[60.0,41], true]
+                }
+            },
+            tni: {
+                 pria: {
+                    lari: [[3507,100],[3488,99],[3469,98],[3450,97],[3431,96],[3412,95],[3393,94],[3374,93],[3355,92],[3336,91],[3317,90],[3298,89],[3279,88],[3260,87],[3241,86],[3222,85],[3203,84],[3184,83],[3165,82],[3146,81],[3127,80],[3108,79],[3089,78],[3070,77],[3051,76],[3032,75],[3013,74],[2994,73],[2975,72],[2956,71],[2937,70],[2918,69],[2899,68],[2880,67],[2861,66],[2842,65],[2823,64],[2804,63],[2785,62],[2766,61],[2747,60],[2728,59],[2709,58],[2690,57],[2671,56],[2652,55],[2633,54],[2614,53],[2595,52],[2576,51],[2557,50],[2538,49],[2519,48],[2500,47],[2481,46],[2462,45],[2443,44],[2424,43],[2405,42],[2386,41],[2367,40],[2348,39],[2329,38],[2310,37],[2291,36],[2272,35],[2253,34],[2234,33],[2215,32],[2196,31],[2177,30],[2158,29],[2139,28],[2120,27],[2101,26],[2082,25],[2063,24],[2044,23],[2025,22],[2006,21],[1987,20],[1968,19],[1949,18],[1930,17],[1911,16],[1892,15],[1873,14],[1854,13],[1835,12],[1816,11],[1797,10],[1778,9],[1759,8],[1740,7],[1721,6],[1702,5],[1683,4],[1664,3],[1645,2],[1626,1]],
+                    pullup: [[18,100],[17,95],[16,90],[15,85],[14,80],[13,75],[12,70],[11,65],[10,60],[9,55],[8,50],[7,45],[6,40],[5,35],[4,30],[3,25],[2,20],[1,15]],
+                    situp: [[41,100],[40,96],[39,92],[38,88],[37,83],[36,79],[35,75],[34,71],[33,67],[32,63],[31,58],[30,54],[29,50],[28,46],[27,42],[26,38],[25,33],[24,29],[23,25],[22,21],[21,17],[20,13],[19,9],[18,5],[17,1]],
+                    pushup: [[43,100],[42,97],[41,94],[40,91],[39,88],[38,85],[37,82],[36,78],[35,75],[34,72],[33,69],[32,66],[31,63],[30,60],[29,56],[28,53],[27,50],[26,47],[25,44],[24,41],[23,38],[22,34],[21,31],[20,28],[19,25],[18,22],[17,19],[16,15]],
+                    shuttle: [[15.90,100],[16.00,99],[16.10,98],[16.20,97],[16.30,96],[16.40,95],[16.50,94],[16.60,93],[16.70,92],[16.80,91],[16.90,90],[17.00,89],[17.10,88],[17.20,87],[17.30,86],[17.40,85],[17.50,84],[17.60,83],[17.70,82],[17.80,81],[17.90,80],[18.00,79],[18.10,78],[18.20,77],[18.30,76],[18.40,75],[18.50,74],[18.60,73],[18.70,72],[18.80,71],[18.90,70],[19.00,69],[19.10,68],[19.20,67],[19.30,66],[19.40,65],[19.50,64],[19.60,63],[19.70,62],[19.80,61],[19.90,60],[20.00,59],[20.10,58],[20.20,57],[20.30,56],[20.40,55],[20.50,54],[20.60,53],[20.70,52],[20.80,51],[20.90,50],[21.00,49],[21.10,48],[21.20,47],[21.30,46],[21.40,45],[21.50,44],[21.60,43],[21.70,42],[21.80,41],[21.90,40],[22.00,39],[22.10,38],[22.20,37],[22.30,36],[22.40,35],[22.50,34],[22.60,33],[22.70,32],[22.80,31],[22.90,30],[23.00,29],[23.10,28],[23.20,27],[23.30,26],[23.40,25],[23.50,24],[23.60,23],[23.70,22],[23.80,21],[23.90,20],[24.00,19],[24.10,18],[24.20,17],[24.30,16],[24.40,15],[24.50,14],[24.60,13],[24.70,12],[24.80,11],[24.90,10],[25.00,9],[25.10,8],[25.20,7],[25.30,6],[25.40,5],[25.50,4],[25.60,3],[25.70,2],[25.80,1], true],
+                    lunges: [[54,100],[53,95],[52,90],[51,85],[50,80],[49,75],[48,70],[47,65],[46,60],[45,55],[44,50],[43,45],[42,41],[41,37],[40,33],[39,29],[38,25],[37,21],[36,17],[35,13],[34,9],[33,5],[32,1]],
+                    renang: {
+                        dada: [[40,100],[41,99],[42,98],[43,97],[44,96],[45,95],[46,94],[47,93],[48,92],[49,91],[50,90],[51,89],[52,88],[53,87],[54,86],[55,85],[56,84],[57,83],[58,82],[59,81],[60,80],[61,79],[62,78],[63,77],[64,76],[65,75],[66,74],[67,73],[68,72],[69,71],[70,70],[71,69],[72,68],[73,67],[74,66],[75,65],[76,64],[77,63],[78,62],[79,61],[80,60],[81,59],[82,58],[83,57],[84,56],[85,55],[86,54],[87,53],[88,52],[89,51],[90,50],[91,49],[92,48],[93,47],[94,46],[95,45],[96,44],[97,43],[98,42],[99,41],[100,40],[101,39],[102,38],[103,37],[104,36],[105,35],[106,34],[107,33],[108,32],[109,31],[110,30],[111,29],[112,28],[113,27],[114,26],[115,25],[116,24],[117,23],[118,22],[119,21],[120,20],[121,19],[122,18],[123,17],[124,16],[125,15],[126,14],[127,13],[128,12],[129,11],[130,10],[131,9],[132,8],[133,7],[134,6],[135,5],[136,4],[137,3],[138,2],[139,1], true],
+                        bebas: [[25,100],[26,99],[27,98],[28,97],[29,96],[30,95],[31,94],[32,93],[33,92],[34,91],[35,90],[36,89],[37,88],[38,87],[39,86],[40,85],[41,84],[42,83],[43,82],[44,81],[45,80],[46,79],[47,78],[48,77],[49,76],[50,75],[51,74],[52,73],[53,72],[54,71],[55,70],[56,69],[57,68],[58,67],[59,66],[60,65],[61,64],[62,63],[63,62],[64,61],[65,60],[66,59],[67,58],[68,57],[69,56],[70,55],[71,54],[72,53],[73,52],[74,51],[75,50],[76,49],[77,48],[78,47],[79,46],[80,45],[81,44],[82,43],[83,42],[84,41],[85,40],[86,39],[87,38],[88,37],[89,36],[90,35],[91,34],[92,33],[93,32],[94,31],[95,30],[96,29],[97,28],[98,27],[99,26],[100,25],[101,24],[102,23],[103,22],[104,21],[105,20],[106,19],[107,18],[108,17],[109,16],[110,15],[111,14],[112,13],[113,12],[114,11],[115,10],[116,9],[117,8],[118,7],[119,6],[120,5],[121,4],[122,3],[123,2],[124,1], true]
+                    }
+                },
+                wanita: {
+                    chinning: [[63,100],[62,98],[61,97],[60,95],[59,93],[58,92],[57,90],[56,89],[55,87],[54,86],[53,84],[52,83],[51,81],[50,80],[49,79],[48,77],[47,76],[46,74],[45,72],[44,71],[43,69],[42,68],[41,67],[40,65],[39,63],[38,62],[36,60],[35,59],[34,57],[33,56],[32,54],[31,53],[30,51],[29,50],[28,48],[27,47],[26,45],[25,44],[24,42],[23,41]],
+                    situp: [[36,100],[35,95],[34,90],[33,85],[32,80],[31,75],[30,70],[29,65],[28,60],[27,55],[26,50],[25,45],[24,40],[23,35],[22,30],[21,25],[20,20],[19,15],[18,10],[17,5],[16,1]],
+                    pushup: [[28,100],[27,96],[26,93],[25,89],[24,86],[23,82],[22,79],[21,75],[20,71],[19,68],[18,64],[17,61],[16,57],[15,54],[14,50],[13,46],[12,43],[11,39],[10,36],[9,32],[8,29],[7,25],[6,21],[5,18],[4,14],[3,11],[2,7],[1,4]],
+                    lari: [[2630,100],[2619,99],[2608,98],[2597,97],[2586,96],[2575,95],[2564,94],[2553,93],[2542,92],[2531,91],[2520,90],[2509,89],[2498,88],[2487,87],[2476,86],[2465,85],[2454,84],[2443,83],[2432,82],[2421,81],[2410,80],[2399,79],[2388,78],[2377,77],[2366,76],[2355,75],[2344,74],[2333,73],[2322,72],[2311,71],[2300,70],[2289,69],[2278,68],[2267,67],[2256,66],[2245,65],[2234,64],[2223,63],[2212,62],[2201,61],[2190,60],[2179,59],[2168,58],[2157,57],[2146,56],[2135,55],[2124,54],[2113,53],[2102,52],[2088,51],[2074,50],[2060,49],[2046,48],[2033,47],[2019,46],[2005,45],[1992,44],[1979,43],[1966,42],[1953,41]],
+                    shuttle: [[17.20,100],[17.30,99],[17.40,98],[17.50,97],[17.60,96],[17.70,95],[17.80,94],[17.90,93],[18.00,92],[18.10,91],[18.20,90],[18.30,89],[18.40,88],[18.50,87],[18.60,86],[18.70,85],[18.80,84],[18.90,83],[19.00,82],[19.10,81],[19.20,80],[19.30,79],[19.40,78],[19.50,77],[19.60,76],[19.70,75],[19.80,74],[19.90,73],[20.00,72],[20.10,71],[20.20,70],[20.30,69],[20.40,68],[20.50,67],[20.60,66],[20.70,65],[20.80,64],[20.90,63],[21.00,62],[21.10,61],[21.20,60],[21.30,59],[21.40,58],[21.50,57],[21.60,56],[21.70,55],[21.80,54],[21.90,53],[22.00,52],[22.10,51],[22.20,50],[22.30,49],[22.40,48],[22.50,47],[22.60,46],[22.70,45],[22.80,44],[22.90,43],[23.00,42],[23.10,41],[23.20,40],[23.30,39],[23.40,38],[23.50,37],[23.60,36],[23.70,35],[23.80,34],[23.90,33],[24.00,32],[24.10,31],[24.20,30],[24.30,29],[24.40,28],[24.50,27],[24.60,26],[24.70,25],[24.80,24],[24.90,23],[25.00,22],[25.10,21],[25.20,20],[25.30,19],[25.40,18],[25.50,17],[25.60,16],[25.70,15],[25.80,14],[25.90,13],[26.00,12],[26.10,11],[26.20,10],[26.30,9],[26.40,8],[26.50,7],[26.60,6],[26.70,5],[26.80,4],[26.90,3],[27.00,2],[27.10,1], true],
+                    lunges: [[45,100],[44,95],[43,90],[42,85],[41,80],[40,75],[39,70],[38,65],[37,60],[36,55],[35,50],[34,45],[33,41],[32,37],[31,33],[30,29],[29,25],[28,21],[27,17],[26,13],[25,9],[24,5],[23,1]],
+                    renang: {
+                        dada: [[49,100],[50,99],[51,98],[52,97],[53,96],[54,95],[55,94],[56,93],[57,92],[58,91],[59,90],[60,89],[61,88],[62,87],[63,86],[64,85],[65,84],[66,83],[67,82],[68,81],[69,80],[70,79],[71,78],[72,77],[73,76],[74,75],[75,74],[76,73],[77,72],[78,71],[79,70],[80,69],[81,68],[82,67],[83,66],[84,65],[85,64],[86,63],[87,62],[88,61],[89,60],[90,59],[91,58],[92,57],[93,56],[94,55],[95,54],[96,53],[97,52],[98,51],[99,50],[100,49],[101,48],[102,47],[103,46],[104,45],[105,44],[106,43],[107,42],[108,41], true],
+                        bebas: [[30,100],[31,99],[32,98],[33,97],[34,96],[35,95],[36,94],[37,93],[38,92],[39,91],[40,90],[41,89],[42,88],[43,87],[44,86],[45,85],[46,84],[47,83],[48,82],[49,81],[50,80],[51,79],[52,78],[53,77],[54,76],[55,75],[56,74],[57,73],[58,72],[59,71],[60,70],[61,69],[62,68],[63,67],[64,66],[65,65],[66,64],[67,63],[68,62],[69,61],[70,60],[71,59],[72,58],[73,57],[74,56],[75,55],[76,54],[77,53],[78,52],[79,51],[80,50],[81,49],[82,48],[83,47],[84,46],[85,45],[86,44],[87,43],[88,42],[89,41], true]
+                    }
+                }
+            }
+        };
+
+        function updateUI() {
+            const institusi = document.getElementById('institusi').value;
+            const gender = document.getElementById('gender').value;
+            const isTni = institusi === 'tni';
+
+            document.body.classList.toggle('tni-mode', isTni);
+            
+            document.getElementById('label-pullup').textContent = (gender === 'wanita') ? 'Chinning (rep)' : 'Pull-up (rep)';
+            document.getElementById('rincian-label-pullup').textContent = (gender === 'wanita') ? 'Nilai Chinning' : 'Nilai Pull-up';
+            document.getElementById('label-renang').textContent = (isTni) ? 'Waktu Renang 50m (detik)' : 'Waktu Renang 25m (detik)';
+            document.getElementById('name-renang').textContent = (isTni) ? 'Nilai Renang 50m' : 'Nilai Renang 25m';
+            document.getElementById('label-shuttle').textContent = 'Shuttle Run (detik)';
+
+            document.getElementById('renang-container').classList.toggle('hidden', !document.getElementById('include-renang').checked);
+            document.getElementById('lunges-group').classList.toggle('hidden', !document.getElementById('include-lunges').checked);
+            
+            const renangGayaSelect = document.getElementById('renang-gaya-container');
+            renangGayaSelect.classList.toggle('hidden', !isTni || !document.getElementById('include-renang').checked);
+        }
+        
+        function getScoreFromTable(value, table) {
+            if (!table || value <= 0) return 0;
+            const isTimeBased = table[table.length - 1] === true;
+            for (const entry of table) {
+                if (typeof entry === 'boolean') continue;
+                const [threshold, score] = entry;
+                if (isTimeBased) {
+                    if (value <= threshold) return score;
+                } else {
+                    if (value >= threshold) return score;
+                }
+            }
+            return 0;
+        }
+
+        function calculateScore() {
+            try {
+                const institusi = document.getElementById('institusi').value;
+                const gender = document.getElementById('gender').value;
+                const tables = scoreTables[institusi][gender];
+                const pullupKey = gender === 'wanita' ? 'chinning' : 'pullup';
+                
+                const lari = parseFloat(document.getElementById('lari').value) || 0;
+                const pullup = parseFloat(document.getElementById('pullup').value) || 0;
+                const situp = parseFloat(document.getElementById('situp').value) || 0;
+                const pushup = parseFloat(document.getElementById('pushup').value) || 0;
+                const shuttle = parseFloat(document.getElementById('shuttle').value) || 0;
+
+                const nLari = getScoreFromTable(lari, tables.lari);
+                const nPullup = getScoreFromTable(pullup, tables[pullupKey]);
+                const nSitup = getScoreFromTable(situp, tables.situp);
+                const nPushup = getScoreFromTable(pushup, tables.pushup);
+                const nShuttle = getScoreFromTable(shuttle, tables.shuttle);
+
+                let samaptaBItems = [nPullup, nSitup, nPushup, nShuttle];
+                
+                if (document.getElementById('include-lunges').checked) {
+                    const lungesValue = parseFloat(document.getElementById('lunges').value) || 0;
+                    const nLunges = getScoreFromTable(lungesValue, tables.lunges);
+                    document.getElementById('rincian-lunges').textContent = nLunges;
+                    document.getElementById('result-lunges').classList.remove('hidden');
+                    samaptaBItems.push(nLunges);
+                } else {
+                    document.getElementById('result-lunges').classList.add('hidden');
+                }
+                let hasZeroValueSamapta = nLari === 0 || samaptaBItems.some(s => s === 0);
+
+                const avgB = samaptaBItems.reduce((a, b) => a + b, 0) / samaptaBItems.length;
+                const nilaiAkhirAB = (nLari + avgB) / 2;
+
+                document.getElementById('rincian-lari').textContent = nLari;
+                document.getElementById('rincian-pullup').textContent = nPullup;
+                document.getElementById('rincian-situp').textContent = nSitup;
+                document.getElementById('rincian-pushup').textContent = nPushup;
+                document.getElementById('rincian-shuttle').textContent = nShuttle;
+                document.getElementById('nilai-akhir').textContent = nilaiAkhirAB.toFixed(2);
+
+                const statusEl = document.getElementById('status-kelulusan');
+                let isRenangTMS = false;
+                
+                if (document.getElementById('include-renang').checked) {
+                    const renangValue = parseFloat(document.getElementById('renang').value) || 0;
+                    let renangTable;
+                    if(institusi === 'tni'){
+                        const gaya = document.getElementById('renang-gaya').value;
+                        renangTable = tables.renang[gaya];
+                    } else {
+                        renangTable = tables.renang;
+                    }
+
+                    let nRenang = getScoreFromTable(renangValue, renangTable);
+                    if (nRenang === 0 && renangValue > 0) { 
+                        nRenang = (institusi === 'polri') ? 41 : 1;
+                    }
+                    document.getElementById('rincian-renang').textContent = nRenang;
+                    document.getElementById('result-renang').classList.remove('hidden');
+                    if (nRenang === 0) { isRenangTMS = true; }
+
+                    const nilaiGabungan = (nilaiAkhirAB + nRenang) / 2;
+                    document.getElementById('nilai-gabungan').textContent = nilaiGabungan.toFixed(2);
+                    document.getElementById('result-gabungan').classList.remove('hidden');
+                } else {
+                     document.getElementById('result-renang').classList.add('hidden');
+                     document.getElementById('result-gabungan').classList.add('hidden');
+                }
+                
+                const passingGrade = institusi === 'polri' ? 61 : 41;
+                const isMS = nilaiAkhirAB >= passingGrade && !hasZeroValueSamapta && !isRenangTMS;
+
+                if (isMS) {
+                    statusEl.className = 'ms';
+                    statusEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Memenuhi Syarat`;
+                } else {
+                    statusEl.className = 'tms';
+                    let reason = "";
+                    if (nilaiAkhirAB < passingGrade) { reason = `Nilai Akhir (A&B) di bawah ${passingGrade}`; } 
+                    else if (hasZeroValueSamapta) { reason = "Item Samapta A/B bernilai 0"; } 
+                    else if (isRenangTMS) { reason = "Item Renang Tidak Memenuhi Syarat"; }
+                    else { reason = "Periksa kembali nilai input."; }
+                    statusEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Tidak Memenuhi Syarat (${reason})`;
+                }
+                document.getElementById('results').classList.remove('hidden');
+            } catch (error) {
+                console.error("Calculation Error:", error);
+                alert("Terjadi kesalahan dalam perhitungan. Silakan periksa kembali input Anda.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+</body>
+</html>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => showSection('quiz'));
+</script>
+</body>
+</html>
