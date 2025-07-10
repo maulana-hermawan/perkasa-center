@@ -5,21 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binjas Perkasa - Simulasi CAT SKD 2025</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Konfigurasi MathJax
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                packages: {'[+]': ['ams', 'color']}
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                typeset: false // Nonaktifkan render otomatis saat memuat
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
 
     <style>
-        
+        /* Global & Reset */
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            color: #333;display: flex;
-            flex-direction: column; /* Mengubah arah flex menjadi vertikal */
-            align-items: center;    /* Memusatkan konten secara horizontal */
+            color: #333;
         }
 
         .container {
@@ -28,17 +42,14 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 95%;
             max-width: 1200px;
-            /* margin: 30px auto; Dihapus karena body sudah mengatur centering */
-            margin-top: 30px;
-            margin-bottom: 30px;
+            margin: 30px auto;
             padding: 30px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden; 
-        } /* Ensure rounded corners are respected */
-        
+            overflow: hidden;
+        }
 
         h1, h2, h3 {
             color: #2c3e50;
@@ -48,7 +59,7 @@
         }
 
         button {
-            background-color: #007bff; /* Primary Blue */
+            background-color: #007bff;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -60,480 +71,10 @@
             margin: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        button:hover { background-color: #0056b3; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
 
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: translateY(0);
-        }
-
-        /* Splash Screen */
-        #splash-screen {
-            text-align: center;
-            padding: 50px 20px;
-            max-width: 800px; /* Constrain width for better readability */
-        }
-        #splash-screen p, #splash-screen ul {
-            font-size: 1em;
-            line-height: 1.8;
-            margin-bottom: 20px;
-            color: #555;
-            text-align: left; /* Align text left for lists and general paragraphs */
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #splash-screen ul {
-            list-style: disc inside;
-            padding-left: 20px;
-        }
-        #splash-screen li {
-            margin-bottom: 8px;
-        }
-
-        /* Name Input Section */
-        .name-input-section {
-            margin-top: 20px;
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            background-color: #f9fbfd;
-        }
-        .name-input-section label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #34495e;
-        }
-        .name-input-section input[type="text"] {
-            width: calc(100% - 22px); /* Account for padding */
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        /* File Upload Section */
-        .file-upload-section {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px dashed #a0a0a0;
-            border-radius: 10px;
-            background-color: #f9fbfd;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .file-upload-section input[type="file"] {
-            display: block;
-            margin: 15px auto;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-        .file-upload-section h3 {
-            margin-bottom: 15px;
-            color: #34495e;
-        }
-        .file-upload-section button {
-            background-color: #28a745; /* Green for upload */
-        }
-        .file-upload-section button:hover {
-            background-color: #218838;
-        }
-        #csv-load-status {
-            margin-top: 10px;
-            font-size: 0.95em;
-            font-weight: 500;
-            line-height: 1.4;
-            color: #333; /* Default text color */
-        }
-        #csv-load-status.error {
-            color: #dc3545; /* Red for errors */
-        }
-        #csv-load-status.warning {
-            color: #ffc107; /* Yellow for warnings */
-        }
-        #csv-load-status.success {
-            color: #28a745; /* Green for success */
-        }
-
-
-        /* Exam Container */
-        #exam-container {
-            display: none; /* Hidden by default */
-            width: 100%;
-            flex-direction: row; /* For side-by-side layout */
-            gap: 25px;
-            min-height: 600px; /* Min height to prevent jumping */
-        }
-
-        .main-exam-area {
-            flex: 3; /* Takes 3/4 of the space */
-            display: flex;
-            flex-direction: column;
-        }
-
-        .exam-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            width: 100%;
-        }
-
-        .timer-display {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #e74c3c;
-            background-color: #ffebe9;
-            padding: 8px 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .question-counter {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #3498db;
-        }
-
-        .question-area {
-            background-color: #fcfcfc;
-            border: 1px solid #e9e9e9;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            flex-grow: 1; /* Takes remaining vertical space */
-            display: flex;
-            flex-direction: column;
-        }
-
-        .question-media {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .question-media img, .question-media audio {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .question-media audio {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .question-text {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 20px;
-            line-height: 1.7;
-            color: #444;
-        }
-
-        .options-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .options-container label {
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-            font-size: 1.05em;
-            padding: 14px 18px;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-            background-color: #fff;
-        }
-
-        .options-container label:hover {
-            background-color: #eef7ff;
-            border-color: #b0d8f7;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
-        }
-
-        .options-container input[type="radio"] {
-            margin-right: 15px;
-            margin-top: 3px;
-            transform: scale(1.2);
-            accent-color: #007bff;
-            flex-shrink: 0;
-        }
-
-        .options-container input[type="radio"]:checked + span {
-            font-weight: 600;
-            color: #007bff;
-        }
-
-        .exam-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .nav-buttons button {
-            background-color: #6c757d; /* Gray */
-        }
-        .nav-buttons button:hover {
-            background-color: #5a6268;
-        }
-        .finish-button {
-            background-color: #dc3545; /* Red */
-        }
-        .finish-button:hover {
-            background-color: #c82333;
-        }
-        .doubt-button {
-            background-color: #ffc107; /* Yellow */
-            color: #333;
-        }
-        .doubt-button:hover {
-            background-color: #e0a800;
-        }
-
-        /* Question Palette Sidebar */
-        .question-palette-sidebar {
-            flex: 1; /* Takes 1/4 of the space */
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            box-sizing: border-box;
-            max-height: 70vh; /* Limit height */
-            overflow-y: auto; /* Scrollable */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            position: sticky; /* Keep it in view */
-            top: 30px; /* Aligned with container top */
-        }
-        .palette-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .palette-item {
-            width: 48px;
-            height: 48px;
-            background-color: #e9ecef;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.95em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        .palette-item:hover {
-            background-color: #dee2e6;
-            border-color: #c0c4c8;
-            transform: scale(1.05);
-        }
-        .palette-item.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-            font-weight: bold;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-        }
-        .palette-item.answered {
-            background-color: #28a745; /* Green */
-            color: white;
-            border-color: #28a745;
-        }
-        .palette-item.doubt {
-            background-color: #ffc107; /* Yellow */
-            color: #333;
-            border-color: #ffc107;
-        }
-        /* Tooltip for palette items */
-        .palette-item::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 110%; /* Above the item */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-        }
-        .palette-item:hover::after {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Result Screen */
-        #result-screen {
-            display: none; /* Hidden by default */
-            text-align: center;
-            padding: 40px 20px;
-        }
-        #result-screen h2 {
-            color: #2c3e50; /* Changed to match primary heading color */
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
-        #result-screen h3.user-info {
-            color: #3498db;
-            margin-bottom: 25px;
-            font-size: 1.4em;
-        }
-        #result-screen table {
-            width: 80%;
-            margin: 0 auto 30px;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        }
-        #result-screen th, #result-screen td {
-            border: 1px solid #eee;
-            padding: 15px;
-            text-align: left;
-        }
-        #result-screen th {
-            background-color: #f5f7fa;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-        #result-screen td {
-            font-size: 1em;
-            color: #444;
-        }
-        #result-screen .status-pass {
-            color: #28a745;
-            font-weight: bold;
-        }
-        #result-screen .status-fail {
-            color: #dc3545;
-            font-weight: bold;
-        }
-        #result-screen .overall-status {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-top: 30px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            background-color: #e6ffe6;
-            color: #1a7e3d;
-            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
-        }
-        #result-screen .overall-status.fail {
-            background-color: #ffe6e6;
-            color: #b3243a;
-            box-shadow: 0 4px 12px rgba(179, 36, 58, 0.1);
-        }
-        #result-screen .download-button {
-            background-color: #17a2b8; /* Info blue */
-            margin-top: 20px;
-        }
-        #result-screen .download-button:hover {
-            background-color: #138496;
-        }
-
-
-        /* Responsive adjustments */
-        @media (max-width: 992px) {
-            .container {
-                max-width: 100%;
-                margin: 15px auto;
-                padding: 15px;
-            }
-            #exam-container {
-                flex-direction: column;
-            }
-            .question-palette-sidebar {
-                max-height: unset;
-                position: static;
-                margin-top: 25px;
-            }
-            #result-screen table {
-                width: 95%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                width: 98%;
-                padding: 10px;
-            }
-            .exam-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .exam-footer {
-                flex-direction: column;
-                align-items: center;
-            }
-            .nav-buttons, .finish-button, .doubt-button {
-                width: 100%;
-                text-align: center;
-            }
-            .nav-buttons button, .finish-button, .doubt-button {
-                width: calc(100% - 16px);
-                margin: 5px 8px;
-            }
-            .question-text {
-                font-size: 1.1em;
-            }
-            .options-container label {
-                font-size: 1em;
-            }
-            .palette-grid {
-                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-                gap: 6px;
-            }
-            .palette-item {
-                width: 40px;
-                height: 40px;
-                font-size: 0.85em;
-            }
-        }
-        /* [ ... (CSS yang sudah ada tidak diubah) ... ] */
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            color: #333;
-        }
-        
-        /* CSS Untuk Navbar Ditambahkan Di Sini */
+        /* Navbar */
         .navbar {
             background-color: #ffffff;
             padding: 1rem 2rem;
@@ -548,6 +89,7 @@
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
+            flex-wrap: wrap; 
         }
         .nav-brand {
             font-size: 1.5rem;
@@ -556,52 +98,97 @@
             text-decoration: none;
             transition: color 0.3s;
         }
-        .nav-links a {
-            font-weight: 500;
-            color: #4a5568;
-            text-decoration: none;
-            margin-left: 1.5rem;
-            transition: color 0.3s;
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
         }
-        .nav-links a:hover {
-            color: #0056b3;
+        .nav-links a { font-weight: 500; color: #4a5568; text-decoration: none; transition: color 0.3s; }
+        .nav-links a:hover { color: #0056b3; }
+
+        /* Splash Screen */
+        #splash-screen { text-align: center; padding: 20px 0; max-width: 800px; width:100%; }
+        #splash-screen p, #splash-screen ul { font-size: 1em; line-height: 1.7; margin-bottom: 20px; color: #555; text-align: left; }
+        #splash-screen ul { list-style-position: inside; padding-left: 0; }
+        #splash-screen li { margin-bottom: 8px; }
+
+        .name-input-section { margin-top: 20px; margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9fbfd; }
+        .name-input-section label { display: block; margin-bottom: 10px; font-weight: 600; color: #34495e; }
+        .name-input-section input[type="text"] { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        .file-upload-section { margin-top: 30px; padding: 20px; border: 1px dashed #a0a0a0; border-radius: 10px; background-color: #f9fbfd; max-width: 600px; }
+        .file-upload-section h3 { margin-bottom: 15px; color: #34495e; }
+        .file-upload-section button { background-color: #28a745; }
+        
+        #csv-load-status { margin-top: 10px; font-size: 0.9em; font-weight: 500; line-height: 1.4; }
+        #csv-load-status.error { color: #dc3545; }
+        #csv-load-status.warning { color: #ffc107; }
+        #csv-load-status.success { color: #28a745; }
+        
+        /* Exam Container */
+        #exam-container { display: none; width: 100%; flex-direction: row; gap: 25px; min-height: 600px; }
+        .main-exam-area { flex: 3; display: flex; flex-direction: column; min-width: 0;}
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0; width: 100%; flex-wrap: wrap; gap: 1rem;}
+        .timer-display { font-size: 1.4em; font-weight: 700; color: #e74c3c; background-color: #ffebe9; padding: 8px 15px; border-radius: 8px; }
+        .question-counter { font-size: 1.1em; font-weight: 600; color: #3498db; }
+        .question-area { background-color: #fcfcfc; border: 1px solid #e9e9e9; border-radius: 12px; padding: 25px; margin-bottom: 25px; flex-grow: 1; }
+        .question-text { font-size: 1.1em; font-weight: 600; line-height: 1.7; color: #444; word-wrap: break-word; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .options-container label { display: flex; align-items: flex-start; cursor: pointer; font-size: 1em; padding: 14px 18px; border: 1px solid #e0e0e0; border-radius: 10px; transition: background-color 0.25s ease; background-color: #fff; }
+        .options-container input[type="radio"] { margin-right: 15px; margin-top: 5px; flex-shrink: 0; }
+        .exam-footer { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; width: 100%; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e0e0e0; }
+        .nav-buttons { display: flex; gap: 10px; }
+        .nav-buttons button, .doubt-button, .finish-button { width: 100%; margin: 0; }
+        .finish-button { background-color: #dc3545; }
+
+        /* Question Palette Sidebar */
+        .question-palette-sidebar { flex: 1; background-color: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; box-sizing: border-box; align-self: flex-start; max-height: 70vh; overflow-y: auto; position: sticky; top: 100px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 8px; }
+        .palette-item { width: 100%; padding-top: 100%; position: relative; background-color: #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .palette-item > span { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; font-size: 0.9em; font-weight: 500; }
+        .palette-item.active { background-color: #007bff; color: white; transform: scale(1.05); }
+        .palette-item.answered { background-color: #28a745; color: white; }
+        .palette-item.doubt { background-color: #ffc107; color: #333; }
+        
+        /* Result Screen */
+        #result-screen { display: none; text-align: center; width:100%; }
+        .table-wrapper { overflow-x: auto; width:100%; }
+        #result-screen table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        #result-screen th, #result-screen td { border: 1px solid #eee; padding: 12px 15px; }
+        #result-screen th { background-color: #f5f7fa; font-weight: 600; text-transform: uppercase; font-size: 0.85em; }
+        #result-screen .status-pass { color: #28a745; font-weight: bold; }
+        #result-screen .status-fail { color: #dc3545; font-weight: bold; }
+        #result-screen .overall-status { font-size: 1.4em; font-weight: bold; margin-top: 30px; padding: 15px; border-radius: 10px; }
+        #result-screen .overall-status.pass { background-color: #e6ffe6; color: #1a7e3d; }
+        #result-screen .overall-status.fail { background-color: #ffe6e6; color: #b3243a; }
+        
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 992px) {
+            #exam-container { flex-direction: column; }
+            .question-palette-sidebar { position: static; max-height: unset; margin-top: 25px; top: unset; width: 100%; box-sizing: border-box;}
         }
 
-        /* Mengubah flex container body */
-        body > .container {
-            /* flex, justify-content, dan align-items dari body dipindahkan ke sini */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: calc(100vh - 70px); /* Adjust based on navbar height */
-            padding-top: 30px;
+        @media (max-width: 768px) {
+            .container { padding: 15px; margin-top: 15px; margin-bottom: 15px; }
+            h1 { font-size: 1.8rem; } h2 { font-size: 1.5rem; }
+            .navbar { padding: 1rem; }
+            .nav-container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .nav-brand { font-size: 1.3rem; }
+            .nav-links { gap: 1rem; padding-top: 0.5rem; width: 100%; justify-content: space-between; }
+            .nav-links a { margin-left: 0; }
+            .exam-footer { flex-direction: column; }
+            #result-screen h2 { font-size: 1.6em; }
+            #result-screen .overall-status { font-size: 1.2em; }
+        }
+
+        @media (min-width: 769px) {
+            .exam-footer { flex-direction: row; justify-content: space-between; }
+            .nav-buttons { flex-basis: auto; width: auto; flex-grow: 0; }
+            .doubt-button, .finish-button { width: auto; }
         }
 
     </style>
-    <!-- [ ... Script MathJax yang sudah ada tidak diubah ... ] -->
-     
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']], // \( ... \) for inline math
-                displayMath: [['\\[', '\\]']], // \[ ... \] for block math
-                processEscapes: true, // Process escaped characters like \$
-                packages: {'[+]': ['ams', 'color']} // Load amsmath and color packages
-            },
-            options: {
-                ignoreHtmlClass: 'tex2jax_ignore', // Class to ignore HTML
-                processHtmlClass: 'tex2jax_process' // Class to process HTML
-            },
-            startup: {
-                typeset: false // Disable initial typesetting on page load, we'll call it manually
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
 </head>
 <body>
-    
-    <!-- Navbar HTML Ditambahkan Di Sini -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-brand">Pusat Aplikasi Perkasa</a>
@@ -613,9 +200,10 @@
     </nav>
     
     <div class="container">
+        <!-- Splash Screen -->
         <div id="splash-screen">
             <h1>Binjas Perkasa - Simulasi CAT SKD 2025</h1>
-            <p>Selamat datang di aplikasi simulasi Computer Assisted Test (CAT) untuk Seleksi Kompetensi Dasar (SKD) Calon Pegawai Negeri Sipil. Aplikasi ini dirancang untuk membantu Anda berlatih dan memahami format ujian TWK, TIU, dan TKP sesuai standar terbaru.</p>
+            <p>Selamat datang di aplikasi simulasi Computer Assisted Test (CAT) untuk Seleksi Kompetensi Dasar (SKD). Aplikasi ini dirancang untuk membantu Anda berlatih dan memahami format ujian TWK, TIU, dan TKP sesuai standar terbaru.</p>
             
             <div class="name-input-section">
                 <label for="user-name-input">Masukkan Nama Anda:</label>
@@ -628,10 +216,7 @@
                 <button id="load-csv-button">Muat Soal dari CSV</button>
                 <p id="csv-load-status"></p>
                 <p style="font-size: 0.85em; text-align: center; color: #777;">
-                    **Format CSV yang diharapkan:**<br>
-                    `id,type,question,optionA,optionB,optionC,optionD,optionE,correctAnswer/scoreA,scoreB,scoreC,scoreD,scoreE,mediaUrl,mediaType`<br>
-                    Untuk soal matematika, gunakan sintaks LaTeX (misal: `\(x^2\)` atau `\[\frac{1}{2}\]`).<br>
-                    Parser akan otomatis meng-unescape backslash ganda (`\\`) menjadi tunggal (`\`).
+                    Format CSV: id,type,question,optionA,... ,E,correct/scoreA,... ,E,mediaUrl,mediaType
                 </p>
             </div>
 
@@ -639,17 +224,9 @@
             <ul>
                 <li>Total Soal: 110 (TWK 30, TIU 35, TKP 45)</li>
                 <li>Waktu Ujian: 100 menit</li>
-                <li><strong>Penilaian TWK & TIU:</strong> Jawaban Benar = 5 poin, Salah/Kosong = 0 poin.</li>
-                <li><strong>Penilaian TKP:</strong> Setiap pilihan memiliki bobot nilai 1-5 poin, Kosong = 0 poin.</li>
-                <li><strong>Fitur Ragu-ragu:</strong> Anda bisa menandai soal jika ragu. Soal ragu-ragu akan berwarna kuning di panel soal.</li>
-                <li><strong>Nilai Ambang Batas (Passing Grade):</strong></li>
-                <ul>
-                    <li>TWK: 65</li>
-                    <li>TIU: 80</li>
-                    <li>TKP: 166</li>
-                </ul>
+                <li><strong>Penilaian:</strong> TWK & TIU (Benar +5), TKP (Skor 1-5).</li>
+                <li><strong>Passing Grade:</strong> TWK: 65, TIU: 80, TKP: 166</li>
             </ul>
-            <p>Anda dapat memulai ujian meskipun jumlah soal di CSV tidak mencapai total 110. Ujian akan menggunakan soal yang tersedia, diprioritaskan berdasarkan jumlah yang dibutuhkan per kategori.</p>
             <button id="start-button" disabled>Mulai Ujian</button>
         </div>
 
@@ -660,32 +237,24 @@
                     <div class="timer-display" id="timer-display">Waktu: 00:00:00</div>
                     <div class="question-counter" id="question-counter">Soal 0 dari 0</div>
                 </div>
-
                 <div class="question-area">
-                    <div class="question-media" id="question-media">
-                        <!-- Media (image/audio) will be loaded here by JavaScript -->
-                    </div>
+                    <div id="question-media"></div>
                     <div class="question-text" id="question-text"></div>
-                    <div class="options-container" id="options-container">
-                        <!-- Options will be loaded here by JavaScript -->
-                    </div>
+                    <div class="options-container" id="options-container"></div>
                 </div>
-
                 <div class="exam-footer">
                     <div class="nav-buttons">
-                        <button id="prev-button" disabled>&lt;&lt; Sebelumnya</button>
-                        <button id="doubt-button" class="doubt-button">Ragu-ragu</button>
-                        <button id="next-button">Selanjutnya &gt;&gt;</button>
+                        <button id="prev-button" disabled><< Sebelumnya</button>
+                        <button id="next-button">Selanjutnya >></button>
                     </div>
+                    <button id="doubt-button" class="doubt-button">Ragu-ragu</button>
                     <button id="finish-button" class="finish-button">Selesai Ujian</button>
                 </div>
             </div>
 
             <div class="question-palette-sidebar">
                 <h3>Panel Soal</h3>
-                <div class="palette-grid" id="palette-grid">
-                    <!-- Question numbers will be loaded here -->
-                </div>
+                <div class="palette-grid" id="palette-grid"></div>
             </div>
         </div>
 
@@ -693,77 +262,44 @@
         <div id="result-screen">
             <h2>Hasil Ujian SKD Anda</h2>
             <h3 class="user-info" id="result-user-name"></h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kategori Tes</th>
-                        <th>Skor Anda</th>
-                        <th>Skor Maksimal</th>
-                        <th>Passing Grade</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>TWK</td>
-                        <td id="score-twk"></td>
-                        <td id="max-twk"></td>
-                        <td id="pg-twk"></td>
-                        <td id="status-twk"></td>
-                    </tr>
-                    <tr>
-                        <td>TIU</td>
-                        <td id="score-tiu"></td>
-                        <td id="max-tiu"></td>
-                        <td id="pg-tiu"></td>
-                        <td id="status-tiu"></td>
-                    </tr>
-                    <tr>
-                        <td>TKP</td>
-                        <td id="score-tkp"></td>
-                        <td id="max-tkp"></td>
-                        <td id="pg-tkp"></td>
-                        <td id="status-tkp"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategori Tes</th>
+                            <th>Skor</th>
+                            <th>Skor Maksimal</th>
+                            <th>Passing Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>TWK</td><td id="score-twk"></td><td id="max-twk"></td><td id="pg-twk"></td><td id="status-twk"></td></tr>
+                        <tr><td>TIU</td><td id="score-tiu"></td><td id="max-tiu"></td><td id="pg-tiu"></td><td id="status-tiu"></td></tr>
+                        <tr><td>TKP</td><td id="score-tkp"></td><td id="max-tkp"></td><td id="pg-tkp"></td><td id="status-tkp"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             <h3 class="overall-status" id="overall-status"></h3>
-            <button id="download-pdf-button" class="download-button">Unduh Hasil (PDF)</button>
+            <button id="download-pdf-button">Unduh Hasil (PDF)</button>
             <button onclick="location.reload()">Ulangi Ujian</button>
         </div>
-        <!-- [ ... Konten aplikasi yang sudah ada tidak diubah, dari #splash-screen hingga #result-screen ... ] -->
     </div>
-        <!-- html2pdf.js library via CDN -->
-    <!-- PENTING: Jika ingin file ini sepenuhnya OFFLINE, unduh file ini:
-         https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
-         dan tempelkan seluruh isinya ke dalam tag <script> di sini,
-         menggantikan baris CDN ini. Ukuran file lumayan besar (~2.3 MB).
-    -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         // --- Global Variables ---
-        let allQuestions = []; // This will be populated from CSV
+        let allQuestions = [];
         let shuffledQuestions = [];
         let currentQuestionIndex = 0;
-        let userAnswers = {}; // { questionId: { selected: 'A', isDoubt: true/false } }
-        let timerSeconds = 100 * 60; // 100 minutes in seconds
+        let userAnswers = {};
+        let timerSeconds = 100 * 60;
         let timerInterval;
         let examRunning = false;
-        let userName = ''; // To store user's name
+        let userName = '';
 
-        const passingGrades = {
-            TWK: 65,
-            TIU: 80,
-            TKP: 166
-        };
-
-        const questionCounts = { // Actual counts after questions are loaded and filtered
-            TWK: 0,
-            TIU: 0,
-            TKP: 0
-        };
-
+        const passingGrades = { TWK: 65, TIU: 80, TKP: 166 };
+        const questionCounts = { TWK: 0, TIU: 0, TKP: 0 };
         const REQUIRED_TWK = 30;
         const REQUIRED_TIU = 35;
         const REQUIRED_TKP = 45;
@@ -783,28 +319,14 @@
         const doubtButton = document.getElementById('doubt-button');
         const finishButton = document.getElementById('finish-button');
         const paletteGrid = document.getElementById('palette-grid');
-
-        // CSV upload elements
         const csvFileInput = document.getElementById('csv-file-input');
         const loadCsvButton = document.getElementById('load-csv-button');
         const csvLoadStatus = document.getElementById('csv-load-status');
-
-        // Name input element
         const userNameInput = document.getElementById('user-name-input');
         const resultUserNameDisplay = document.getElementById('result-user-name');
         const downloadPdfButton = document.getElementById('download-pdf-button');
 
-
         // --- Helper Functions ---
-        function shuffleArray(array) {
-            // This function is still here, but not used for ordering questions for the exam.
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
         function formatTime(seconds) {
             const h = Math.floor(seconds / 3600);
             const m = Math.floor((seconds % 3600) / 60);
@@ -812,566 +334,267 @@
             return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        // --- CSV Parsing Function (More Robust) ---
-        // This parser handles commas within double quotes and escaped double quotes ("")
-        // It implements a state machine approach for better reliability.
-        // It also unescapes double backslashes (\\) to single backslashes (\) for MathJax.
+        // --- CSV Parsing Function ---
         function parseCSV(text) {
             const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
             const questions = [];
+            const header = lines[0].toLowerCase().split(',');
 
-            let startIndex = 0;
-            // Check for header row to skip it. A header usually starts with 'id,type,'
-            if (lines.length > 0 && lines[0].startsWith('id,type,')) { 
-                startIndex = 1;
-            }
-
-            for (let index = startIndex; index < lines.length; index++) {
+            for (let index = 1; index < lines.length; index++) {
                 const line = lines[index];
                 const values = [];
-                let currentVal = "";
-                let inQuote = false;
-
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-
-                    if (char === '"') {
-                        // If inside a quote and next char is also a quote, it's an escaped quote ("")
-                        if (inQuote && i + 1 < line.length && line[i+1] === '"') {
-                            currentVal += '"'; // Add a single quote
-                            i++; // Skip the next character as it's part of the escape sequence
-                        } else {
-                            inQuote = !inQuote; // Toggle quote state (enter/exit quote)
-                        }
-                    } else if (char === ',' && !inQuote) {
-                        // If comma found outside quotes, push current value and reset
-                        values.push(currentVal.trim());
-                        currentVal = "";
-                    } else {
-                        // Add character to current value
-                        currentVal += char;
-                    }
+                let currentVal = "", inQuote = false;
+                for (const char of line) {
+                    if (char === '"') { inQuote = !inQuote; } 
+                    else if (char === ',' && !inQuote) { values.push(currentVal.trim()); currentVal = ""; } 
+                    else { currentVal += char; }
                 }
-                values.push(currentVal.trim()); // Push the last value after the loop finishes
-
-                // --- Apply unescaping for MathJax here ---
-                // Replace all occurrences of double backslash (\\) with a single backslash (\)
-                // This prepares the string for MathJax, which expects single backslashes for commands
-                const processedValues = values.map(val => val.replace(/\\\\/g, '\\'));
-
-
-                // --- Validation and Object Construction ---
-                // A valid question needs at least: id, type, question, 5 options, and correct answer/scoreA (9 columns)
-                // If a line results in fewer than 9 columns, it's considered invalid.
-                if (processedValues.length < 9) { 
-                    console.warn(`Baris ${index + 1} tidak valid (kolom kurang dari minimum 9), dilewati: ${line}`);
-                    continue; // Skip this malformed line
-                }
+                values.push(currentVal.trim());
+                if (values.length < 9) continue;
+                
+                const processedValues = values.map(val => val.replace(/\\/g, '\\'));
 
                 const question = {
                     id: processedValues[0],
-                    type: processedValues[1].toUpperCase(), // Ensure type is consistent (e.g., "TWK" not "twk")
+                    type: processedValues[1].toUpperCase(),
                     question: processedValues[2],
-                    options: {} // Initialize options object
+                    options: {}
                 };
 
                 const optionLetters = ['A', 'B', 'C', 'D', 'E'];
-                // Populate options A-E (columns 3 to 7 in CSV)
-                for (let i = 0; i < optionLetters.length; i++) {
-                    const optKey = optionLetters[i];
-                    const optionIndex = i + 3; // Options start from 4th column (index 3)
-                    // Use a fallback to empty string if option column is missing/undefined
-                    question.options[optKey] = processedValues[optionIndex] !== undefined ? processedValues[optionIndex] : '';
-                }
+                optionLetters.forEach((key, i) => { question.options[key] = processedValues[i + 3] || ''; });
 
-                // Handle correct answer (for TWK/TIU) or TKP scores
-                // Column 8 contains either the correct answer letter or score for option A
-                if (question.type === 'TWK' || question.type === 'TIU') {
-                    question.correctAnswer = processedValues[8]; 
-                } else if (question.type === 'TKP') {
-                    // For TKP, columns 8 to 12 contain scores for options A to E
-                    for (let i = 0; i < optionLetters.length; i++) {
-                        const optKey = optionLetters[i];
-                        const scoreIndex = i + 8; // Scores start from 9th column (index 8)
-                        const score = parseInt(processedValues[scoreIndex]);
-                        question.options[optKey] = {
-                            text: question.options[optKey], // Retain the option text
-                            score: isNaN(score) ? 0 : score // Parse score, default to 0 if not a number
-                        };
-                    }
+                if (question.type === 'TKP') {
+                    optionLetters.forEach((key, i) => {
+                        const score = parseInt(processedValues[i + 8]);
+                        question.options[key] = { text: question.options[key], score: isNaN(score) ? 0 : score };
+                    });
+                } else {
+                    question.correctAnswer = processedValues[8];
                 }
-
-                // Handle optional media (columns 13 and 14)
                 if (processedValues[13] && processedValues[14]) {
                     question.mediaUrl = processedValues[13];
                     question.mediaType = processedValues[14];
                 }
-
                 questions.push(question);
             }
             return questions;
         }
 
-
         // --- Exam Functions ---
         function startExam() {
             userName = userNameInput.value.trim();
-            if (userName === '') {
-                alert('Mohon masukkan nama Anda terlebih dahulu.');
-                userNameInput.focus();
-                return;
-            }
+            if (!userName) { alert('Mohon masukkan nama Anda.'); return; }
+            if (allQuestions.length === 0) { alert("Harap muat soal dari CSV."); return; }
 
-            if (allQuestions.length === 0) {
-                alert("Harap unggah file CSV berisi soal terlebih dahulu.");
-                return;
-            }
+            const twkQuestions = allQuestions.filter(q => q.type === 'TWK').slice(0, REQUIRED_TWK);
+            const tiuQuestions = allQuestions.filter(q => q.type === 'TIU').slice(0, REQUIRED_TIU);
+            const tkpQuestions = allQuestions.filter(q => q.type === 'TKP').slice(0, REQUIRED_TKP);
 
-            // Filter questions by type
-            const rawTWK = allQuestions.filter(q => q.type === 'TWK');
-            const rawTIU = allQuestions.filter(q => q.type === 'TIU');
-            const rawTKP = allQuestions.filter(q => q.type === 'TKP');
-
-            // Determine how many questions to take for the exam (min of required vs available)
-            const numTWK = Math.min(REQUIRED_TWK, rawTWK.length);
-            const numTIU = Math.min(REQUIRED_TIU, rawTIU.length);
-            const numTKP = Math.min(REQUIRED_TKP, rawTKP.length);
-
-            // Store actual counts for result calculation
-            questionCounts.TWK = numTWK;
-            questionCounts.TIU = numTIU;
-            questionCounts.TKP = numTKP;
-
-            // Take slices of questions (maintaining their original order from CSV within each category)
-            const twkQuestionsForExam = rawTWK.slice(0, numTWK); 
-            const tiuQuestionsForExam = rawTIU.slice(0, numTIU); 
-            const tkpQuestionsForExam = rawTKP.slice(0, numTKP); 
-
-            // Combine questions in the desired order: TWK -> TIU -> TKP
-            shuffledQuestions = [...twkQuestionsForExam, ...tiuQuestionsForExam, ...tkpQuestionsForExam];
-
-            // Removed the blocking alert here. The check for total questions should allow starting
-            // even if fewer than 110 questions are available, as per request.
-            if (shuffledQuestions.length === 0) {
-                alert("Tidak ada soal yang valid setelah pemrosesan atau soal yang diunggah tidak mencukupi. Periksa format CSV Anda.");
-                return;
-            }
+            questionCounts.TWK = twkQuestions.length;
+            questionCounts.TIU = tiuQuestions.length;
+            questionCounts.TKP = tkpQuestions.length;
+            
+            shuffledQuestions = [...twkQuestions, ...tiuQuestions, ...tkpQuestions];
+            if (shuffledQuestions.length === 0) { alert("Tidak ada soal yang valid."); return; }
 
             splashScreen.style.display = 'none';
             examContainer.style.display = 'flex';
             examRunning = true;
             
             renderQuestionPalette();
-            loadQuestion(currentQuestionIndex);
+            loadQuestion(0);
             startTimer();
         }
 
+        function startTimer() { timerInterval = setInterval(updateTimer, 1000); }
         function updateTimer() {
             timerDisplay.textContent = `Waktu: ${formatTime(timerSeconds)}`;
-
-            if (timerSeconds <= 0) {
-                clearInterval(timerInterval);
-                if (examRunning) {
-                    alert('Waktu ujian habis!');
-                    endExam();
-                }
-            } else {
-                timerSeconds--;
-            }
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(updateTimer, 1000);
+            if (timerSeconds-- <= 0) endExam('Waktu ujian habis!');
         }
 
         function saveAnswer() {
-            // Ensure there's a current question before trying to save
-            if (!shuffledQuestions[currentQuestionIndex]) return;
-
             const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            if (!currentQuestion) return;
             const selectedOption = optionsContainer.querySelector('input[name="option"]:checked');
-            // Get current state or initialize it if not set
-            const currentAnswerState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
-
-            userAnswers[currentQuestion.id] = {
-                selected: selectedOption ? selectedOption.value : null, // Store selected option value (A, B, etc.)
-                isDoubt: currentAnswerState.isDoubt // Preserve existing doubt status
-            };
-            updatePaletteStatus(currentQuestionIndex); // Update palette color
+            const currentState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
+            userAnswers[currentQuestion.id] = { selected: selectedOption ? selectedOption.value : null, isDoubt: currentState.isDoubt };
+            updatePaletteStatus(currentQuestionIndex);
         }
 
         function toggleDoubt() {
-            // Ensure there's a current question before toggling doubt
-            if (!shuffledQuestions[currentQuestionIndex]) return;
-
             const currentQuestion = shuffledQuestions[currentQuestionIndex];
-            // Get current state or initialize it if not set
-            const currentAnswerState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
-            
-            currentAnswerState.isDoubt = !currentAnswerState.isDoubt; // Toggle doubt status
-            userAnswers[currentQuestion.id] = currentAnswerState; // Update userAnswers
-            updatePaletteStatus(currentQuestionIndex); // Update palette color
-            // Change button text based on current doubt status
-            doubtButton.textContent = currentAnswerState.isDoubt ? 'Batalkan Ragu-ragu' : 'Ragu-ragu';
+            if (!currentQuestion) return;
+            const currentState = userAnswers[currentQuestion.id] || { selected: null, isDoubt: false };
+            currentState.isDoubt = !currentState.isDoubt;
+            userAnswers[currentQuestion.id] = currentState;
+            doubtButton.textContent = currentState.isDoubt ? 'Batalkan Ragu' : 'Ragu-ragu';
+            updatePaletteStatus(currentQuestionIndex);
         }
 
         function loadQuestion(index) {
-            // Validate index
-            if (index < 0 || index >= shuffledQuestions.length) return;
+            saveAnswer();
+            currentQuestionIndex = index;
+            const q = shuffledQuestions[index];
+            const answerState = userAnswers[q.id] || { selected: null, isDoubt: false };
 
-            saveAnswer(); // Always save the current question's answer before moving
-            currentQuestionIndex = index; // Update current question index
-
-            const questionData = shuffledQuestions[currentQuestionIndex];
-            // Get current answer state for the loaded question
-            const currentAnswerState = userAnswers[questionData.id] || { selected: null, isDoubt: false };
-
-            // Update UI elements
-            questionCounter.textContent = `Soal ${currentQuestionIndex + 1} dari ${shuffledQuestions.length} (${questionData.type})`;
-            questionText.textContent = questionData.question;
-            optionsContainer.innerHTML = ''; // Clear old options
-            questionMedia.innerHTML = ''; // Clear old media
-
-            // Load media if mediaUrl and mediaType are present in questionData
-            if (questionData.mediaUrl && questionData.mediaType) {
-                if (questionData.mediaType === 'image') {
-                    const img = document.createElement('img');
-                    img.src = questionData.mediaUrl;
-                    img.alt = 'Gambar Soal'; // Alt text for accessibility
-                    questionMedia.appendChild(img);
-                } else if (questionData.mediaType === 'audio') {
-                    const audio = document.createElement('audio');
-                    audio.controls = true; // Show audio controls
-                    const source = document.createElement('source');
-                    source.src = questionData.mediaUrl;
-                    source.type = 'audio/mpeg'; // Assuming MP3, adjust if other formats are used
-                    audio.appendChild(source);
-                    questionMedia.appendChild(audio);
-                }
-            }
-
-            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
-            optionLetters.forEach(key => {
-                const optionValue = questionData.options[key];
-                
-                let optionText = '';
-                // Handle different structures for TKP (object with text/score) and TWK/TIU (string)
-                if (questionData.type === 'TKP') {
-                    optionText = optionValue && optionValue.text !== undefined ? optionValue.text : '';
-                } else {
-                    optionText = optionValue !== undefined ? optionValue : '';
-                }
-
-                // Only create radio button if option text is not empty
-                if (optionText === '') return; 
+            questionCounter.textContent = `Soal ${index + 1} dari ${shuffledQuestions.length} (${q.type})`;
+            questionText.textContent = q.question;
+            optionsContainer.innerHTML = '';
+            
+            Object.keys(q.options).forEach(key => {
+                const optionData = q.options[key];
+                const optionText = q.type === 'TKP' ? optionData.text : optionData;
+                if (!optionText) return;
 
                 const label = document.createElement('label');
                 const input = document.createElement('input');
                 input.type = 'radio';
-                input.name = 'option'; // Same name for all options in a question to make them mutually exclusive
-                input.value = key; // Value is 'A', 'B', etc.
-
+                input.name = 'option';
+                input.value = key;
+                if (answerState.selected === key) input.checked = true;
+                
                 const span = document.createElement('span');
                 span.textContent = `${key}. ${optionText}`;
-
-                label.appendChild(input);
-                label.appendChild(span);
+                
+                label.append(input, span);
                 optionsContainer.appendChild(label);
-
-                // Check the radio button if it was previously selected
-                if (currentAnswerState.selected === key) {
-                    input.checked = true;
-                }
             });
 
-            prevButton.disabled = currentQuestionIndex === 0;
-            nextButton.disabled = currentQuestionIndex === shuffledQuestions.length - 1;
-            doubtButton.textContent = currentAnswerState.isDoubt ? 'Batalkan Ragu-ragu' : 'Ragu-ragu';
-
-            updatePaletteActiveState(); // Update active state in palette
-
-            // --- MathJax Typesetting ---
-            // Tell MathJax to process the newly loaded content in questionText and optionsContainer
-            // This is crucial for rendering LaTeX math
+            prevButton.disabled = index === 0;
+            nextButton.disabled = index === shuffledQuestions.length - 1;
+            doubtButton.textContent = answerState.isDoubt ? 'Batalkan Ragu' : 'Ragu-ragu';
+            updatePaletteActiveState();
+            
             if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                // Ensure we typeset the specific elements where content has changed
-                MathJax.typesetPromise([questionText, optionsContainer]).catch(function (err) {
-                    console.error('MathJax typesetting failed:', err);
-                });
+                MathJax.typesetPromise([questionText, optionsContainer]).catch(err => console.error(err));
             }
         }
-
-        function nextQuestion() {
-            if (currentQuestionIndex < shuffledQuestions.length - 1) {
-                loadQuestion(currentQuestionIndex + 1);
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                loadQuestion(currentQuestionIndex - 1);
-            }
-        }
-
+        
         function confirmFinish() {
-            saveAnswer(); // Ensure current question's answer is saved
-
-            // Count unanswered and doubtful questions for confirmation message
-            const unansweredCount = shuffledQuestions.filter(q => !userAnswers[q.id] || userAnswers[q.id].selected === null).length;
-            const doubtCount = shuffledQuestions.filter(q => userAnswers[q.id] && userAnswers[q.id].isDoubt).length;
-
-            let confirmationMessage = 'Apakah Anda yakin ingin mengakhiri ujian?';
-            if (unansweredCount > 0) {
-                confirmationMessage += `\nAnda masih memiliki ${unansweredCount} soal yang belum dijawab.`;
-            }
-            if (doubtCount > 0) {
-                confirmationMessage += `\nAnda masih memiliki ${doubtCount} soal yang ditandai ragu-ragu.`;
-            }
-            confirmationMessage += '\nAnda tidak bisa kembali setelah ini.';
-
-            if (confirm(confirmationMessage)) {
-                endExam();
-            }
+            saveAnswer();
+            if (confirm('Apakah Anda yakin ingin mengakhiri ujian?')) endExam();
         }
 
-        function endExam() {
-            clearInterval(timerInterval); // Stop the timer
-            examRunning = false; // Set exam state
-            examContainer.style.display = 'none'; // Hide exam UI
-            resultScreen.style.display = 'block'; // Show result UI
-            calculateAndDisplayResults(); // Populate results
+        function endExam(message = '') {
+            if (message) alert(message);
+            clearInterval(timerInterval);
+            examRunning = false;
+            examContainer.style.display = 'none';
+            resultScreen.style.display = 'block';
+            calculateAndDisplayResults();
         }
 
         function calculateAndDisplayResults() {
-            let scoreTWK = 0;
-            let scoreTIU = 0;
-            let scoreTKP = 0;
-
-            // Calculate max possible scores based on actual questions loaded
-            let maxTWK = questionCounts.TWK * 5;
-            let maxTIU = questionCounts.TIU * 5;
-            let maxTKP = questionCounts.TKP * 5;
-
+            let scores = { TWK: 0, TIU: 0, TKP: 0 };
             shuffledQuestions.forEach(q => {
-                const answerState = userAnswers[q.id];
-                const selectedOption = answerState ? answerState.selected : null;
-
-                if (q.type === 'TWK') {
-                    if (selectedOption === q.correctAnswer) {
-                        scoreTWK += 5;
-                    }
-                } else if (q.type === 'TIU') {
-                    if (selectedOption === q.correctAnswer) {
-                        scoreTIU += 5;
-                    }
-                } else if (q.type === 'TKP') {
-                    if (selectedOption && q.options[selectedOption] && typeof q.options[selectedOption].score === 'number') {
-                        scoreTKP += q.options[selectedOption].score;
-                    }
-                }
+                const answer = userAnswers[q.id]?.selected;
+                if (!answer) return;
+                if (q.type === 'TKP') scores.TKP += q.options[answer]?.score || 0;
+                else if (answer === q.correctAnswer) scores[q.type] += 5;
             });
 
-            const totalScore = scoreTWK + scoreTIU + scoreTKP;
-
-            // Display results in the table
+            const totalScore = scores.TWK + scores.TIU + scores.TKP;
             resultUserNameDisplay.textContent = `Nama Peserta: ${userName}`;
-            document.getElementById('score-twk').textContent = scoreTWK;
-            document.getElementById('max-twk').textContent = maxTWK;
-            document.getElementById('pg-twk').textContent = passingGrades.TWK;
 
-            document.getElementById('score-tiu').textContent = scoreTIU;
-            document.getElementById('max-tiu').textContent = maxTIU;
-            document.getElementById('pg-tiu').textContent = passingGrades.TIU;
+            let allPass = true;
+            ['TWK', 'TIU', 'TKP'].forEach(type => {
+                const score = scores[type];
+                const pg = passingGrades[type];
+                const status = score >= pg;
+                if (!status) allPass = false;
 
-            document.getElementById('score-tkp').textContent = scoreTKP;
-            document.getElementById('max-tkp').textContent = maxTKP;
-            document.getElementById('pg-tkp').textContent = passingGrades.TKP;
-
-            // Determine pass/fail status for each category
-            const statusTWK = scoreTWK >= passingGrades.TWK;
-            const statusTIU = scoreTIU >= passingGrades.TIU;
-            const statusTKP = scoreTKP >= passingGrades.TKP;
-
-            document.getElementById('status-twk').textContent = statusTWK ? 'Lulus' : 'Tidak Lulus';
-            document.getElementById('status-twk').className = statusTWK ? 'status-pass' : 'status-fail';
-
-            document.getElementById('status-tiu').textContent = statusTIU ? 'Lulus' : 'Tidak Lulus';
-            document.getElementById('status-tiu').className = statusTIU ? 'status-pass' : 'status-fail';
-
-            document.getElementById('status-tkp').textContent = statusTKP ? 'Lulus' : 'Tidak Lulus';
-            document.getElementById('status-tkp').className = statusTKP ? 'status-pass' : 'status-fail';
-
-            // Determine overall status
+                document.getElementById(`score-${type.toLowerCase()}`).textContent = score;
+                document.getElementById(`max-${type.toLowerCase()}`).textContent = questionCounts[type] * 5;
+                document.getElementById(`pg-${type.toLowerCase()}`).textContent = pg;
+                const statusEl = document.getElementById(`status-${type.toLowerCase()}`);
+                statusEl.textContent = status ? 'Lulus' : 'Gagal';
+                statusEl.className = status ? 'status-pass' : 'status-fail';
+            });
+            
             const overallStatusEl = document.getElementById('overall-status');
-            if (statusTWK && statusTIU && statusTKP) {
-                overallStatusEl.textContent = `SELAMAT! Anda Dinyatakan LULUS SKD dengan Total Skor ${totalScore}!`;
-                overallStatusEl.className = 'overall-status status-pass'; // Green style
-            } else {
-                overallStatusEl.textContent = `MAAF, Anda Dinyatakan TIDAK LULUS SKD. Total Skor Anda ${totalScore}.`;
-                overallStatusEl.className = 'overall-status status-fail'; // Red style
-            }
-
-            // --- MathJax Typesetting for Results Screen ---
-            // If there's math on the results screen (e.g., in overall status or if you add more details)
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([resultScreen]).catch(function (err) {
-                    console.error('MathJax typesetting failed on result screen:', err);
-                });
-            }
+            overallStatusEl.textContent = allPass 
+                ? `SELAMAT! Anda LULUS SKD dengan Total Skor ${totalScore}!` 
+                : `MAAF, Anda TIDAK LULUS SKD. Total Skor Anda ${totalScore}.`;
+            overallStatusEl.className = `overall-status ${allPass ? 'pass' : 'fail'}`;
         }
-
-        // --- Question Palette Functions ---
+        
         function renderQuestionPalette() {
-            paletteGrid.innerHTML = ''; // Clear existing palette items
-            shuffledQuestions.forEach((q, index) => {
-                const item = document.createElement('div');
-                item.classList.add('palette-item');
-                item.textContent = index + 1; // Display question number
-                item.dataset.index = index; // Store index for navigation
-                item.dataset.tooltip = `${q.type} - Soal ${index + 1}`; // Tooltip on hover
-                item.addEventListener('click', () => loadQuestion(index)); // Event listener for direct jump
-                paletteGrid.appendChild(item);
-                userAnswers[q.id] = userAnswers[q.id] || { selected: null, isDoubt: false };
-                updatePaletteStatus(index); // Set initial color based on state
+            paletteGrid.innerHTML = shuffledQuestions.map((q, index) => 
+                `<div class="palette-item" data-index="${index}"><span class="palette-content">${index + 1}</span></div>`
+            ).join('');
+            paletteGrid.querySelectorAll('.palette-item').forEach(item => {
+                item.addEventListener('click', () => loadQuestion(parseInt(item.dataset.index)));
             });
-            updatePaletteActiveState(); // Set active color for current question
-        }
-
-        function updatePaletteActiveState() {
-            const paletteItems = document.querySelectorAll('.palette-item');
-            paletteItems.forEach((item, index) => {
-                item.classList.remove('active'); // Remove active class from all
-                if (index === currentQuestionIndex) {
-                    item.classList.add('active'); // Add active class to current question
-                }
-            });
+            updatePaletteActiveState();
         }
 
         function updatePaletteStatus(index) {
             const item = paletteGrid.querySelector(`.palette-item[data-index="${index}"]`);
-            if (item) {
-                const questionId = shuffledQuestions[index].id;
-                const answerState = userAnswers[questionId];
-
-                item.classList.remove('answered', 'doubt'); // Clear current status classes
-
-                if (answerState && answerState.isDoubt) {
-                    item.classList.add('doubt'); // Apply yellow for doubt
-                } else if (answerState && answerState.selected !== null) {
-                    item.classList.add('answered'); // Apply green for answered
-                }
-                // No specific class for 'skipped' (unanswered and not doubtful), it retains default style.
-            }
+            if (!item) return;
+            const q = shuffledQuestions[index];
+            const answerState = userAnswers[q.id] || { isDoubt: false, selected: null };
+            item.className = 'palette-item'; // Reset
+            if (answerState.isDoubt) item.classList.add('doubt');
+            else if (answerState.selected) item.classList.add('answered');
+            if (index === currentQuestionIndex) item.classList.add('active');
         }
 
-        // --- PDF Download Function ---
+        function updatePaletteActiveState() {
+            document.querySelectorAll('.palette-item').forEach(item => item.classList.remove('active'));
+            const activeItem = paletteGrid.querySelector(`.palette-item[data-index="${currentQuestionIndex}"]`);
+            if(activeItem) activeItem.classList.add('active');
+        }
+        
         function downloadPdfResult() {
-            // Get the element to convert (the result screen)
             const element = document.getElementById('result-screen');
-            
-            // Clone the element to remove interactive elements (buttons) from the PDF output
-            const clone = element.cloneNode(true);
-            const buttonsToRemove = clone.querySelectorAll('button');
-            buttonsToRemove.forEach(button => button.remove()); // Remove all buttons from the cloned element
-
-            // Get current date for filename
-            const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-
-            // Use html2pdf to generate and download the PDF
-            // Ensure html2pdf.js is loaded from CDN or embedded script
-            if (typeof html2pdf === 'undefined') {
-                alert("Kesalahan: Library PDF belum dimuat. Periksa koneksi internet atau embed script.");
-                console.error("html2pdf.js is not loaded.");
-                return;
-            }
-
-            html2pdf(clone, {
+            html2pdf(element.cloneNode(true), {
                 margin: 10,
-                filename: `Hasil_SKD_${userName.replace(/\s/g, '_')}_${date}.pdf`, // Dynamic filename
+                filename: `Hasil_SKD_${userName.replace(/\s/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true }, // Scale up for better quality
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // A4 portrait format
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             });
         }
-
+        
         // --- Event Listeners ---
         startButton.addEventListener('click', startExam);
-        prevButton.addEventListener('click', prevQuestion);
-        nextButton.addEventListener('click', nextQuestion);
+        prevButton.addEventListener('click', () => loadQuestion(currentQuestionIndex - 1));
+        nextButton.addEventListener('click', () => loadQuestion(currentQuestionIndex + 1));
         doubtButton.addEventListener('click', toggleDoubt);
         finishButton.addEventListener('click', confirmFinish);
-        downloadPdfButton.addEventListener('click', downloadPdfResult); // New listener for PDF button
-
-        // CSV Upload Listener
+        downloadPdfButton.addEventListener('click', downloadPdfResult);
+        
         loadCsvButton.addEventListener('click', () => {
-            const file = csvFileInput.files[0];
-            if (!file) {
-                csvLoadStatus.textContent = "Pilih file CSV terlebih dahulu.";
-                csvLoadStatus.classList.add('error');
+            if (!csvFileInput.files.length) {
+                csvLoadStatus.textContent = "Pilih file CSV.";
+                csvLoadStatus.className = 'error';
                 return;
             }
-
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = e => {
                 try {
                     allQuestions = parseCSV(e.target.result);
                     if (allQuestions.length > 0) {
-                        // Check actual loaded counts
-                        const actualTWK = allQuestions.filter(q => q.type === 'TWK').length;
-                        const actualTIU = allQuestions.filter(q => q.type === 'TIU').length;
-                        const actualTKP = allQuestions.filter(q => q.type === 'TKP').length;
-
-                        let warnings = [];
-                        if (actualTWK < REQUIRED_TWK) warnings.push(`TWK: ${actualTWK}/${REQUIRED_TWK}`);
-                        if (actualTIU < REQUIRED_TIU) warnings.push(`TIU: ${actualTIU}/${REQUIRED_TIU}`);
-                        if (actualTKP < REQUIRED_TKP) warnings.push(`TKP: ${actualTKP}/${REQUIRED_TKP}`);
-
-                        let statusMessage = `Berhasil memuat ${allQuestions.length} soal dari CSV.`;
-                        csvLoadStatus.classList.remove('error', 'warning');
-                        csvLoadStatus.classList.add('success');
-
-                        if (warnings.length > 0) {
-                            statusMessage += ` (Perhatian: Jumlah soal kurang dari standar: ${warnings.join(', ')})`;
-                            csvLoadStatus.classList.remove('success');
-                            csvLoadStatus.classList.add('warning');
-                        } else if (actualTWK > REQUIRED_TWK || actualTIU > REQUIRED_TIU || actualTKP > REQUIRED_TKP) {
-                            statusMessage += ` (Catatan: Jumlah soal lebih dari standar, akan diambil ${REQUIRED_TWK} TWK, ${REQUIRED_TIU} TIU, ${REQUIRED_TKP} TKP.)`;
-                             csvLoadStatus.classList.remove('success');
-                             csvLoadStatus.classList.add('warning'); // Use warning for "too many" as well
-                        }
-
-                        csvLoadStatus.textContent = statusMessage;
+                        csvLoadStatus.textContent = `Berhasil memuat ${allQuestions.length} soal. Siap untuk memulai.`;
+                        csvLoadStatus.className = 'success';
                         startButton.disabled = false;
-                        startButton.textContent = "Mulai Ujian";
-
                     } else {
-                        csvLoadStatus.textContent = "Tidak ada soal yang valid ditemukan di CSV. Periksa format file Anda.";
-                        csvLoadStatus.classList.remove('success', 'warning');
-                        csvLoadStatus.classList.add('error');
-                        startButton.disabled = true;
-                        startButton.textContent = "Mulai Ujian (Soal Tidak Cukup)";
+                        throw new Error("Tidak ada soal valid yang ditemukan.");
                     }
                 } catch (error) {
-                    csvLoadStatus.textContent = `Gagal memproses CSV: ${error.message}. Periksa format file dan lihat console log untuk detail.`;
-                    csvLoadStatus.classList.remove('success', 'warning');
-                    csvLoadStatus.classList.add('error');
-                    console.error("Error parsing CSV:", error);
-                    startButton.disabled = true;
-                    startButton.textContent = "Mulai Ujian (Error Soal)";
+                    csvLoadStatus.textContent = `Gagal memproses CSV: ${error.message}`;
+                    csvLoadStatus.className = 'error';
                 }
             };
-            reader.readAsText(file);
+            reader.readAsText(csvFileInput.files[0]);
         });
-
-        // Initial setup on page load
+        
         window.onload = () => {
             startButton.disabled = true;
-            startButton.textContent = "Mulai Ujian (Unggah Soal Dulu)";
             userNameInput.focus();
         };
 
     </script>
-    <!-- [ ... CDN dan Script JavaScript yang sudah ada tidak diubah ... ] -->
-
 </body>
 </html>
