@@ -115,9 +115,8 @@
         .name-input-section label { display: block; margin-bottom: 10px; font-weight: 600; color: #34495e; }
         .name-input-section input[type="text"] { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
 
-        .file-upload-section { margin-top: 30px; padding: 20px; border: 1px dashed #a0a0a0; border-radius: 10px; background-color: #f9fbfd; max-width: 600px; }
+        .file-upload-section { margin-top: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9fbfd; max-width: 600px; }
         .file-upload-section h3 { margin-bottom: 15px; color: #34495e; }
-        .file-upload-section button { background-color: #28a745; }
         
         #csv-load-status { margin-top: 10px; font-size: 0.9em; font-weight: 500; line-height: 1.4; }
         #csv-load-status.error { color: #dc3545; }
@@ -211,13 +210,8 @@
             </div>
 
             <div class="file-upload-section">
-                <h3>Unggah Soal dari File CSV</h3>
-                <input type="file" id="csv-file-input" accept=".csv">
-                <button id="load-csv-button">Muat Soal dari CSV</button>
-                <p id="csv-load-status"></p>
-                <p style="font-size: 0.85em; text-align: center; color: #777;">
-                    Format CSV: id,type,question,optionA,... ,E,correct/scoreA,... ,E,mediaUrl,mediaType
-                </p>
+                <h3>Status Pemuatan Soal</h3>
+                <p id="csv-load-status">Memuat soal secara otomatis...</p>
             </div>
 
             <p><strong>Peraturan Ujian:</strong></p>
@@ -319,8 +313,6 @@
         const doubtButton = document.getElementById('doubt-button');
         const finishButton = document.getElementById('finish-button');
         const paletteGrid = document.getElementById('palette-grid');
-        const csvFileInput = document.getElementById('csv-file-input');
-        const loadCsvButton = document.getElementById('load-csv-button');
         const csvLoadStatus = document.getElementById('csv-load-status');
         const userNameInput = document.getElementById('user-name-input');
         const resultUserNameDisplay = document.getElementById('result-user-name');
@@ -338,21 +330,25 @@
         function parseCSV(text) {
             const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
             const questions = [];
-            const header = lines[0].toLowerCase().split(',');
-
-            for (let index = 1; index < lines.length; index++) {
+            
+            for (let index = 1; index < lines.length; index++) { // Start from 1 to skip header
                 const line = lines[index];
                 const values = [];
                 let currentVal = "", inQuote = false;
                 for (const char of line) {
-                    if (char === '"') { inQuote = !inQuote; } 
-                    else if (char === ',' && !inQuote) { values.push(currentVal.trim()); currentVal = ""; } 
-                    else { currentVal += char; }
+                    if (char === '"' && (line[line.indexOf(char)-1] !== '\\')) { 
+                        inQuote = !inQuote; 
+                    } else if (char === ',' && !inQuote) { 
+                        values.push(currentVal.trim()); 
+                        currentVal = ""; 
+                    } else { 
+                        currentVal += char; 
+                    }
                 }
                 values.push(currentVal.trim());
                 if (values.length < 9) continue;
                 
-                const processedValues = values.map(val => val.replace(/\\/g, '\\'));
+                const processedValues = values.map(val => val.replace(/^"|"$/g, '').replace(/\\"/g, '"'));
 
                 const question = {
                     id: processedValues[0],
@@ -381,11 +377,12 @@
             return questions;
         }
 
+
         // --- Exam Functions ---
         function startExam() {
             userName = userNameInput.value.trim();
             if (!userName) { alert('Mohon masukkan nama Anda.'); return; }
-            if (allQuestions.length === 0) { alert("Harap muat soal dari CSV."); return; }
+            if (allQuestions.length === 0) { alert("Soal belum termuat. Mohon tunggu atau muat ulang halaman."); return; }
 
             const twkQuestions = allQuestions.filter(q => q.type === 'TWK').slice(0, REQUIRED_TWK);
             const tiuQuestions = allQuestions.filter(q => q.type === 'TIU').slice(0, REQUIRED_TIU);
@@ -565,34 +562,42 @@
         finishButton.addEventListener('click', confirmFinish);
         downloadPdfButton.addEventListener('click', downloadPdfResult);
         
-        loadCsvButton.addEventListener('click', () => {
-            if (!csvFileInput.files.length) {
-                csvLoadStatus.textContent = "Pilih file CSV.";
-                csvLoadStatus.className = 'error';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    allQuestions = parseCSV(e.target.result);
-                    if (allQuestions.length > 0) {
-                        csvLoadStatus.textContent = `Berhasil memuat ${allQuestions.length} soal. Siap untuk memulai.`;
-                        csvLoadStatus.className = 'success';
-                        startButton.disabled = false;
-                    } else {
-                        throw new Error("Tidak ada soal valid yang ditemukan.");
-                    }
-                } catch (error) {
-                    csvLoadStatus.textContent = `Gagal memproses CSV: ${error.message}`;
-                    csvLoadStatus.className = 'error';
-                }
-            };
-            reader.readAsText(csvFileInput.files[0]);
-        });
-        
         window.onload = () => {
             startButton.disabled = true;
             userNameInput.focus();
+
+            const csvUrl = 'https://raw.githubusercontent.com/maulana-hermawan/perkasa-center/main/skd001.csv';
+            
+            csvLoadStatus.textContent = 'Memuat soal dari server...';
+            csvLoadStatus.className = 'warning';
+
+            fetch(csvUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Gagal mengambil data dari server: ${response.status} ${response.statusText}`);
+                    }
+                    return response.text();
+                })
+                .then(csvText => {
+                    try {
+                        allQuestions = parseCSV(csvText);
+                        if (allQuestions.length > 0) {
+                            csvLoadStatus.textContent = `Berhasil memuat ${allQuestions.length} soal. Silakan masukkan nama dan mulai ujian.`;
+                            csvLoadStatus.className = 'success';
+                            startButton.disabled = false;
+                        } else {
+                            throw new Error("File CSV tidak berisi soal yang valid atau kosong.");
+                        }
+                    } catch (error) {
+                        csvLoadStatus.textContent = `Gagal memproses data soal: ${error.message}`;
+                        csvLoadStatus.className = 'error';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching CSV:', error);
+                    csvLoadStatus.textContent = `Gagal memuat soal. Periksa koneksi internet Anda. (${error.message})`;
+                    csvLoadStatus.className = 'error';
+                });
         };
 
     </script>
