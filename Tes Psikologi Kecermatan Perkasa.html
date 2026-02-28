@@ -1,794 +1,470 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <!-- Menggunakan URL logo PNG yang diberikan -->
+    <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="perkasa-logo.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Binjas Perkasa: Tes Kecermatan CAT Polri</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perkasa Mulia: Tes Kecermatan CAT</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* [ ... (CSS yang sudah ada tidak diubah) ... ] */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; }
+        
+        /* BRANDING BINJAS PERKASA */
+        .branding-header {
+            background-color: #0f172a; 
+            padding: 25px 20px;
+            margin: -30px -30px 25px -30px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px; 
         }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+        .branding-logo { width: 80px; height: 80px; object-fit: contain; }
+        .branding-text { text-align: left; }
+        .branding-title {
+            font-size: 24px; font-weight: 800; color: #ffffff; text-transform: uppercase;
+            letter-spacing: 0.05em; margin: 0; line-height: 1.2;
         }
-        .chart-bar-container { display: flex; align-items: flex-end; gap: 2px; height: 100%; flex-direction: column; justify-content: flex-end; }
-        .chart-bar { width: 100%; transition: height 0.3s ease-in-out; display: flex; flex-direction: column; justify-content: flex-end; }
-        .bar-correct { background-color: #16a34a; }
-        .bar-incorrect { background-color: #dc2626; border-top: 1px solid rgba(255, 255, 255, 0.2); }
-        .y-axis-labels-container { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; width: 40px; height: 100%; position: relative; padding-right: 5px; box-sizing: border-box; font-size: 0.75rem; }
-        .y-axis-label { color: #64748b; position: relative; white-space: nowrap; }
-        .y-axis-label:first-child { transform: translateY(-50%); }
-        .y-axis-label:last-child { transform: translateY(50%); }
-        .y-axis-label::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 5px; border-bottom: 1px solid #e2e8f0; }
+        .branding-subtitle { font-size: 20px; font-weight: 600; color: #fde047; margin: 5px 0 0 0; }
+        
+        /* --- Core UI --- */
+        .screen { display: none; }
+        .active-screen { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; color: #444;}
+        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        
+        .btn { padding: 14px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; text-align: center; width: 100%; box-sizing: border-box;}
+        .btn-primary { background-color: #004080; color: white; margin-top: 10px;}
+        .btn-primary:hover { background-color: #003060; }
+        .btn-success { background-color: #16a34a; color: white; margin-top: 10px;}
+        .btn-success:hover { background-color: #15803d; }
+        .btn-danger { background-color: #dc2626; color: white; margin-top: 10px;}
+        .btn-danger:hover { background-color: #b91c1c; }
+
+        .guide-box { background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; line-height: 1.6;}
+        
+        /* Skala Dinamis Preview & Ujian */
+        .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; }
+        .header-info { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px;}
+        .timer-text { color: #fde047; }
+        
+        .sandi-table { margin: 0 auto 1.5em auto; border-collapse: collapse; font-weight: bold; background: white; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 1.8em;}
+        .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 0.5em; text-align: center; width: 20%;}
+        .sandi-table th { background-color: #0f172a; color: white; font-size: 0.75em; padding: 0.4em;}
+        .soal-kecermatan { font-size: 3.5em; letter-spacing: 0.5em; text-align: center; margin: 0.5em 0; font-weight: bold; background: #f8f9fa; padding: 0.4em; border-radius: 10px; border: 2px dashed #bbb; font-family: 'Courier New', Courier, monospace;}
+        
+        .ans-group { display: flex; justify-content: center; gap: 0.8em; }
+        .btn-ans { font-size: 1.6em; padding: 0.8em 0; width: 18%; background-color: #004080; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-ans:active { transform: scale(0.92); background-color: #002040;}
+
+        /* Preview Slider */
+        .preview-box { background: #e8f4fd; border: 2px dashed #0f172a; padding: 20px; border-radius: 8px; margin-bottom: 20px; overflow: hidden;}
+        input[type="range"] { width: 100%; margin: 15px 0; cursor: pointer; }
+
+        /* Jeda */
+        .break-screen { text-align: center; padding: 50px 20px; }
+        .break-timer { font-size: 80px; font-weight: bold; color: #dc2626; margin: 20px 0;}
+
+        /* Hasil */
+        .result-box { padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; }
+        .status-badge { display: inline-block; padding: 10px 25px; font-size: 24px; font-weight: bold; color: white; border-radius: 30px; margin: 15px 0; }
+        .ms { background-color: #16a34a; }
+        .tms { background-color: #dc2626; }
+        .chart-container { position: relative; height: 300px; width: 100%; margin: 20px 0; }
+        
+        .resume-alert { background: #fef08a; color: #854d0e; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #fde047; display: none; text-align: center; font-weight: bold;}
+        .no-print { display: block; }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "react": "https://esm.sh/react@^19.1.0"
-  }
-}
-</script>
 </head>
-<body class="bg-slate-900">
+<body>
 
-    <!-- Navbar Ditambahkan Di Sini -->
- 
-
-    <div class="min-h-screen text-white flex flex-col items-center p-4">
-        <!-- Header diperlebar -->
-        <header class="w-full py-4 mb-6">
-            <div class="flex items-center justify-center gap-3 sm:gap-4">
-                <img src="perkasa-logo.png" alt="Logo Binjas Perkasa" class="w-20 h-20 object-contain" />
-                <div class="text-left">
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide uppercase">CAT Polri - Tes Kecermatan</h1>
-                    <h2 class="text-lg sm:text-xl font-semibold text-yellow-300">BINJAS PERKASA</h2>
-                </div>
+<div class="container" id="app-container">
+    
+    <div id="screen-setup" class="screen active-screen">
+        
+        <header class="branding-header">
+            <img src="perkasa-logo.png" alt="Logo Binjas Perkasa" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=LOGO'"/>
+            <div class="branding-text">
+                <h1 class="branding-title">Tes Kecermatan CAT</h1>
+                <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
             </div>
         </header>
-        <main class="w-full flex-grow flex items-start justify-center">
-            <!-- Kontainer aplikasi diperlebar -->
-            <div id="app-container" class="w-full bg-white text-slate-800 rounded-xl shadow-2xl p-6 md:p-10">
-                <!-- Konten aplikasi akan dirender di sini oleh JavaScript -->
-            </div>
-        </main>
-        <footer class="text-center py-4 mt-6 text-slate-400 text-sm">
-            <p>&copy; 2024 Binjas Perkasa. All rights reserved.</p>
-        </footer>
+
+        <div id="resume-notif" class="resume-alert">
+            Sesi ujian sebelumnya ditemukan! Anda akan melanjutkan dari titik terakhir.
+            <br><button class="btn btn-danger" style="width:auto; padding:8px 15px; font-size:14px; margin-top:10px;" onclick="clearSessionAndReload()">Hapus Sesi & Mulai Baru</button>
+        </div>
+        
+        <div class="form-group">
+            <label>Nama Lengkap Peserta:</label>
+            <input type="text" id="inputName" placeholder="Masukkan nama Anda..." required>
+        </div>
+        <div class="form-group">
+            <label>Pilih Jenis Karakter Ujian:</label>
+            <select id="inputType">
+                <option value="angka">Angka Saja (0-9)</option>
+                <option value="huruf">Huruf Saja (A-Z)</option>
+                <option value="simbol">Simbol Geometris & Arah</option>
+                <option value="campuran">Campuran Ekstrem (Angka + Huruf + Simbol)</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="goToGuide()">Lanjut ke Tahap Persiapan</button>
     </div>
 
-    <script type="module">
-// =================================================================================
-        // KONSTANTA
-        // =================================================================================
-        const TOTAL_ROUNDS = 10;
-        const ROUND_DURATION_SECONDS = 60;
-        const BREAK_DURATION_SECONDS = 5;
-        const PRE_TEST_COUNTDOWN_SECONDS = 5; 
-        const EXAMPLE_TEMPLATES = ["KS7W2", "0SK3G", "M34BV", "K02LS", "Z2LS7", "S5YD6", "OLI1M", "2V1SA", "L3KMF", "HY4J6"];
-        const NUM_QUESTIONS_PER_ROUND = 50;
-        const NUM_OPTIONS = 5;
+    <div id="screen-guide" class="screen">
+        <h2 style="margin-top:0; color:#0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Persiapan & Panduan Ujian</h2>
+        
+        <div class="guide-box">
+            <h3 style="margin-top:0; color:#0f172a;">📚 Tata Cara & Peraturan Tes</h3>
 
-        // =================================================================================
-        // UTILITAS
-        // =================================================================================
-        const shuffle = (array) => {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        };
+            <b>1. Format Ujian:</b>
+            <ul style="margin-top:5px; margin-bottom:15px; padding-left:20px;">
+                <li>Tes ini terdiri dari <b>10 Kolom (Ronde)</b> secara berturut-turut.</li>
+                <li>Waktu pengerjaan untuk setiap kolom adalah <b>Tepat 60 Detik</b>.</li>
+                <li>Terdapat jeda istirahat singkat selama <b>3 Detik</b> di setiap pergantian kolom. Manfaatkan untuk berkedip dan memulihkan fokus Anda.</li>
+                <li>Tidak ada batasan jumlah soal per kolom. Jawablah sebanyak-banyaknya.</li>
+            </ul>
 
-        // =================================================================================
-        // LOGIKA ANALISIS KINERJA
-        // =================================================================================
-        const calculateAverage = (arr) => arr.length === 0 ? 0 : arr.reduce((acc, val) => acc + val, 0) / arr.length;
-        const calculateStdDev = (arr) => {
-            const n = arr.length;
-            if (n < 2) return 0;
-            const mean = calculateAverage(arr);
-            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
-            return Math.sqrt(variance);
-        };
+            <b>2. Cara Mengerjakan (Sistem Karakter Hilang):</b>
+            <ul style="margin-top:5px; margin-bottom:15px; padding-left:20px; list-style-type: decimal;">
+                <li>Perhatikan <b>Tabel Sandi (Petunjuk)</b> di bagian paling atas. Terdapat 5 karakter yang masing-masing diwakili oleh kolom <b>A, B, C, D, dan E</b>.</li>
+                <li>Pada bagian <b>Soal</b> (teks berukuran besar di tengah), hanya akan ditampilkan <b>4 karakter</b> yang diacak letaknya.</li>
+                <li>Tugas Anda: Cari tahu <b>1 karakter apa yang HILANG</b> atau tidak ada pada baris soal tersebut.</li>
+                <li>Klik tombol jawaban (A, B, C, D, atau E) yang letaknya mewakili karakter yang hilang tersebut.</li>
+                <li>Setelah dijawab, soal akan langsung berganti ke soal berikutnya <i>tanpa</i> mengubah tabel sandi (tabel sandi hanya berganti saat pindah ronde/kolom baru).</li>
+            </ul>
 
-        const getSpeedAnalysis = (avgAnswered) => {
-            if (avgAnswered >= 30) return { level: 'Sangat Cepat', description: 'Kecepatan kerja Anda luar biasa, mampu memproses informasi dan menjawab dengan sangat efisien.' };
-            if (avgAnswered >= 20) return { level: 'Cepat', description: 'Anda memiliki kecepatan kerja di atas rata-rata. Ini adalah aset penting dalam tes berbasis waktu.' };
-            if (avgAnswered >= 10) return { level: 'Cukup', description: 'Kecepatan kerja Anda berada pada tingkat yang memadai. Latihan dapat membantu meningkatkannya.' };
-            return { level: 'Perlu Ditingkatkan', description: 'Kecepatan Anda masih bisa dioptimalkan. Fokus pada pengenalan pola untuk mempercepat respons.' };
-        };
+            <b>3. Tips Kelulusan (Kriteria Penilaian ):</b>
+            <ul style="margin-top:5px; padding-left:20px; color:#b91c1c;">
+                <li><b>Kecepatan:</b> Pertahankan rata-rata jawaban minimal 30 soal per kolom.</li>
+                <li><b>Ketelitian:</b> Jangan asal tebak! Akurasi (jawaban benar dibanding total menjawab) harus di atas 80%.</li>
+                <li><b>Konsistensi:</b> Psikolog mencari peserta dengan grafik kerja yang stabil atau perlahan naik. <i>Hindari menjawab sangat cepat di awal lalu panik/menurun drastis di detik-detik akhir.</i></li>
+            </ul>
+        </div>
 
-        const getAccuracyAnalysis = (totalCorrect, totalAnswered) => {
-            if (totalAnswered === 0) return { level: 'N/A', description: 'Tidak ada jawaban yang tercatat untuk dianalisis.' };
-            const accuracyPercentage = (totalCorrect / totalAnswered) * 100;
-            if (accuracyPercentage >= 95) return { level: 'Sangat Teliti', description: 'Tingkat ketelitian Anda sangat tinggi. Anda mampu bekerja cepat tanpa mengorbankan kualitas.' };
-            if (accuracyPercentage >= 85) return { level: 'Teliti', description: 'Anda mampu menjaga ketelitian dengan baik. Pertahankan fokus untuk meminimalkan kesalahan kecil.' };
-            if (accuracyPercentage >= 75) return { level: 'Cukup Teliti', description: 'Ketelitian Anda cukup, namun ada ruang untuk perbaikan. Periksa kembali sebelum memilih.' };
-            return { level: 'Perlu Ditingkatkan', description: 'Banyak terjadi kesalahan. Coba untuk sedikit lebih tenang dan fokus pada ketepatan jawaban.' };
-        };
-
-        const getEnduranceAnalysis = (answeredPerRound) => {
-            const totalRounds = answeredPerRound.length;
-            if (totalRounds < 4) return { level: 'N/A', description: 'Data tidak cukup untuk menganalisis daya tahan.' };
-            const firstHalf = answeredPerRound.slice(0, Math.floor(totalRounds / 2));
-            const secondHalf = answeredPerRound.slice(Math.ceil(totalRounds / 2));
-            const avgFirstHalf = calculateAverage(firstHalf);
-            const avgSecondHalf = calculateAverage(secondHalf);
-            if (avgSecondHalf >= avgFirstHalf * 0.95) return { level: 'Sangat Baik', description: 'Daya tahan Anda luar biasa. Anda mampu menjaga atau bahkan meningkatkan performa di bawah tekanan waktu yang lama.' };
-            if (avgSecondHalf >= avgFirstHalf * 0.85) return { level: 'Baik', description: 'Anda memiliki daya tahan yang baik, hanya terjadi sedikit penurunan performa seiring berjalannya waktu.' };
-            if (avgSecondHalf >= avgFirstHalf * 0.75) return { level: 'Cukup', description: 'Terlihat adanya tanda-tanda kelelahan. Performa Anda cenderung menurun pada paruh akhir tes.' };
-            return { level: 'Perlu Ditingkatkan', description: 'Terjadi penurunan performa yang signifikan. Latih konsentrasi dan stamina untuk menjaga stabilitas kerja.' };
-        };
-
-        const getConsistencyAnalysis = (answeredPerRound) => {
-            const avg = calculateAverage(answeredPerRound);
-            if (avg === 0) return { level: 'N/A', description: 'Tidak ada jawaban yang tercatat.' };
-            const stdDev = calculateStdDev(answeredPerRound);
-            const coefficientOfVariation = (stdDev / avg) * 100;
-            if (coefficientOfVariation <= 15) return { level: 'Sangat Stabil', description: 'Ritme kerja Anda sangat konsisten. Ini menunjukkan tingkat fokus dan stabilitas emosi yang tinggi.' };
-            if (coefficientOfVariation <= 25) return { level: 'Cukup Stabil', description: 'Ritme kerja Anda cukup konsisten, meskipun ada sedikit fluktuasi antar ronde.' };
-            return { level: 'Kurang Stabil', description: 'Performa Anda cenderung naik-turun. Latih untuk menjaga ritme kerja yang lebih stabil di setiap ronde.' };
-        };
-
-        const analyzePerformance = (results) => {
-            const totalAnswered = results.reduce((sum, r) => sum + r.answered, 0);
-            const totalCorrect = results.reduce((sum, r) => sum + r.correct, 0);
-            const answeredPerRound = results.map(r => r.answered);
-            const avgAnswered = calculateAverage(answeredPerRound);
-            return {
-                speed: getSpeedAnalysis(avgAnswered),
-                accuracy: getAccuracyAnalysis(totalCorrect, totalAnswered),
-                endurance: getEnduranceAnalysis(answeredPerRound),
-                consistency: getConsistencyAnalysis(answeredPerRound),
-            };
-        };
-
-        // =================================================================================
-        // KELAS LOGIKA TES
-        // =================================================================================
-        class TestLogic {
-            constructor(onUpdate, onFinish, onBreakStart, onBreakEnd) {
-                this.onUpdate = onUpdate;
-                this.onFinish = onFinish;
-                this.onBreakStart = onBreakStart;
-                this.onBreakEnd = onBreakEnd;
-
-                this.isActive = false;
-                this.isBreak = false;
-                this.currentRound = 0;
-                this.timeLeft = ROUND_DURATION_SECONDS;
-                this.breakTimeLeft = BREAK_DURATION_SECONDS;
-                this.questions = [];
-                this.currentQuestionIndex = 0;
-                this.roundStats = { correct: 0, incorrect: 0 };
-                this.allRoundResults = [];
-                this.roundTimerId = null;
-                this.breakTimerId = null;
-            }
-
-            generateQuestionsForRound(roundIndex) {
-                const template = EXAMPLE_TEMPLATES[roundIndex % EXAMPLE_TEMPLATES.length];
-                this.questions = [];
-                for (let i = 0; i < NUM_QUESTIONS_PER_ROUND; i++) {
-                    const allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                    const missingIndex = Math.floor(Math.random() * template.length);
-                    const jawaban = template[missingIndex];
-                    const soalArray = template.split('');
-                    soalArray.splice(missingIndex, 1);
-                    const soal = shuffle(soalArray).join('');
-                    const optionsSet = new Set([jawaban]);
-                    while (optionsSet.size < NUM_OPTIONS) {
-                        const randomChar = allChars[Math.floor(Math.random() * allChars.length)];
-                        if (!optionsSet.has(randomChar) && !template.includes(randomChar)) { 
-                            optionsSet.add(randomChar);
-                        }
-                    }
-                    this.questions.push({ soal, jawaban, contoh: template, options: shuffle(Array.from(optionsSet)) });
-                }
-            }
-            
-            startNewRound() {
-                this.isBreak = false;
-                this.timeLeft = ROUND_DURATION_SECONDS;
-                this.roundStats = { correct: 0, incorrect: 0 };
-                this.currentQuestionIndex = 0;
-                this.generateQuestionsForRound(this.currentRound);
-                this.onBreakEnd(); 
-                this.startRoundTimer();
-            }
-            
-            startBreak() {
-                this.isBreak = true;
-                this.breakTimeLeft = BREAK_DURATION_SECONDS;
-                this.onBreakStart(this.breakTimeLeft); 
-                this.breakTimerId = setInterval(() => {
-                    this.breakTimeLeft--;
-                    this.onBreakStart(this.breakTimeLeft); 
-                    if (this.breakTimeLeft <= 0) {
-                        clearInterval(this.breakTimerId);
-                        this.currentRound++;
-                        this.startNewRound();
-                    }
-                }, 1000);
-            }
-
-            startTest() {
-                this.isActive = true;
-                this.allRoundResults = [];
-                this.currentRound = 0;
-                this.startNewRound();
-            }
-            
-            startRoundTimer() {
-                this.roundTimerId = setInterval(() => {
-                    this.timeLeft--;
-                    this.onUpdate({ 
-                        timeLeft: this.timeLeft,
-                        currentRound: this.currentRound,
-                        currentQuestion: this.questions[this.currentQuestionIndex] 
-                    });
-                    if (this.timeLeft <= 0) {
-                        this.endRound();
-                    }
-                }, 1000);
-            }
-            
-            stopTimers() {
-                clearInterval(this.roundTimerId);
-                clearInterval(this.breakTimerId);
-                this.roundTimerId = null;
-                this.breakTimerId = null;
-            }
-
-            endRound() {
-                this.stopTimers();
-                const newResult = {
-                    round: this.currentRound + 1,
-                    answered: this.roundStats.correct + this.roundStats.incorrect,
-                    correct: this.roundStats.correct,
-                    incorrect: this.roundStats.incorrect,
-                };
-                this.allRoundResults.push(newResult);
-
-                if (this.currentRound + 1 >= TOTAL_ROUNDS) {
-                    this.endTestManually(); 
-                } else {
-                    this.startBreak();
-                }
-            }
-
-            endTestManually() {
-                this.stopTimers();
-                this.isActive = false;
-
-                const lastRoundResult = this.allRoundResults.find(r => r.round === this.currentRound + 1);
-                if (!lastRoundResult) { 
-                    const finalResult = {
-                        round: this.currentRound + 1,
-                        answered: this.roundStats.correct + this.roundStats.incorrect,
-                        correct: this.roundStats.correct,
-                        incorrect: this.roundStats.incorrect,
-                    };
-                    this.allRoundResults.push(finalResult);
-                }
+        <div class="preview-box">
+            <div style="text-align:center;">
+                <b style="color:#0f172a; font-size:18px;">Sesuaikan Ukuran Layar Anda!</b><br>
+                <span style="font-size:13px; color:#555;">Geser tombol di bawah agar ukuran soal dan tombol pas di layar HP/PC Anda tanpa perlu <i>zoom</i> manual saat ujian berjalan.</span>
                 
-                this.onFinish(this.allRoundResults);
-            }
+                <input type="range" id="uiScaleSlider" min="5" max="24" step="1" value="14" oninput="updatePreviewSize(this.value)">
+                <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Ukuran Visual: <span id="scale-indicator">14</span></div>
+            </div>
+            
+            <div id="preview-area" class="dynamic-wrapper" style="background:white; padding:15px; border-radius:8px; border:1px solid #ccc;">
+                <table class="sandi-table">
+                    <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+                    <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
+                </table>
+                <div class="soal-kecermatan">5 1 7 2</div>
+                <div class="ans-group">
+                    <button class="btn-ans">A</button><button class="btn-ans">B</button><button class="btn-ans">C</button><button class="btn-ans">D</button><button class="btn-ans">E</button>
+                </div>
+            </div>
+        </div>
 
-            handleAnswer(selectedAnswer) {
-                if (this.isBreak || !this.isActive) return;
+        <button class="btn btn-success" onclick="startNewSession()" style="font-size: 18px; padding: 16px;">SAYA PAHAM & UKURAN SUDAH PAS<br>MULAI UJIAN SEKARANG</button>
+        <button class="btn btn-danger" onclick="switchScreen('screen-setup')">Kembali</button>
+    </div>
 
-                const currentQuestion = this.questions[this.currentQuestionIndex];
-                if (selectedAnswer.toUpperCase() === currentQuestion.jawaban.toUpperCase()) {
-                    this.roundStats.correct++;
-                } else {
-                    this.roundStats.incorrect++;
-                }
+    <div id="screen-break" class="screen">
+        <div class="break-screen">
+            <h2>Fokus...</h2>
+            <p>Ronde <span id="next-round-num" style="font-weight:bold; color:#0f172a; font-size:24px;"></span> akan segera dimulai.</p>
+            <div class="break-timer" id="break-timer">3</div>
+        </div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="header-info">
+            <div>Ronde: <span id="ui-round">1</span> / 10</div>
+            <div>Menjawab: <span id="ui-answered">0</span></div>
+            <div class="timer-text">Waktu: <span id="ui-timer">60</span>s</div>
+        </div>
+        
+        <div id="game-area" class="dynamic-wrapper">
+            <table class="sandi-table">
+                <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+                <tr id="ui-sandi"></tr>
+            </table>
+            <div class="soal-kecermatan" id="ui-soal"></div>
+            <div class="ans-group">
+                <button class="btn-ans" onclick="answer('A')">A</button>
+                <button class="btn-ans" onclick="answer('B')">B</button>
+                <button class="btn-ans" onclick="answer('C')">C</button>
+                <button class="btn-ans" onclick="answer('D')">D</button>
+                <button class="btn-ans" onclick="answer('E')">E</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <div id="pdf-content">
+            
+            <div style="text-align:center; border-bottom: 2px solid #0f172a; margin-bottom: 20px; padding-bottom: 10px;">
+                <h2 style="margin:0; color:#0f172a; font-weight:900;">BINJAS PERKASA</h2>
+                <div style="font-size:16px; color:#555; font-weight:bold;">Laporan Asesmen Tes Kecermatan Polri</div>
+            </div>
+            
+            <div class="result-box">
+                <table style="width:100%; font-size:16px; margin-bottom:15px;">
+                    <tr><td width="30%"><b>Nama Peserta</b></td><td>: <span id="res-name"></span></td></tr>
+                    <tr><td><b>Jenis Sandi</b></td><td>: <span id="res-type"></span></td></tr>
+                    <tr><td><b>Waktu Selesai</b></td><td>: <span id="res-date"></span></td></tr>
+                </table>
                 
-                if (this.currentQuestionIndex >= this.questions.length - 1) {
-                    this.endRound();
-                } else {
-                    this.currentQuestionIndex++;
-                    this.onUpdate({ 
-                        timeLeft: this.timeLeft,
-                        currentRound: this.currentRound,
-                        currentQuestion: this.questions[this.currentQuestionIndex] 
-                    });
-                }
+                <div style="text-align: center; border-top: 1px dashed #ccc; padding-top: 15px;">
+                    <div style="font-size: 18px; color: #555; font-weight:bold;">KEPUTUSAN KELULUSAN</div>
+                    <div class="status-badge" id="res-status-badge"></div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3 style="margin-top:0; color:#0f172a; border-left:4px solid #dc2626; padding-left:10px;">Analisis Kinerja & Ketelitian</h3>
+                <ul id="res-analysis" style="font-size: 15px; line-height: 1.6;"></ul>
+            </div>
+
+            <div class="result-box">
+                <h3 style="margin-top:0; color:#0f172a; border-left:4px solid #dc2626; padding-left:10px;">Grafik Konsistensi Psikomotorik</h3>
+                <div class="chart-container"><canvas id="cerChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;">
+            <button class="btn btn-success" onclick="downloadPDF()">Cetak Rapor (PDF)</button>
+            <button class="btn btn-primary" onclick="clearSessionAndReload()">Selesai & Ulangi Latihan</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const TOTAL_ROUNDS = 10;
+    const TIME_PER_ROUND = 60;
+    const CACHE_KEY = "binjasPerkasaSession";
+    const SESSION_EXPIRY = 60 * 60 * 1000; 
+
+    const arrAngka = ['0','1','2','3','4','5','6','7','8','9'];
+    const arrHuruf = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z']; 
+    const arrSimbol = [
+        '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '-', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', "'", '<', '>', ',', '.', '?', '/',
+        '▲', '△', '▼', '▽', '◀', '◁', '▶', '▷', '■', '□', '▣', '▤', '▥', '▦', '▧', '▨', '▩', '●', '○', '◐', '◑', '◒', '◓', '◔', '◕', '⊕', '⊗', '◆', '◇', '◈', '★', '☆', '✡', '✦', '✧',
+        '←', '↑', '→', '↓', '↔', '↕', '↖', '↗', '↘', '↙', '↚', '↛', '↜', '↝',
+        '±', '×', '÷', '≠', '≈', '≤', '≥', '∞', '√', '∑', '∫', 'µ', 'α', 'β', 'γ', 'δ', 'π', 'Ω'
+    ];
+
+    let state = {
+        isActive: false, name: "", type: "", uiScale: 14, 
+        startTime: 0, currentRound: 1, timeLeft: TIME_PER_ROUND,
+        stats: [], currentSandi: [], correctAnswer: ""
+    };
+
+    let timerInterval, breakInterval, answeredThisRound = 0;
+
+    window.onload = function() { checkSession(); };
+
+    function checkSession() {
+        let saved = localStorage.getItem(CACHE_KEY);
+        if (saved) {
+            let parsed = JSON.parse(saved);
+            if (Date.now() - parsed.startTime < SESSION_EXPIRY && parsed.isActive) {
+                state = parsed;
+                document.getElementById('resume-notif').style.display = 'block';
+                document.getElementById('inputName').value = state.name;
+                document.getElementById('inputType').value = state.type;
+                
+                document.getElementById('uiScaleSlider').value = state.uiScale;
+                updatePreviewSize(state.uiScale);
+
+                let btnLanjut = document.querySelector('#screen-setup .btn-primary');
+                btnLanjut.innerText = "Lanjutkan Sesi Sebelumnya";
+                btnLanjut.onclick = resumeSession;
+            } else {
+                localStorage.removeItem(CACHE_KEY);
             }
         }
+    }
 
-        // =================================================================================
-        // TEMPLATE HTML
-        // =================================================================================
-        const renderWelcomeScreenHTML = () => `
-            <div class="text-center animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang!</h2>
-                <p class="text-slate-600 mb-6">Silakan masukkan nama lengkap Anda untuk memulai tes.</p>
-                <form id="name-form" class="flex flex-col items-center gap-4">
-                    <input id="name-input" type="text" placeholder="Nama Lengkap" class="w-full max-w-sm px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition" required />
-                    <button type="submit" class="w-full max-w-sm bg-slate-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105">
-                        Mulai Tes
-                    </button>
-                </form>
-            </div>
-        `;
+    function saveSession() { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); }
+    function clearSessionAndReload() { localStorage.removeItem(CACHE_KEY); location.reload(); }
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+        document.getElementById(id).classList.add('active-screen');
+    }
 
-        const renderInstructionScreenHTML = (playerName) => {
-            const ruleItem = (icon, text) => `
-                <li class="flex items-center gap-4 p-3 bg-slate-100 rounded-lg">
-                    <div class="flex-shrink-0 text-slate-500">${icon}</div>
-                    <span class="text-slate-700">${text}</span>
-                </li>
-            `;
-            // Helper function to render a single example question block for instructions
-            const renderExampleQuestionBlock = (contoh, soal, jawaban, options) => {
-                return `
-                    <div class="space-y-4 p-4 bg-white rounded-lg border-2 border-slate-300 text-center">
-                        <div>
-                            <p class="font-bold text-red-600">CONTOH LENGKAP</p>
-                            <!-- Ukuran teks Contoh Lengkap diperkecil dan disamakan -->
-                            <div class="mt-1 p-2 bg-white border-2 border-slate-800 text-2xl md:text-3xl font-mono tracking-[0.5em] inline-block rounded-lg shadow-md">${contoh}</div>
-                        </div>
-                        <div>
-                            <p class="font-bold text-orange-500">SOAL</p>
-                            <!-- Ukuran teks Soal diperkecil dan disamakan -->
-                            <div class="mt-1 p-2 bg-white border-2 border-slate-800 text-2xl md:text-3xl font-mono tracking-[0.5em] inline-block rounded-lg shadow-md">${soal}</div>
-                        </div>
-                        <div class="w-full flex justify-center flex-wrap gap-3 pt-4">
-                            ${options.map(option => `
-                                <!-- Ukuran tombol dan teks opsi diperkecil dan disamakan -->
-                                <button class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl font-bold border-2 border-slate-800 rounded-lg bg-white ${option === jawaban ? 'bg-green-100 border-green-500' : ''} shadow-lg pointer-events-none">${option}</button>
-                            `).join('')}
-                        </div>
-                        <p class="text-lg text-slate-700 mt-4">Karakter yang hilang adalah: <span class="font-bold text-green-600">${jawaban}</span></p>
-                        <p class="text-sm text-slate-600 italic">Karena '${jawaban}' adalah karakter yang ada pada 'CONTOH LENGKAP' namun tidak ada pada 'SOAL'.</p>
-                    </div>
-                `;
-            };
+    function updatePreviewSize(val) {
+        document.getElementById('scale-indicator').innerText = val;
+        document.getElementById('preview-area').style.fontSize = val + 'px';
+        state.uiScale = val; 
+    }
 
-            return `
-            <div class="text-center animate-fade-in flex flex-col items-center">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
-                    Instruksi Tes Kecermatan, <span class="text-yellow-500">${playerName}</span>
-                </h2>
-                <p class="text-slate-600 mb-6 font-semibold">Harap baca instruksi berikut dengan seksama:</p>
-                <div class="text-left w-full space-y-4 mb-8 bg-slate-100 p-6 rounded-lg shadow-inner">
-                    <p class="font-bold text-slate-800">Tujuan Tes:</p>
-                    <ul class="list-disc list-inside text-slate-700 space-y-2 ml-4">
-                        <li>Mengukur kecepatan dan ketelitian Anda dalam memproses informasi visual.</li>
-                    </ul>
+    function goToGuide() {
+        let name = document.getElementById('inputName').value.trim();
+        if(!name) { alert("Nama lengkap wajib diisi!"); return; }
+        switchScreen('screen-guide');
+    }
 
-                    <p class="font-bold text-slate-800">Cara Mengerjakan:</p>
-                    <ul class="list-decimal list-inside text-slate-700 space-y-2 ml-4">
-                        <li>Setiap soal akan menampilkan sebuah <strong class="font-bold text-red-600">'CONTOH LENGKAP'</strong> (serangkaian karakter) dan sebuah <strong class="font-bold text-orange-500">'SOAL'</strong> (serangkaian karakter yang mirip dengan contoh, namun ada satu karakter yang hilang).</li>
-                        <li>Tugas Anda adalah menemukan <strong class="font-bold text-green-600">karakter yang hilang</strong> dari 'CONTOH LENGKAP' agar 'SOAL' menjadi lengkap kembali.</li>
-                        <li>Pilih jawaban (karakter yang hilang) dari 5 opsi yang tersedia di bagian bawah.</li>
-                        <li>Jawablah <strong class="font-bold">secepat dan seteliti mungkin</strong>.</li>
-                    </ul>
+    function startNewSession() {
+        state.isActive = true;
+        state.name = document.getElementById('inputName').value.trim();
+        state.type = document.getElementById('inputType').value;
+        state.startTime = Date.now();
+        state.currentRound = 1;
+        state.timeLeft = TIME_PER_ROUND;
+        state.stats = [];
+        saveSession(); applyScaleToGame(); triggerBreak(1);
+    }
 
-                    <p class="font-bold text-slate-800">Contoh Pengerjaan:</p>
-                    ${renderExampleQuestionBlock("XYZ98", "XZ98", "Y", ["K", "Y", "P", "Q", "Z"])}
+    function resumeSession() { applyScaleToGame(); triggerBreak(state.currentRound); }
+    function applyScaleToGame() { document.getElementById('game-area').style.fontSize = state.uiScale + 'px'; }
 
-                    <p class="font-bold text-slate-800">Struktur Tes:</p>
-                    <ul class="list-disc list-inside text-slate-700 space-y-2 ml-4">
-                        <li>Tes terdiri dari <strong class="font-bold text-slate-900">${TOTAL_ROUNDS} Ronde</strong>.</li>
-                        <li>Setiap ronde berlangsung selama <strong class="font-bold text-slate-900">${ROUND_DURATION_SECONDS} detik</strong>.</li>
-                        <li>Akan ada istirahat singkat <strong class="font-bold text-slate-900">${BREAK_DURATION_SECONDS} detik</strong> antar ronde.</li>
-                    </ul>
-                    <p class="text-slate-700 mt-4 italic">Perhatikan waktu dan pertahankan konsentrasi. Selamat mengerjakan!</p>
-                </div>
-                <button id="begin-test-btn" class="w-full max-w-sm bg-slate-800 text-white font-bold py-4 px-6 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105 shadow-lg">
-                    SAYA SIAP, MULAI TES
-                </button>
-            </div>
-            `;
-        };
+    function triggerBreak(roundNum) {
+        switchScreen('screen-break');
+        document.getElementById('next-round-num').innerText = roundNum;
+        let bTime = 3; document.getElementById('break-timer').innerText = bTime;
+        breakInterval = setInterval(() => {
+            bTime--; document.getElementById('break-timer').innerText = bTime;
+            if (bTime <= 0) { clearInterval(breakInterval); startRound(); }
+        }, 1000);
+    }
 
-        const renderPreTestCountdownScreenHTML = (timeLeft) => `
-            <div class="text-center p-8 bg-blue-100 border-4 border-dashed border-blue-400 rounded-xl animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800">PERHATIAN!</h2>
-                <p class="text-slate-600 mt-2 mb-4">Tes akan dimulai dalam:</p>
-                <div id="pre-test-countdown-display" class="text-6xl font-bold text-slate-900 my-4">${timeLeft}</div>
-                <svg class="animate-spin h-8 w-8 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
+    function startRound() {
+        switchScreen('screen-game');
+        document.getElementById('ui-round').innerText = state.currentRound;
+        if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
+        
+        answeredThisRound = state.stats[state.currentRound - 1].benar + state.stats[state.currentRound - 1].salah;
+        document.getElementById('ui-answered').innerText = answeredThisRound;
+        document.getElementById('ui-timer').innerText = state.timeLeft;
+
+        generateSandi(); generateSoal();
+
+        timerInterval = setInterval(() => {
+            state.timeLeft--;
+            document.getElementById('ui-timer').innerText = state.timeLeft;
+            if(state.timeLeft % 5 === 0) saveSession(); 
+            if (state.timeLeft <= 0) endRound();
+        }, 1000);
+    }
+
+    function endRound() {
+        clearInterval(timerInterval); state.currentRound++; state.timeLeft = TIME_PER_ROUND; saveSession();
+        if (state.currentRound > TOTAL_ROUNDS) finishGame(); else triggerBreak(state.currentRound);
+    }
+
+    function getCharSet() {
+        if (state.type === 'angka') return [...arrAngka];
+        if (state.type === 'huruf') return [...arrHuruf];
+        if (state.type === 'simbol') return [...arrSimbol];
+        return [...arrAngka, ...arrHuruf, ...arrSimbol]; 
+    }
+
+    function generateSandi() {
+        state.currentSandi = []; let pool = getCharSet();
+        for (let i = 0; i < 5; i++) {
+            let r = Math.floor(Math.random() * pool.length);
+            state.currentSandi.push(pool[r]); pool.splice(r, 1);
+        }
+        let html = ""; for (let i = 0; i < 5; i++) html += `<td>${state.currentSandi[i]}</td>`;
+        document.getElementById('ui-sandi').innerHTML = html;
+    }
+
+    function generateSoal() {
+        let missing = Math.floor(Math.random() * 5); state.correctAnswer = ['A', 'B', 'C', 'D', 'E'][missing];
+        let arr = []; for (let i = 0; i < 5; i++) if (i !== missing) arr.push(state.currentSandi[i]);
+        arr.sort(() => Math.random() - 0.5); document.getElementById('ui-soal').innerText = arr.join(" ");
+    }
+
+    function answer(btn) {
+        if(btn === state.correctAnswer) state.stats[state.currentRound - 1].benar++;
+        else state.stats[state.currentRound - 1].salah++;
+        answeredThisRound++; document.getElementById('ui-answered').innerText = answeredThisRound; generateSoal(); 
+    }
+
+    function finishGame() {
+        state.isActive = false; saveSession(); switchScreen('screen-result');
+        let typeDict = { 'angka': 'Angka Saja', 'huruf': 'Huruf Saja', 'simbol': 'Simbol Ekstrem', 'campuran': 'Campuran Lengkap' };
+
+        document.getElementById('res-name').innerText = state.name.toUpperCase();
+        document.getElementById('res-type').innerText = typeDict[state.type];
+        document.getElementById('res-date').innerText = new Date().toLocaleString('id-ID');
+
+        let totalBenar = 0, totalSalah = 0, minB = 9999, maxB = 0;
+        let labels = [], dataTotal = [], dataBenar = [], dataSalah = [];
+
+        state.stats.forEach((s, idx) => {
+            let tot = s.benar + s.salah;
+            totalBenar += s.benar; totalSalah += s.salah;
+            if (s.benar < minB) minB = s.benar; if (s.benar > maxB) maxB = s.benar;
+            labels.push(`Kol-${idx+1}`); dataTotal.push(tot); dataBenar.push(s.benar); dataSalah.push(s.salah);
+        });
+
+        let avgBenar = totalBenar / TOTAL_ROUNDS; let selisih = maxB - minB;
+        let totalSemua = totalBenar + totalSalah; let akurasi = totalSemua > 0 ? (totalBenar / totalSemua) * 100 : 0;
+
+        let isMS = true; let alasanTMS = [];
+        if (avgBenar < 30) { isMS = false; alasanTMS.push("Kecepatan rata-rata di bawah standar (Minimal 30)."); }
+        if (akurasi < 80) { isMS = false; alasanTMS.push("Akurasi ketelitian di bawah 80%."); }
+        if (selisih > 10) { isMS = false; alasanTMS.push("Ketahanan mental tidak stabil (Grafik selisih > 10)."); }
+
+        let badge = document.getElementById('res-status-badge');
+        if (isMS) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; } 
+        else { badge.innerText = "TIDAK MEMENUHI SYARAT (TMS)"; badge.className = "status-badge tms"; }
+
+        let htmlAnalysis = `
+            <li><b>Total Karakter Dikerjakan:</b> ${totalSemua} Soal</li>
+            <li><b>Rata-rata Kecepatan Kerja:</b> <span style="color:#0f172a; font-weight:bold;">${avgBenar.toFixed(1)} Benar / Kolom</span></li>
+            <li><b>Akurasi Ketelitian:</b> ${akurasi.toFixed(1)}% (Jumlah Error: ${totalSalah})</li>
+            <li><b>Stabilitas Pengerjaan:</b> ${selisih <= 4 ? 'Sangat Stabil' : selisih <= 8 ? 'Cukup Stabil' : 'Tidak Stabil'} (Selisih Min-Max: ${selisih})</li>
         `;
         
-        const renderTestScreenHTML = (playerName) => `
-            <div class="flex flex-col items-center">
-              <div class="w-full grid grid-cols-2 sm:grid-cols-3 gap-4 text-center mb-6 p-4 bg-slate-100 rounded-lg shadow-inner">
-                <div class="sm:col-span-1 col-span-2 sm:text-left">
-                  <p class="text-sm font-semibold text-slate-500">Peserta</p>
-                  <p class="text-lg font-bold text-slate-800 truncate">${playerName}</p>
-                </div>
-                <div>
-                  <p class="text-sm font-semibold text-slate-500">Ronde</p>
-                  <p id="round-info" class="text-lg font-bold text-slate-800">1 / ${TOTAL_ROUNDS}</p>
-                </div>
-                <div>
-                  <p class="text-sm font-semibold text-slate-500">Waktu</p>
-                  <p id="timer-info" class="text-lg font-bold text-red-600">0:00</p>
-                </div>
-              </div>
-        
-              <div id="question-content-wrapper" class="w-full flex flex-col items-center space-y-6">
-                <div id="example-container">
-                    <p class="text-center font-bold text-red-600">CONTOH LENGKAP</p>
-                    <!-- Ukuran teks Contoh Lengkap diperbesar dan disamakan -->
-                    <div id="example-text" class="mt-1 p-4 bg-white border-2 border-slate-800 text-4xl md:text-5xl font-mono tracking-[0.5em] text-center rounded-lg shadow-md"></div>
-                </div>
-                <div id="question-container">
-                    <p class="text-center font-bold text-orange-500">SOAL</p>
-                    <!-- Ukuran teks Soal diperbesar dan disamakan -->
-                    <div id="question-text" class="mt-1 p-4 bg-white border-2 border-slate-800 text-4xl md:text-5xl font-mono tracking-[0.5em] text-center rounded-lg shadow-md"></div>
-                </div>
-                <div id="options-container" class="w-full flex justify-center flex-wrap gap-3 pt-4">
-                    <!-- Opsi jawaban akan dirender di sini -->
-                </div>
-                <div id="round-complete-message" class="hidden text-center p-8">
-                    <h2 class="text-2xl font-bold text-slate-800">Ronde Selesai!</h2>
-                    <p class="text-slate-600 mt-2">Anda telah menyelesaikan semua soal di ronde ini.</p>
-                </div>
-              </div>
-            </div>
-        `;
+        if (!isMS) {
+            htmlAnalysis += `<li style="color:#dc2626; margin-top:10px;"><b>Catatan Evaluasi (TMS):</b> Anda dinyatakan belum memenuhi syarat dikarenakan:<ul>`;
+            alasanTMS.forEach(msg => htmlAnalysis += `<li>${msg}</li>`); htmlAnalysis += `</ul></li>`;
+        } else {
+            htmlAnalysis += `<li style="color:#16a34a; margin-top:10px; font-weight:bold;">Catatan Evaluasi: Performa psikomotorik Anda sangat mumpuni. Pertahankan!</li>`;
+        }
+        document.getElementById('res-analysis').innerHTML = htmlAnalysis;
 
-        const renderBreakScreenHTML = (timeLeft) => `
-            <div class="text-center p-8 bg-yellow-100 border-4 border-dashed border-yellow-400 rounded-xl animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800">ISTIRAHAT</h2>
-                <p class="text-slate-600 mt-2">Ronde berikutnya akan dimulai dalam:</p>
-                <div id="break-countdown-display" class="text-6xl font-bold text-slate-900 my-4">${timeLeft}</div>
-                <svg class="animate-spin h-8 w-8 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-        `;
+        new Chart(document.getElementById('cerChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Total Dijawab', data: dataTotal, borderColor: '#3b82f6', borderDash: [5,5], fill:false, tension: 0.3 },
+                    { label: 'Jawaban Benar', data: dataBenar, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.2)', borderWidth: 3, fill: true, tension: 0.3 },
+                    { label: 'Jawaban Salah', data: dataSalah, borderColor: '#dc2626', fill:false, borderWidth: 2, tension: 0.3 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'bottom' } } }
+        });
 
-        const renderResultsScreenHTML = (playerName, results) => {
-            const totalStats = results.reduce(
-                (acc, round) => {
-                    acc.answered += round.answered;
-                    acc.correct += round.correct;
-                    acc.incorrect += round.incorrect;
-                    return acc;
-                }, { answered: 0, correct: 0, incorrect: 0 }
-            );
+        localStorage.removeItem(CACHE_KEY); 
+    }
 
-            const performanceReport = analyzePerformance(results);
-            const levelColorClasses = {
-                'Sangat Cepat': 'bg-blue-100 text-blue-800', 'Cepat': 'bg-blue-100 text-blue-800',
-                'Sangat Teliti': 'bg-green-100 text-green-800', 'Teliti': 'bg-green-100 text-green-800',
-                'Sangat Baik': 'bg-purple-100 text-purple-800', 'Baik': 'bg-purple-100 text-purple-800',
-                'Sangat Stabil': 'bg-indigo-100 text-indigo-800', 'Cukup Stabil': 'bg-indigo-100 text-indigo-800',
-                'Cukup': 'bg-yellow-100 text-yellow-800', 'Cukup Teliti': 'bg-yellow-100 text-yellow-800',
-                'Perlu Ditingkatkan': 'bg-red-100 text-red-800', 'Kurang Stabil': 'bg-red-100 text-red-800',
-                'N/A': 'bg-slate-100 text-slate-800',
-            };
-            const aspectCard = (title, aspect, icon) => `
-                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-start gap-4">
-                  <div class="flex-shrink-0 text-slate-500">${icon}</div>
-                  <div>
-                    <h4 class="font-bold text-slate-700">${title}</h4>
-                    <span class="inline-block px-2 py-0.5 text-sm font-semibold rounded-full mt-1 mb-2 ${levelColorClasses[aspect.level] || 'bg-slate-100 text-slate-800'}">
-                      ${aspect.level}
-                    </span>
-                    <p class="text-slate-600 text-sm">${aspect.description}</p>
-                  </div>
-                </div>
-            `;
-            
-            const maxAnswered = Math.max(...results.map(r => r.answered), 1); 
-            const numYAxisLabels = 5; 
-            let yAxisLabelsHtml = '';
-            for (let i = numYAxisLabels - 1; i >= 0; i--) { 
-                const value = Math.round(maxAnswered * (i / (numYAxisLabels - 1)));
-                yAxisLabelsHtml += `<span class="y-axis-label">${value}</span>`;
-            }
-
-            const chartHTML = `
-                <div class="chart-container-with-yaxis" style="display: flex; align-items: flex-end; width: 100%; height: 300px;">
-                    <div class="y-axis-labels-container">
-                         ${yAxisLabelsHtml}
-                    </div>
-                    <div class="w-full h-full bg-slate-50/50 p-4 rounded-lg flex gap-2 border border-slate-200 relative overflow-hidden" style="flex-grow: 1;">
-                        ${results.map(r => {
-                            const currentRoundBarHeightPercent = (r.answered / maxAnswered) * 100;
-                            
-                            const correctPortionPercent = r.answered > 0 ? (r.correct / r.answered) * 100 : 0;
-                            const incorrectPortionPercent = r.answered > 0 ? (r.incorrect / r.answered) * 100 : 0;
-
-                            return `
-                                <div class="flex-1 flex flex-col items-center justify-end">
-                                    <div class="chart-bar-container w-full h-full flex flex-col justify-end">
-                                        <div class="chart-bar" 
-                                             title="Benar: ${r.correct}\nSalah: ${r.incorrect}"
-                                             style="height: ${currentRoundBarHeightPercent}%; 
-                                                    min-height: ${r.answered > 0 ? '5px' : '2px'};">
-                                            <div class="bar-incorrect" 
-                                                 style="height: ${incorrectPortionPercent}%; 
-                                                        min-height: ${r.incorrect > 0 && incorrectPortionPercent > 0 ? '1px' : '0px'};"></div>
-                                            <div class="bar-correct" 
-                                                 style="height: ${correctPortionPercent}%; 
-                                                        min-height: ${r.correct > 0 && correctPortionPercent > 0 ? '1px' : '0px'};"></div>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-500 mt-2">R${r.round}</span>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-                <div class="flex justify-center items-center gap-6 mt-4 text-sm">
-                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-green-600"></div><span>Benar</span></div>
-                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-red-600"></div><span>Salah</span></div>
-                </div>
-            `;
-
-            return `
-            <div class="animate-fade-in">
-                <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2">Hasil Tes</h2>
-                <p class="text-center text-slate-600 text-lg mb-6">Peserta: <span class="font-bold">${playerName}</span></p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
-                    <div class="bg-slate-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-slate-500">Total Jawaban</p><p class="text-3xl font-bold text-slate-800">${totalStats.answered}</p></div>
-                    <div class="bg-green-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-green-700">Jawaban Benar</p><p class="text-3xl font-bold text-green-600">${totalStats.correct}</p></div>
-                    <div class="bg-red-100 p-4 rounded-lg shadow-inner"><p class="text-sm font-semibold text-red-700">Jawaban Salah</p><p class="text-3xl font-bold text-red-600">${totalStats.incorrect}</p></div>
-                </div>
-                
-                <div class="my-8">
-                   <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Analisis Kinerja Psikologis</h3>
-                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${aspectCard('Kecepatan (Speed)', performanceReport.speed, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>')}
-                        ${aspectCard('Ketelitian (Accuracy)', performanceReport.accuracy, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>')}
-                        ${aspectCard('Daya Tahan (Endurance)', performanceReport.endurance, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.69v4.99" /></svg>')}
-                        ${aspectCard('Konsistensi (Consistency)', performanceReport.consistency, '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h12M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-12a2.25 2.25 0 01-2.25-2.25V3z" /></svg>')}
-                   </div>
-                </div>
-
-                <div class="mb-8">
-                  <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Grafik Hasil per Ronde</h3>
-                  ${chartHTML}
-                </div>
-
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-slate-700 text-center mb-4">Detail per Ronde</h3>
-                    <div class="overflow-x-auto rounded-lg border border-slate-200"><table class="min-w-full divide-y divide-slate-200 text-center"><thead class="bg-slate-100"><tr><th class="px-6 py-3 text-xs font-medium text-slate-600 uppercase tracking-wider">Ronde</th><th class="px-6 py-3 text-xs font-medium text-slate-600 uppercase tracking-wider">Jumlah</th><th class="px-6 py-3 text-xs font-medium text-green-700 uppercase tracking-wider">Benar</th><th class="px-6 py-3 text-xs font-medium text-red-700 uppercase tracking-wider">Salah</th></tr></thead><tbody class="bg-white divide-y divide-slate-200">
-                        ${results.map(r => `<tr><td class="px-6 py-4 whitespace-nowrap font-medium text-slate-800">${r.round}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-slate-800">${r.answered}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-green-600">${r.correct}</td><td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">${r.incorrect}</td></tr>`).join('')}
-                    </tbody></table></div>
-                </div>
-                
-                <div class="text-center">
-                    <button id="restart-btn" class="bg-slate-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-transform transform hover:scale-105">
-                        Coba Lagi
-                    </button>
-                </div>
-            </div>
-            `;
+    function downloadPDF() {
+        document.querySelector('.no-print').style.display = 'none'; 
+        const element = document.getElementById('pdf-content');
+        const opt = {
+            margin:       0.5,
+            filename:     `Hasil_Kecermatan_BinjasPerkasa_${state.name.replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.querySelector('.no-print').style.display = 'flex'; 
+        });
+    }
+</script>
 
-        // =================================================================================
-        // LOGIKA & STATE APLIKASI
-        // =================================================================================
-        let gameState = 'welcome'; 
-        let playerName = '';
-        let finalResults = [];
-        let testLogicInstance = null; 
-        let lastRenderedQuestionSoal = null; 
-        let breakCountdownElement = null; 
-        let optionsContainerClickHandler = null; 
-
-        let preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
-        let preTestCountdownTimerId = null; 
-        let preTestCountdownDisplayElement = null; 
-
-        const appContainer = document.getElementById('app-container');
-
-        const handleStartTest = (name) => {
-            playerName = name;
-            gameState = 'instructions'; 
-            renderApp();
-        };
-
-        const handleBeginTest = () => {
-            gameState = 'pre-test-countdown';
-            finalResults = []; 
-            renderApp(); 
-            startPreTestCountdown(); 
-        };
-
-        const startPreTestCountdown = () => {
-            preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
-
-            preTestCountdownTimerId = setInterval(() => {
-                preTestCountdownTimeLeft--;
-                if (preTestCountdownDisplayElement) {
-                    preTestCountdownDisplayElement.textContent = preTestCountdownTimeLeft;
-                }
-
-                if (preTestCountdownTimeLeft <= 0) {
-                    clearInterval(preTestCountdownTimerId);
-                    preTestCountdownTimerId = null; 
-                    preTestCountdownDisplayElement = null; 
-                    
-                    gameState = 'test'; 
-                    testLogicInstance = new TestLogic(onUpdate, handleFinishTest, onBreakStart, onBreakEnd);
-                    testLogicInstance.startTest(); 
-                }
-            }, 1000);
-        };
-
-        const handleFinishTest = (results) => {
-            finalResults = results;
-            gameState = 'results';
-            if (testLogicInstance) {
-                testLogicInstance.stopTimers();
-            }
-            if (preTestCountdownTimerId) { 
-                clearInterval(preTestCountdownTimerId);
-                preTestCountdownTimerId = null;
-            }
-            testLogicInstance = null; 
-            renderApp();
-        };
-
-        const handleRestart = () => {
-            playerName = '';
-            finalResults = [];
-            gameState = 'welcome';
-            if (testLogicInstance) {
-                testLogicInstance.stopTimers();
-            }
-            if (preTestCountdownTimerId) { 
-                clearInterval(preTestCountdownTimerId);
-                preTestCountdownTimerId = null;
-            }
-            testLogicInstance = null; 
-            lastRenderedQuestionSoal = null; 
-            breakCountdownElement = null; 
-            optionsContainerClickHandler = null; 
-            preTestCountdownTimeLeft = PRE_TEST_COUNTDOWN_SECONDS; 
-            renderApp();
-        };
-
-        const onUpdate = ({ timeLeft, currentRound, currentQuestion }) => {
-            const timerInfoElement = document.getElementById('timer-info');
-            const roundInfoElement = document.getElementById('round-info');
-            const exampleTextElement = document.getElementById('example-text');
-            const questionTextElement = document.getElementById('question-text');
-            const optionsContainerElement = document.getElementById('options-container');
-            const questionContentWrapper = document.getElementById('question-content-wrapper');
-            const roundCompleteMessage = document.getElementById('round-complete-message');
-
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            if (timerInfoElement) timerInfoElement.textContent = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-            if (roundInfoElement) roundInfoElement.textContent = `${currentRound + 1} / ${TOTAL_ROUNDS}`;
-
-            if (currentQuestion && currentQuestion.soal !== lastRenderedQuestionSoal) {
-                if (roundCompleteMessage) roundCompleteMessage.classList.add('hidden');
-                if (questionContentWrapper) questionContentWrapper.style.display = 'flex'; 
-
-                if (exampleTextElement) exampleTextElement.textContent = currentQuestion.contoh;
-                if (questionTextElement) questionTextElement.textContent = currentQuestion.soal;
-
-                if (optionsContainerElement) {
-                    optionsContainerElement.innerHTML = currentQuestion.options.map(option => `
-                        <button data-answer="${option}" class="option-btn w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl font-bold border-2 border-slate-800 rounded-lg bg-white hover:bg-yellow-200 transition-all duration-150 transform hover:scale-110 active:scale-100 shadow-lg">${option}</button>
-                    `).join('');
-                }
-                lastRenderedQuestionSoal = currentQuestion.soal; 
-            } else if (!currentQuestion && lastRenderedQuestionSoal !== 'round-finished') {
-                if (questionContentWrapper) questionContentWrapper.style.display = 'none'; 
-                if (roundCompleteMessage) roundCompleteMessage.classList.remove('hidden'); 
-                lastRenderedQuestionSoal = 'round-finished'; 
-            }
-        };
-
-        const onBreakStart = (timeLeft) => {
-            if (gameState !== 'break') {
-                appContainer.innerHTML = renderBreakScreenHTML(timeLeft);
-                breakCountdownElement = document.getElementById('break-countdown-display');
-                gameState = 'break'; 
-            }
-            if (breakCountdownElement) {
-                breakCountdownElement.textContent = timeLeft;
-            }
-        };
-        
-        const onBreakEnd = () => {
-            gameState = 'test'; 
-            renderApp(); 
-            lastRenderedQuestionSoal = null; 
-            breakCountdownElement = null; 
-        };
-
-        const renderApp = () => {
-            appContainer.innerHTML = ''; 
-
-            switch (gameState) {
-                case 'welcome':
-                    appContainer.innerHTML = renderWelcomeScreenHTML();
-                    document.getElementById('name-form').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const nameInput = document.getElementById('name-input');
-                        if (nameInput.value.trim()) {
-                            handleStartTest(nameInput.value.trim());
-                        }
-                    });
-                    break;
-                case 'instructions': 
-                    appContainer.innerHTML = renderInstructionScreenHTML(playerName);
-                    document.getElementById('begin-test-btn').addEventListener('click', handleBeginTest);
-                    break;
-                case 'pre-test-countdown': 
-                    appContainer.innerHTML = renderPreTestCountdownScreenHTML(preTestCountdownTimeLeft);
-                    preTestCountdownDisplayElement = document.getElementById('pre-test-countdown-display');
-                    break;
-                case 'test':
-                    appContainer.innerHTML = renderTestScreenHTML(playerName);
-
-                    const optionsContainerElement = document.getElementById('options-container');
-
-                    if (optionsContainerElement && optionsContainerClickHandler) {
-                        optionsContainerElement.removeEventListener('click', optionsContainerClickHandler);
-                    }
-
-                    optionsContainerClickHandler = (e) => {
-                        const clickedBtn = e.target.closest('.option-btn'); 
-                        if (clickedBtn && testLogicInstance) { 
-                            testLogicInstance.handleAnswer(clickedBtn.dataset.answer);
-                        }
-                    };
-
-                    if (optionsContainerElement) {
-                        optionsContainerElement.addEventListener('click', optionsContainerClickHandler);
-                    }
-
-                    const nextRoundBtn = document.getElementById('next-round-btn');
-                    const endTestBtn = document.getElementById('end-test-btn');
-                    if (nextRoundBtn) {
-                        nextRoundBtn.addEventListener('click', () => {
-                            if (testLogicInstance) testLogicInstance.endRound();
-                        });
-                    }
-                    if (endTestBtn) {
-                        endTestBtn.addEventListener('click', () => {
-                            if (testLogicInstance) testLogicInstance.endTestManually();
-                        });
-                    }
-                    
-                    if (testLogicInstance) {
-                        testLogicInstance.onUpdate({
-                            timeLeft: testLogicInstance.timeLeft,
-                            currentRound: testLogicInstance.currentRound,
-                            currentQuestion: testLogicInstance.questions[testLogicInstance.currentQuestionIndex]
-                        });
-                    }
-                    break;
-                case 'results':
-                    appContainer.innerHTML = renderResultsScreenHTML(playerName, finalResults);
-                    document.getElementById('restart-btn').addEventListener('click', handleRestart);
-                    break;
-                case 'break':
-                    break;
-            }
-        };
-
-        // =================================================================================
-        // INISIALISASI
-        // =================================================================================
-        renderApp();
-    </script>
 </body>
 </html>
