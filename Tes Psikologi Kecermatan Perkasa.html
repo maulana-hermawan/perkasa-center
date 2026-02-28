@@ -66,11 +66,12 @@
 
         .guide-box { background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; line-height: 1.6;}
         
-        /* 3. SKALA DINAMIS & WRAP SYSTEM */
+        /* 3. SKALA DINAMIS */
         .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; width: 100%; }
         .header-info { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px;}
         .timer-text { color: #fde047; }
         
+        /* TABEL SANDI */
         .sandi-table { 
             margin: 0 auto 1.5em auto; border-collapse: collapse; font-weight: bold; background: white; width: 100%; 
             table-layout: fixed; font-size: 1.8em;
@@ -78,31 +79,58 @@
         .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 10px; text-align: center; width: 20%; word-break: break-all; }
         .sandi-table th { background-color: #0f172a; color: white; font-size: 0.75em; padding: 0.4em;}
         
+        /* SOAL: Font sama dengan tabel, TIDAK WRAP */
         .soal-kecermatan { 
-            font-size: 3.5em; letter-spacing: 0.2em; text-align: center; margin: 0.5em 0; 
-            font-weight: bold; background: #f8f9fa; padding: 0.4em; border: 2px dashed #bbb; 
-            font-family: 'Courier New', Courier, monospace; word-wrap: break-word; line-height: 1.2;
+            font-size: 3.5em; 
+            text-align: center; 
+            margin: 0.5em 0; 
+            font-weight: bold; 
+            background: #f8f9fa; 
+            padding: 0.4em; 
+            border: 2px dashed #bbb; 
+            /* Font disamakan dengan tabel (Inherit dari body) */
+            font-family: inherit; 
+            line-height: 1.2;
+            display: flex;
+            justify-content: space-around; 
+            align-items: center;
+            /* Proteksi agar tetap sebaris */
+            flex-wrap: nowrap; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            width: 100%;
         }
+        .soal-kecermatan span { display: inline-block; }
         
-        /* 4. TOMBOL JAWABAN UNIFORM (SAMA RATA) */
+        /* 4. TOMBOL JAWABAN: CENTERED & BISA WRAP */
         .ans-group { 
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; 
-        }
-        @media (max-width: 500px) {
-            .ans-group { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); }
+            display: flex;
+            flex-wrap: wrap; /* Izinkan pindah baris */
+            justify-content: center; /* Tetap di tengah jika wrap */
+            gap: 10px; 
+            width: 100%; 
         }
         .btn-ans { 
-            font-size: 1.6em; padding: 15px 0; background-color: #004080; color: white; 
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; display: flex;
+            font-size: 1.6em; 
+            padding: 0.7em 0.5em; 
+            background-color: #004080; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            /* Tombol mengecil/wrap secara proporsional */
+            flex: 0 1 auto; 
+            min-width: 70px; 
+            display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
         }
         .btn-ans:active { transform: scale(0.92); background-color: #002040;}
 
-        /* Preview Slider */
-        .preview-box { background: #e8f4fd; border: 2px dashed #0f172a; padding: 20px; border-radius: 8px; margin-bottom: 20px; overflow: hidden;}
-        input[type="range"] { width: 100%; margin: 15px 0; cursor: pointer; }
+        /* Slider */
+        
 
         /* Jeda */
         .break-screen { text-align: center; padding: 50px 20px; }
@@ -124,7 +152,7 @@
 <div class="container" id="app-container">
     
     <header class="branding-header no-print">
-        <img src="perkasa-logo.png" alt="Logo" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=PM'"/>
+        <img src="logo-perkasa.png" alt="Logo" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=PM'"/>
         <div class="branding-text">
             <h1 class="branding-title">Tes Kecermatan CAT</h1>
             <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
@@ -158,25 +186,26 @@
         <div class="screen-content">
             <h2 style="margin-top:0; color:#0f172a;">Persiapan & Panduan Ujian</h2>
             <div class="guide-box">
-                <b>📚 Cara Mengerjakan:</b><br>
-                1. Perhatikan Tabel Sandi di atas (A, B, C, D, E).<br>
-                2. Cari <b>1 Karakter yang HILANG</b> pada soal di tengah.<br>
-                3. Klik tombol jawaban yang mewakili karakter hilang tersebut.<br>
-                4. Terdapat 10 Ronde, masing-masing 60 detik.
+                <b>📚 Aturan Main:</b><br>
+                1. Lihat tabel sandi di atas. Cari 1 karakter yang hilang pada soal.<br>
+                2. Tombol jawaban di bawah akan otomatis pindah baris jika ukuran diperbesar.<br>
+                3. Gunakan slider untuk menyesuaikan kenyamanan visual Anda.
             </div>
 
             <div class="preview-box">
                 <div style="text-align:center;">
-                    <b style="color:#0f172a;">Sesuaikan Ukuran Layar!</b><br>
+                    <b style="color:#0f172a;">Atur Ukuran Tombol & Soal!</b><br>
                     <input type="range" id="uiScaleSlider" min="5" max="35" step="1" value="14" oninput="updatePreviewSize(this.value)">
-                    <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Ukuran Visual: <span id="scale-indicator">14</span></div>
+                    <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Skala Visual: <span id="scale-indicator">14</span></div>
                 </div>
                 <div id="preview-area" class="dynamic-wrapper" style="background:white; padding:15px; border-radius:8px; border:1px solid #ccc;">
                     <table class="sandi-table">
                         <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
                         <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
                     </table>
-                    <div class="soal-kecermatan">5 1 7 2</div>
+                    <div class="soal-kecermatan" id="preview-soal">
+                        <span>5</span><span>9</span><span>1</span><span>7</span>
+                    </div>
                     <div class="ans-group">
                         <button class="btn-ans">A</button><button class="btn-ans">B</button><button class="btn-ans">C</button><button class="btn-ans">D</button><button class="btn-ans">E</button>
                     </div>
@@ -282,7 +311,7 @@
 
     function updatePreviewSize(val) {
         document.getElementById('scale-indicator').innerText = val;
-        document.getElementById('preview-area').style.fontSize = val + 'px';
+        document.querySelectorAll('.dynamic-wrapper').forEach(el => { el.style.fontSize = val + 'px'; });
         state.uiScale = val; 
     }
 
@@ -292,7 +321,9 @@
         switchScreen('screen-guide'); 
     }
 
-    function applyScaleToGame() { document.getElementById('game-area').style.fontSize = state.uiScale + 'px'; }
+    function applyScaleToGame() { 
+        document.querySelectorAll('.dynamic-wrapper').forEach(el => { el.style.fontSize = state.uiScale + 'px'; });
+    }
 
     function startNewSession() {
         state.isActive = true;
@@ -304,15 +335,12 @@
         triggerBreak(1);
     }
 
-    // --- FIX COUNTDOWN ---
     function triggerBreak(roundNum) {
-        clearInterval(breakInterval); // Bersihkan interval sebelumnya
+        clearInterval(breakInterval);
         switchScreen('screen-break');
         document.getElementById('next-round-num').innerText = roundNum;
-        
         let bTime = 3;
         document.getElementById('break-timer').innerText = bTime;
-        
         breakInterval = setInterval(() => {
             bTime--;
             document.getElementById('break-timer').innerText = bTime;
@@ -326,15 +354,11 @@
     function startRound() {
         clearInterval(timerInterval);
         switchScreen('screen-game');
-        
         if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
-        
         document.getElementById('ui-round').innerText = state.currentRound;
         document.getElementById('ui-timer').innerText = state.timeLeft;
-
         generateSandi();
         generateSoal();
-
         timerInterval = setInterval(() => {
             state.timeLeft--;
             document.getElementById('ui-timer').innerText = state.timeLeft;
@@ -348,7 +372,6 @@
         state.currentRound++;
         state.timeLeft = TIME_PER_ROUND;
         saveSession();
-
         if (state.currentRound > TOTAL_ROUNDS) finishGame();
         else triggerBreak(state.currentRound);
     }
@@ -379,7 +402,7 @@
         let arr = [];
         for (let i = 0; i < 5; i++) if (i !== missing) arr.push(state.currentSandi[i]);
         arr.sort(() => Math.random() - 0.5);
-        document.getElementById('ui-soal').innerText = arr.join(" ");
+        document.getElementById('ui-soal').innerHTML = arr.map(char => `<span>${char}</span>`).join("");
     }
 
     function answer(btn) {
@@ -392,24 +415,19 @@
         state.isActive = false;
         saveSession();
         switchScreen('screen-result');
-        
         document.getElementById('res-name').innerText = state.name.toUpperCase();
         document.getElementById('res-type').innerText = state.type.toUpperCase();
-
         let tB = 0, tS = 0;
         state.stats.forEach(s => { tB += s.benar; tS += s.salah; });
         let avg = tB / TOTAL_ROUNDS;
-
         let badge = document.getElementById('res-status-badge');
         if(avg >= 35) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; }
         else { badge.innerText = "TIDAK MEMENUHI SYARAT (TMS)"; badge.className = "status-badge tms"; }
-
         document.getElementById('res-analysis').innerHTML = `
             <li>Total Benar: ${tB}</li>
             <li>Total Salah: ${tS}</li>
             <li>Rata-rata: ${avg.toFixed(1)} / Ronde</li>
         `;
-
         new Chart(document.getElementById('cerChart').getContext('2d'), {
             type: 'line',
             data: {
