@@ -1,447 +1,484 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="perkasa-logo.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perkasa Mulia: Tes Kecermatan CAT</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
-    <style>
-        /* 1. LAYAR FULL TANPA CELAH */
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: white; 
-            margin: 0; 
-            padding: 0; 
-            color: #333; 
-            overflow-x: hidden; 
-        }
-        
-        .container { 
-            width: 100%; 
-            max-width: 100%; 
-            margin: 0; 
-            padding: 0 0 20px 0; 
-            min-height: 100vh; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Perkasa Mulia: Tes Kecermatan CAT</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* 2. BRANDING BINJAS PERKASA */
-        .branding-header {
-            background-color: #0f172a; 
-            padding: 25px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            width: 100%;
-        }
-        .branding-logo { width: 80px; height: 80px; object-fit: contain; }
-        .branding-text { text-align: left; }
-        .branding-title {
-            font-size: 24px; font-weight: 800; color: #ffffff; text-transform: uppercase;
-            letter-spacing: 0.05em; margin: 0; line-height: 1.2;
-        }
-        .branding-subtitle { font-size: 20px; font-weight: 600; color: #fde047; margin: 5px 0 0 0; }
-        
-        /* --- Core UI --- */
-        .screen { display: none; }
-        .active-screen { display: block; animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(-10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
-        .screen-content { padding: 20px; width: 100%; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; color: #444;}
-        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        
-        .btn { padding: 14px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; text-align: center; width: 100%; box-sizing: border-box;}
-        .btn-primary { background-color: #004080; color: white; margin-top: 10px;}
-        .btn-success { background-color: #16a34a; color: white; margin-top: 10px;}
-        .btn-danger { background-color: #dc2626; color: white; margin-top: 10px;}
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: white;
+    margin: 0; padding: 0;
+    color: #333;
+    overflow-x: hidden;
+  }
 
-        .guide-box { background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; line-height: 1.6;}
-        
-        /* 3. SKALA DINAMIS */
-        .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; width: 100%; }
-        .header-info { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px;}
-        .timer-text { color: #fde047; }
-        
-        /* TABEL SANDI */
-        .sandi-table { 
-            margin: 0 auto 1.5em auto; border-collapse: collapse; font-weight: bold; background: white; width: 100%; 
-            table-layout: fixed; font-size: 1.8em;
-        }
-        .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 10px; text-align: center; width: 20%; word-break: break-all; }
-        .sandi-table th { background-color: #0f172a; color: white; font-size: 0.75em; padding: 0.4em;}
-        
-        /* SOAL: Font sama dengan tabel, TIDAK WRAP */
-        .soal-kecermatan { 
-            font-size: 3.5em; 
-            text-align: center; 
-            margin: 0.5em 0; 
-            font-weight: bold; 
-            background: #f8f9fa; 
-            padding: 0.4em; 
-            border: 2px dashed #bbb; 
-            /* Font disamakan dengan tabel (Inherit dari body) */
-            font-family: inherit; 
-            line-height: 1.2;
-            display: flex;
-            justify-content: space-around; 
-            align-items: center;
-            /* Proteksi agar tetap sebaris */
-            flex-wrap: nowrap; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            width: 100%;
-        }
-        .soal-kecermatan span { display: inline-block; }
-        
-        /* 4. TOMBOL JAWABAN: CENTERED & BISA WRAP */
-        .ans-group { 
-            display: flex;
-            flex-wrap: wrap; /* Izinkan pindah baris */
-            justify-content: center; /* Tetap di tengah jika wrap */
-            gap: 10px; 
-            width: 100%; 
-        }
-        .btn-ans { 
-            font-size: 1.6em; 
-            padding: 0.7em 0.5em; 
-            background-color: #004080; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            /* Tombol mengecil/wrap secara proporsional */
-            flex: 0 1 auto; 
-            min-width: 70px; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .btn-ans:active { transform: scale(0.92); background-color: #002040;}
+  .container { width: 100%; max-width: 100%; margin: 0; padding: 0 0 20px 0; min-height: 100vh; }
 
-        /* Slider */
-        
+  /* BRANDING */
+  .branding-header {
+    background-color: #0f172a;
+    padding: 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+  }
+  .branding-logo { width: 70px; height: 70px; object-fit: contain; flex-shrink: 0; }
+  .branding-text { text-align: left; }
+  .branding-title {
+    font-size: clamp(16px, 5vw, 24px);
+    font-weight: 800; color: #ffffff; text-transform: uppercase;
+    letter-spacing: 0.05em; margin: 0; line-height: 1.2;
+  }
+  .branding-subtitle { font-size: clamp(13px, 4vw, 20px); font-weight: 600; color: #fde047; margin: 4px 0 0 0; }
 
-        /* Jeda */
-        .break-screen { text-align: center; padding: 50px 20px; }
-        .break-timer { font-size: 80px; font-weight: bold; color: #dc2626; margin: 20px 0;}
+  /* SCREENS */
+  .screen { display: none; }
+  .active-screen { display: block; animation: fadeIn 0.35s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Hasil */
-        .result-box { padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; }
-        .status-badge { display: inline-block; padding: 10px 25px; font-size: 24px; font-weight: bold; color: white; border-radius: 30px; margin: 15px 0; }
-        .ms { background-color: #16a34a; }
-        .tms { background-color: #dc2626; }
-        .chart-container { position: relative; height: 300px; width: 100%; margin: 20px 0; }
-        
-        .resume-alert { background: #fef08a; color: #854d0e; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #fde047; display: none; text-align: center; font-weight: bold;}
-        .no-print { display: block; }
-    </style>
+  .screen-content { padding: 16px; width: 100%; }
+
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; color: #444; }
+  input[type="text"], select {
+    width: 100%; padding: 13px 14px;
+    border: 1px solid #ccc; border-radius: 6px;
+    font-size: 16px; font-family: inherit;
+    -webkit-appearance: none; appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    padding-right: 38px; background-color: white;
+  }
+
+  .btn {
+    padding: 14px 20px; font-size: 16px; font-weight: bold;
+    border: none; border-radius: 6px; cursor: pointer;
+    transition: 0.2s; text-align: center; width: 100%; display: block;
+    font-family: inherit;
+  }
+  .btn-primary { background-color: #004080; color: white; margin-top: 10px; }
+  .btn-success { background-color: #16a34a; color: white; margin-top: 10px; }
+  .btn-danger  { background-color: #dc2626; color: white; margin-top: 10px; }
+  .btn:active  { opacity: 0.85; transform: scale(0.98); }
+
+  .guide-box {
+    background: #f8f9fa; padding: 20px; border-radius: 8px;
+    border: 1px solid #ddd; margin-bottom: 20px; line-height: 1.8;
+  }
+
+  /* DYNAMIC SCALE */
+  .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; width: 100%; }
+
+  /* SANDI TABLE */
+  .sandi-table {
+    margin: 0 auto 1em auto; border-collapse: collapse; font-weight: bold;
+    background: white; width: 100%; table-layout: fixed; font-size: 1.8em;
+  }
+  .sandi-table th, .sandi-table td {
+    border: 2px solid #333; padding: 10px; text-align: center; width: 20%; word-break: break-all;
+  }
+  .sandi-table th { background-color: #0f172a; color: white; font-size: 0.75em; padding: 0.4em; }
+
+  /* SOAL */
+  .soal-kecermatan {
+    font-size: 3.5em; text-align: center; margin: 0.5em 0;
+    font-weight: bold; background: #f8f9fa; padding: 0.4em;
+    border: 2px dashed #bbb; font-family: inherit; line-height: 1.2;
+    display: flex; justify-content: space-around; align-items: center;
+    flex-wrap: nowrap; white-space: nowrap; overflow: hidden; width: 100%;
+  }
+  .soal-kecermatan span { display: inline-block; }
+
+  /* ANSWER BUTTONS — grid 5 kolom agar tidak wrap */
+  .ans-group {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    margin-top: 0.6em;
+  }
+  .btn-ans {
+    font-size: 1.6em; padding: 0.7em 0.3em;
+    background-color: #004080; color: white;
+    border: none; border-radius: 8px; font-weight: bold;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, background-color 0.1s;
+    touch-action: manipulation;
+  }
+  .btn-ans:active { transform: scale(0.91); background-color: #002040; }
+
+  /* SLIDER */
+  .slider-row { display: flex; align-items: center; gap: 12px; margin: 8px 0 14px; }
+  input[type="range"] {
+    flex: 1; -webkit-appearance: none; height: 5px;
+    background: #ddd; border-radius: 3px; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 22px; height: 22px;
+    background: #004080; border-radius: 50%; cursor: pointer;
+  }
+  .scale-label { font-weight: bold; color: #dc2626; min-width: 24px; text-align: center; }
+
+  /* PREVIEW */
+  .preview-wrap {
+    background: #f8f9fa; padding: 14px; border-radius: 8px;
+    border: 1px solid #ddd; margin-top: 4px;
+  }
+
+  /* RESUME */
+  .resume-alert {
+    background: #fef08a; color: #854d0e; padding: 14px; border-radius: 6px;
+    margin-bottom: 16px; border: 1px solid #fde047; display: none;
+    text-align: center; font-weight: bold; line-height: 1.6;
+  }
+
+  /* BREAK */
+  .break-screen {
+    text-align: center; padding: 40px 20px;
+    min-height: calc(100vh - 110px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  }
+  .break-timer { font-size: clamp(72px, 22vw, 110px); font-weight: bold; color: #dc2626; margin: 10px 0; line-height: 1; }
+  .break-screen h2 { font-size: clamp(20px, 5vw, 28px); color: #0f172a; margin: 0; }
+
+  /* RESULT */
+  .result-box { padding: 18px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 18px; }
+  .status-badge {
+    display: inline-block; padding: 10px 22px;
+    font-size: clamp(15px, 4.5vw, 22px);
+    font-weight: bold; color: white; border-radius: 30px; margin: 12px 0;
+  }
+  .ms  { background-color: #16a34a; }
+  .tms { background-color: #dc2626; }
+  .chart-container { position: relative; height: 260px; width: 100%; margin: 16px 0; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; margin-top: 0; }
+</style>
 </head>
 <body>
 
 <div class="container" id="app-container">
-    
-    <header class="branding-header no-print">
-        <img src="logo-perkasa.png" alt="Logo" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=PM'"/>
-        <div class="branding-text">
-            <h1 class="branding-title">Tes Kecermatan CAT</h1>
-            <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
-        </div>
-    </header>
 
-    <div id="screen-setup" class="screen active-screen">
-        <div class="screen-content">
-            <div id="resume-notif" class="resume-alert">
-                Sesi ujian sebelumnya ditemukan!
-                <br><button class="btn btn-danger" style="width:auto; padding:8px 15px; font-size:14px; margin-top:10px;" onclick="clearSessionAndReload()">Hapus Sesi & Mulai Baru</button>
-            </div>
-            <div class="form-group">
-                <label>Nama Lengkap Peserta:</label>
-                <input type="text" id="inputName" placeholder="Masukkan nama..." required>
-            </div>
-            <div class="form-group">
-                <label>Pilih Jenis Karakter Ujian:</label>
-                <select id="inputType">
-                    <option value="angka">Angka Saja (0-9)</option>
-                    <option value="huruf">Huruf Saja (A-Z)</option>
-                    <option value="simbol">Simbol Geometris & Arah</option>
-                    <option value="campuran">Campuran Lengkap</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="goToGuide()">Lanjut ke Tahap Persiapan</button>
-        </div>
+  <header class="branding-header">
+    <img src="logo-perkasa.png" alt="Logo" class="branding-logo"
+         onerror="this.src='https://via.placeholder.com/70/0f172a/fde047?text=PM'"/>
+    <div class="branding-text">
+      <h1 class="branding-title">Tes Kecermatan CAT</h1>
+      <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
     </div>
+  </header>
 
-    <div id="screen-guide" class="screen">
-        <div class="screen-content">
-            <h2 style="margin-top:0; color:#0f172a;">Persiapan & Panduan Ujian</h2>
-            <div class="guide-box">
-                <b>📚 Aturan Main:</b><br>
-                1. Lihat tabel sandi di atas. Cari 1 karakter yang hilang pada soal.<br>
-                2. Tombol jawaban di bawah akan otomatis pindah baris jika ukuran diperbesar.<br>
-                3. Gunakan slider untuk menyesuaikan kenyamanan visual Anda.
-            </div>
-
-            <div class="preview-box">
-                <div style="text-align:center;">
-                    <b style="color:#0f172a;">Atur Ukuran Tombol & Soal!</b><br>
-                    <input type="range" id="uiScaleSlider" min="5" max="35" step="1" value="14" oninput="updatePreviewSize(this.value)">
-                    <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Skala Visual: <span id="scale-indicator">14</span></div>
-                </div>
-                <div id="preview-area" class="dynamic-wrapper" style="background:white; padding:15px; border-radius:8px; border:1px solid #ccc;">
-                    <table class="sandi-table">
-                        <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-                        <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
-                    </table>
-                    <div class="soal-kecermatan" id="preview-soal">
-                        <span>5</span><span>9</span><span>1</span><span>7</span>
-                    </div>
-                    <div class="ans-group">
-                        <button class="btn-ans">A</button><button class="btn-ans">B</button><button class="btn-ans">C</button><button class="btn-ans">D</button><button class="btn-ans">E</button>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-success" onclick="startNewSession()">MULAI UJIAN SEKARANG</button>
-        </div>
+  <!-- SETUP -->
+  <div id="screen-setup" class="screen active-screen">
+    <div class="screen-content">
+      <div id="resume-notif" class="resume-alert">
+        Sesi ujian sebelumnya ditemukan!<br>
+        <button class="btn btn-danger" style="width:auto;padding:8px 16px;font-size:14px;margin-top:10px;" onclick="clearSessionAndReload()">Hapus Sesi &amp; Mulai Baru</button>
+      </div>
+      <div class="form-group">
+        <label>Nama Lengkap Peserta:</label>
+        <input type="text" id="inputName" placeholder="Masukkan nama..." autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>Pilih Jenis Karakter Ujian:</label>
+        <select id="inputType">
+          <option value="angka">Angka Saja (0–9)</option>
+          <option value="huruf">Huruf Saja (A–Z)</option>
+          <option value="simbol">Simbol Saja</option>
+          <option value="campuran">Campuran Lengkap</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="goToGuide()">Lanjut ke Tahap Persiapan</button>
     </div>
+  </div>
 
-    <div id="screen-break" class="screen">
-        <div class="break-screen">
-            <h2 id="break-title">Bersiap...</h2>
-            <p>Ronde <span id="next-round-num" style="font-weight:bold; color:#0f172a;">1</span> segera dimulai.</p>
-            <div class="break-timer" id="break-timer">3</div>
+  <!-- GUIDE -->
+  <div id="screen-guide" class="screen">
+    <div class="screen-content">
+      <h2 style="margin-top:0;color:#0f172a;">Persiapan &amp; Panduan Ujian</h2>
+      <div class="guide-box">
+        <b>📚 Aturan Main:</b><br>
+        1. Lihat tabel sandi di atas. Cari 1 karakter yang hilang pada soal.<br>
+        2. Tombol jawaban tersusun rapi dalam 1 baris, mudah dijangkau jari.<br>
+        3. Gunakan slider untuk menyesuaikan kenyamanan visual Anda.
+      </div>
+      <b style="color:#0f172a;">Atur Ukuran Tombol &amp; Soal!</b>
+      <div class="slider-row">
+        <span style="font-size:13px;color:#555;">Kecil</span>
+        <input type="range" id="uiScaleSlider" min="5" max="35" step="1" value="14" oninput="updatePreviewSize(this.value)">
+        <span style="font-size:13px;color:#555;">Besar</span>
+        <span class="scale-label" id="scale-indicator">14</span>
+      </div>
+      <div class="preview-wrap">
+        <div id="preview-area" class="dynamic-wrapper">
+          <table class="sandi-table">
+            <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+            <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
+          </table>
+          <div class="soal-kecermatan">
+            <span>5</span><span>9</span><span>1</span><span>7</span>
+          </div>
+          <div class="ans-group">
+            <button class="btn-ans">A</button>
+            <button class="btn-ans">B</button>
+            <button class="btn-ans">C</button>
+            <button class="btn-ans">D</button>
+            <button class="btn-ans">E</button>
+          </div>
         </div>
+      </div>
+      <button class="btn btn-success" onclick="startNewSession()">MULAI UJIAN SEKARANG</button>
     </div>
+  </div>
 
-    <div id="screen-game" class="screen">
-        <div class="header-info">
-            <div>Ronde: <span id="ui-round">1</span> / 10</div>
-            <div class="timer-text">Waktu: <span id="ui-timer">60</span>s</div>
-        </div>
-        <div class="screen-content">
-            <div id="game-area" class="dynamic-wrapper">
-                <table class="sandi-table">
-                    <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-                    <tr id="ui-sandi"></tr>
-                </table>
-                <div class="soal-kecermatan" id="ui-soal"></div>
-                <div class="ans-group">
-                    <button class="btn-ans" onclick="answer('A')">A</button>
-                    <button class="btn-ans" onclick="answer('B')">B</button>
-                    <button class="btn-ans" onclick="answer('C')">C</button>
-                    <button class="btn-ans" onclick="answer('D')">D</button>
-                    <button class="btn-ans" onclick="answer('E')">E</button>
-                </div>
-            </div>
-        </div>
+  <!-- BREAK -->
+  <div id="screen-break" class="screen">
+    <div class="break-screen">
+      <h2 id="break-title">Bersiap...</h2>
+      <p style="font-size:18px;">Ronde <span id="next-round-num" style="font-weight:bold;color:#0f172a;">1</span> / 10 segera dimulai.</p>
+      <div class="break-timer" id="break-timer">3</div>
     </div>
+  </div>
 
-    <div id="screen-result" class="screen">
-        <div class="screen-content">
-            <div id="pdf-content">
-                <div style="text-align:center; border-bottom: 2px solid #0f172a; margin-bottom: 20px; padding-bottom: 10px;">
-                    <h2 style="margin:0; color:#0f172a; font-weight:900;">BINJAS PERKASA</h2>
-                    <div style="font-size:16px; color:#555; font-weight:bold;">Hasil Tes Kecermatan CAT</div>
-                </div>
-                <div class="result-box">
-                    <p><b>Nama:</b> <span id="res-name"></span></p>
-                    <p><b>Jenis:</b> <span id="res-type"></span></p>
-                    <div style="text-align:center;">
-                        <div class="status-badge" id="res-status-badge"></div>
-                    </div>
-                </div>
-                <div class="result-box">
-                    <ul id="res-analysis" style="line-height: 1.8;"></ul>
-                </div>
-                <div class="result-box">
-                    <div class="chart-container"><canvas id="cerChart"></canvas></div>
-                </div>
-            </div>
-            <div class="no-print" style="display:flex; gap:10px;">
-                <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
-                <button class="btn btn-primary" onclick="clearSessionAndReload()">Ulangi Tes</button>
-            </div>
-        </div>
+  <!-- GAME -->
+  <div id="screen-game" class="screen">
+    <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:bold;background:#0f172a;color:white;padding:15px 20px;">
+      <div>Ronde: <span id="ui-round">1</span> / 10</div>
+      <div style="color:#fde047;">Waktu: <span id="ui-timer">60</span>s</div>
     </div>
+    <div class="screen-content">
+      <div id="game-area" class="dynamic-wrapper">
+        <table class="sandi-table">
+          <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+          <tr id="ui-sandi"></tr>
+        </table>
+        <div class="soal-kecermatan" id="ui-soal"></div>
+        <div class="ans-group">
+          <button class="btn-ans" onclick="answer('A')">A</button>
+          <button class="btn-ans" onclick="answer('B')">B</button>
+          <button class="btn-ans" onclick="answer('C')">C</button>
+          <button class="btn-ans" onclick="answer('D')">D</button>
+          <button class="btn-ans" onclick="answer('E')">E</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="screen-content">
+      <div id="pdf-content">
+        <div style="text-align:center;border-bottom:2px solid #0f172a;margin-bottom:18px;padding-bottom:12px;">
+          <h2 style="margin:0;color:#0f172a;font-weight:900;">PERKASA MULIA</h2>
+          <div style="font-size:16px;color:#555;font-weight:bold;">Hasil Tes Kecermatan CAT</div>
+        </div>
+        <div class="result-box">
+          <p><b>Nama:</b> <span id="res-name"></span></p>
+          <p><b>Jenis:</b> <span id="res-type"></span></p>
+          <div style="text-align:center;">
+            <div class="status-badge" id="res-status-badge"></div>
+          </div>
+        </div>
+        <div class="result-box">
+          <ul id="res-analysis" style="line-height:1.9;padding-left:20px;"></ul>
+        </div>
+        <div class="result-box">
+          <div class="chart-container"><canvas id="cerChart"></canvas></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+        <button class="btn btn-primary" onclick="clearSessionAndReload()">Ulangi Tes</button>
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <script>
-    const TOTAL_ROUNDS = 10;
-    const TIME_PER_ROUND = 60;
-    const CACHE_KEY = "binjasPerkasaSession";
+  const TOTAL_ROUNDS = 10, TIME_PER_ROUND = 60, CACHE_KEY = "binjasPerkasaSession";
 
-    const arrAngka = ['0','1','2','3','4','5','6','7','8','9'];
-    const arrHuruf = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z']; 
-    const arrSimbol = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '▲', '▼', '◀', '▶', '■', '□', '●', '○', '←', '↑', '→', '↓', '±', '×', '÷', '∞'];
+  const arrAngka  = ['0','1','2','3','4','5','6','7','8','9'];
+  const arrHuruf  = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
+  const arrSimbol = [
+    // Geometris & Arah
+    '▲','▼','◀','▶','■','□','●','○','←','↑','→','↓','±','×','÷','∞','~','!','@','#','$','%','^','&','*',
+    // Huruf Yunani
+    'α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','π','ρ','σ','τ','υ','φ','χ','ψ','ω',
+    'Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Λ','Ξ','Π','Σ','Φ','Ψ','Ω',
 
-    let state = { isActive: false, name: "", type: "", uiScale: 14, currentRound: 1, timeLeft: TIME_PER_ROUND, stats: [], currentSandi: [], correctAnswer: "" };
-    let timerInterval, breakInterval;
+  ];
 
-    window.onload = function() { checkSession(); };
+  let state = { isActive:false, name:"", type:"", uiScale:14, currentRound:1, timeLeft:TIME_PER_ROUND, stats:[], currentSandi:[], correctAnswer:"" };
+  let timerInterval, breakInterval;
 
-    function checkSession() {
-        let saved = localStorage.getItem(CACHE_KEY);
-        if (saved) {
-            state = JSON.parse(saved);
-            document.getElementById('resume-notif').style.display = 'block';
-            document.getElementById('inputName').value = state.name;
-            document.getElementById('inputType').value = state.type;
-            updatePreviewSize(state.uiScale);
-        }
+  window.onload = () => checkSession();
+
+  function checkSession() {
+    let saved = localStorage.getItem(CACHE_KEY);
+    if (saved) {
+      state = JSON.parse(saved);
+      document.getElementById('resume-notif').style.display = 'block';
+      document.getElementById('inputName').value = state.name;
+      document.getElementById('inputType').value = state.type;
+      document.getElementById('uiScaleSlider').value = state.uiScale;
+      updatePreviewSize(state.uiScale);
     }
+  }
 
-    function saveSession() { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); }
-    function clearSessionAndReload() { localStorage.removeItem(CACHE_KEY); location.reload(); }
+  function saveSession() { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); }
+  function clearSessionAndReload() { localStorage.removeItem(CACHE_KEY); location.reload(); }
 
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(id).classList.add('active-screen');
+  function switchScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+    document.getElementById(id).classList.add('active-screen');
+    window.scrollTo(0, 0);
+  }
+
+  function updatePreviewSize(val) {
+    document.getElementById('scale-indicator').innerText = val;
+    document.querySelectorAll('.dynamic-wrapper').forEach(el => el.style.fontSize = val + 'px');
+    state.uiScale = parseInt(val);
+  }
+
+  function goToGuide() {
+    state.name = document.getElementById('inputName').value.trim();
+    if (!state.name) { alert("Masukkan Nama!"); return; }
+    switchScreen('screen-guide');
+  }
+
+  function startNewSession() {
+    state.isActive = true;
+    state.type = document.getElementById('inputType').value;
+    state.currentRound = 1;
+    state.timeLeft = TIME_PER_ROUND;
+    state.stats = [];
+    document.querySelectorAll('.dynamic-wrapper').forEach(el => el.style.fontSize = state.uiScale + 'px');
+    triggerBreak(1);
+  }
+
+  function triggerBreak(roundNum) {
+    clearInterval(breakInterval); clearInterval(timerInterval);
+    switchScreen('screen-break');
+    document.getElementById('next-round-num').innerText = roundNum;
+    let bTime = 3;
+    document.getElementById('break-timer').innerText = bTime;
+    breakInterval = setInterval(() => {
+      bTime--;
+      document.getElementById('break-timer').innerText = bTime;
+      if (bTime <= 0) { clearInterval(breakInterval); startRound(); }
+    }, 1000);
+  }
+
+  function startRound() {
+    clearInterval(timerInterval);
+    switchScreen('screen-game');
+    if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
+    document.getElementById('ui-round').innerText = state.currentRound;
+    document.getElementById('ui-timer').innerText = state.timeLeft;
+    generateSandi();
+    generateSoal();
+    timerInterval = setInterval(() => {
+      state.timeLeft--;
+      document.getElementById('ui-timer').innerText = state.timeLeft;
+      if (state.timeLeft % 5 === 0) saveSession();
+      if (state.timeLeft <= 0) endRound();
+    }, 1000);
+  }
+
+  function endRound() {
+    clearInterval(timerInterval);
+    state.currentRound++;
+    state.timeLeft = TIME_PER_ROUND;
+    saveSession();
+    if (state.currentRound > TOTAL_ROUNDS) finishGame();
+    else triggerBreak(state.currentRound);
+  }
+
+  function getCharSet() {
+    if (state.type === 'angka')  return [...arrAngka];
+    if (state.type === 'huruf')  return [...arrHuruf];
+    if (state.type === 'simbol') return [...arrSimbol];
+    return [...arrAngka, ...arrHuruf, ...arrSimbol];
+  }
+
+  function generateSandi() {
+    state.currentSandi = [];
+    let pool = getCharSet();
+    for (let i = 0; i < 5; i++) {
+      let r = Math.floor(Math.random() * pool.length);
+      state.currentSandi.push(pool[r]);
+      pool.splice(r, 1);
     }
+    let html = "";
+    state.currentSandi.forEach(c => html += `<td>${c}</td>`);
+    document.getElementById('ui-sandi').innerHTML = html;
+  }
 
-    function updatePreviewSize(val) {
-        document.getElementById('scale-indicator').innerText = val;
-        document.querySelectorAll('.dynamic-wrapper').forEach(el => { el.style.fontSize = val + 'px'; });
-        state.uiScale = val; 
-    }
+  function generateSoal() {
+    let missing = Math.floor(Math.random() * 5);
+    state.correctAnswer = ['A','B','C','D','E'][missing];
+    let arr = state.currentSandi.filter((_, i) => i !== missing);
+    arr.sort(() => Math.random() - 0.5);
+    document.getElementById('ui-soal').innerHTML = arr.map(c => `<span>${c}</span>`).join('');
+  }
 
-    function goToGuide() { 
-        state.name = document.getElementById('inputName').value.trim();
-        if(!state.name) return alert("Masukkan Nama!"); 
-        switchScreen('screen-guide'); 
-    }
+  function answer(btn) {
+    if (btn === state.correctAnswer) state.stats[state.currentRound - 1].benar++;
+    else state.stats[state.currentRound - 1].salah++;
+    generateSoal();
+  }
 
-    function applyScaleToGame() { 
-        document.querySelectorAll('.dynamic-wrapper').forEach(el => { el.style.fontSize = state.uiScale + 'px'; });
-    }
+  function finishGame() {
+    state.isActive = false;
+    saveSession();
+    switchScreen('screen-result');
+    let tB = 0, tS = 0;
+    state.stats.forEach(s => { tB += s.benar; tS += s.salah; });
+    let avg = tB / TOTAL_ROUNDS;
 
-    function startNewSession() {
-        state.isActive = true;
-        state.type = document.getElementById('inputType').value;
-        state.currentRound = 1;
-        state.timeLeft = TIME_PER_ROUND;
-        state.stats = [];
-        applyScaleToGame();
-        triggerBreak(1);
-    }
+    document.getElementById('res-name').innerText = state.name.toUpperCase();
+    document.getElementById('res-type').innerText = state.type.toUpperCase();
 
-    function triggerBreak(roundNum) {
-        clearInterval(breakInterval);
-        switchScreen('screen-break');
-        document.getElementById('next-round-num').innerText = roundNum;
-        let bTime = 3;
-        document.getElementById('break-timer').innerText = bTime;
-        breakInterval = setInterval(() => {
-            bTime--;
-            document.getElementById('break-timer').innerText = bTime;
-            if (bTime <= 0) {
-                clearInterval(breakInterval);
-                startRound();
-            }
-        }, 1000);
-    }
+    const badge = document.getElementById('res-status-badge');
+    if (avg >= 35) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; }
+    else           { badge.innerText = "TIDAK MEMENUHI SYARAT (TMS)"; badge.className = "status-badge tms"; }
 
-    function startRound() {
-        clearInterval(timerInterval);
-        switchScreen('screen-game');
-        if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
-        document.getElementById('ui-round').innerText = state.currentRound;
-        document.getElementById('ui-timer').innerText = state.timeLeft;
-        generateSandi();
-        generateSoal();
-        timerInterval = setInterval(() => {
-            state.timeLeft--;
-            document.getElementById('ui-timer').innerText = state.timeLeft;
-            if(state.timeLeft % 5 === 0) saveSession(); 
-            if (state.timeLeft <= 0) endRound();
-        }, 1000);
-    }
+    document.getElementById('res-analysis').innerHTML = `
+      <li>Total Benar: <b>${tB}</b></li>
+      <li>Total Salah: <b>${tS}</b></li>
+      <li>Rata-rata: <b>${avg.toFixed(1)}</b> / Ronde</li>
+    `;
 
-    function endRound() {
-        clearInterval(timerInterval);
-        state.currentRound++;
-        state.timeLeft = TIME_PER_ROUND;
-        saveSession();
-        if (state.currentRound > TOTAL_ROUNDS) finishGame();
-        else triggerBreak(state.currentRound);
-    }
+    new Chart(document.getElementById('cerChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: [1,2,3,4,5,6,7,8,9,10],
+        datasets: [{ label: 'Benar', data: state.stats.map(s => s.benar), borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.1)', fill: true, tension: 0.3 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { font: { family: 'Segoe UI', size: 13 } } } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+    localStorage.removeItem(CACHE_KEY);
+  }
 
-    function getCharSet() {
-        if (state.type === 'angka') return [...arrAngka];
-        if (state.type === 'huruf') return [...arrHuruf];
-        if (state.type === 'simbol') return [...arrSimbol];
-        return [...arrAngka, ...arrHuruf, ...arrSimbol];
-    }
-
-    function generateSandi() {
-        state.currentSandi = [];
-        let pool = getCharSet();
-        for (let i = 0; i < 5; i++) {
-            let r = Math.floor(Math.random() * pool.length);
-            state.currentSandi.push(pool[r]);
-            pool.splice(r, 1);
-        }
-        let html = "";
-        for (let i = 0; i < 5; i++) html += `<td>${state.currentSandi[i]}</td>`;
-        document.getElementById('ui-sandi').innerHTML = html;
-    }
-
-    function generateSoal() {
-        let missing = Math.floor(Math.random() * 5);
-        state.correctAnswer = ['A', 'B', 'C', 'D', 'E'][missing];
-        let arr = [];
-        for (let i = 0; i < 5; i++) if (i !== missing) arr.push(state.currentSandi[i]);
-        arr.sort(() => Math.random() - 0.5);
-        document.getElementById('ui-soal').innerHTML = arr.map(char => `<span>${char}</span>`).join("");
-    }
-
-    function answer(btn) {
-        if(btn === state.correctAnswer) state.stats[state.currentRound - 1].benar++;
-        else state.stats[state.currentRound - 1].salah++;
-        generateSoal();
-    }
-
-    function finishGame() {
-        state.isActive = false;
-        saveSession();
-        switchScreen('screen-result');
-        document.getElementById('res-name').innerText = state.name.toUpperCase();
-        document.getElementById('res-type').innerText = state.type.toUpperCase();
-        let tB = 0, tS = 0;
-        state.stats.forEach(s => { tB += s.benar; tS += s.salah; });
-        let avg = tB / TOTAL_ROUNDS;
-        let badge = document.getElementById('res-status-badge');
-        if(avg >= 35) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; }
-        else { badge.innerText = "TIDAK MEMENUHI SYARAT (TMS)"; badge.className = "status-badge tms"; }
-        document.getElementById('res-analysis').innerHTML = `
-            <li>Total Benar: ${tB}</li>
-            <li>Total Salah: ${tS}</li>
-            <li>Rata-rata: ${avg.toFixed(1)} / Ronde</li>
-        `;
-        new Chart(document.getElementById('cerChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [1,2,3,4,5,6,7,8,9,10],
-                datasets: [{ label: 'Benar', data: state.stats.map(s => s.benar), borderColor: '#16a34a', fill: false }]
-            }
-        });
-        localStorage.removeItem(CACHE_KEY);
-    }
-
-    function downloadPDF() {
-        const element = document.getElementById('pdf-content');
-        html2pdf().from(element).save(`Hasil_${state.name}.pdf`);
-    }
+  function downloadPDF() {
+    html2pdf().set({ margin: 0, filename: `Hasil_${state.name}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } })
+      .from(document.getElementById('pdf-content')).save();
+  }
 </script>
 </body>
 </html>
