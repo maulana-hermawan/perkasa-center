@@ -7,19 +7,36 @@
     <title>Perkasa Mulia: Tes Kecermatan CAT</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; }
+        /* 1. LAYAR FULL TANPA CELAH */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: white; 
+            margin: 0; 
+            padding: 0; 
+            color: #333; 
+            overflow-x: hidden; 
+        }
         
-        /* BRANDING BINJAS PERKASA */
+        .container { 
+            width: 100%; 
+            max-width: 100%; 
+            margin: 0; 
+            padding: 0 0 20px 0; 
+            min-height: 100vh; 
+        }
+
+        /* 2. BRANDING BINJAS PERKASA */
         .branding-header {
             background-color: #0f172a; 
             padding: 25px 20px;
-            margin: -30px -30px 25px -30px; 
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px; 
+            gap: 16px;
+            width: 100%;
         }
         .branding-logo { width: 80px; height: 80px; object-fit: contain; }
         .branding-text { text-align: left; }
@@ -37,32 +54,50 @@
             to { opacity: 1; transform: translateY(0); } 
         }
         
+        .screen-content { padding: 20px; width: 100%; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; color: #444;}
         input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
         
         .btn { padding: 14px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; text-align: center; width: 100%; box-sizing: border-box;}
         .btn-primary { background-color: #004080; color: white; margin-top: 10px;}
-        .btn-primary:hover { background-color: #003060; }
         .btn-success { background-color: #16a34a; color: white; margin-top: 10px;}
-        .btn-success:hover { background-color: #15803d; }
         .btn-danger { background-color: #dc2626; color: white; margin-top: 10px;}
-        .btn-danger:hover { background-color: #b91c1c; }
 
         .guide-box { background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; line-height: 1.6;}
         
-        /* Skala Dinamis Preview & Ujian */
-        .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; }
+        /* 3. SKALA DINAMIS & WRAP SYSTEM */
+        .dynamic-wrapper { font-size: 16px; transition: font-size 0.2s; width: 100%; }
         .header-info { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px;}
         .timer-text { color: #fde047; }
         
-        .sandi-table { margin: 0 auto 1.5em auto; border-collapse: collapse; font-weight: bold; background: white; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 1.8em;}
-        .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 0.5em; text-align: center; width: 20%;}
+        .sandi-table { 
+            margin: 0 auto 1.5em auto; border-collapse: collapse; font-weight: bold; background: white; width: 100%; 
+            table-layout: fixed; font-size: 1.8em;
+        }
+        .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 10px; text-align: center; width: 20%; word-break: break-all; }
         .sandi-table th { background-color: #0f172a; color: white; font-size: 0.75em; padding: 0.4em;}
-        .soal-kecermatan { font-size: 3.5em; letter-spacing: 0.5em; text-align: center; margin: 0.5em 0; font-weight: bold; background: #f8f9fa; padding: 0.4em; border-radius: 10px; border: 2px dashed #bbb; font-family: 'Courier New', Courier, monospace;}
         
-        .ans-group { display: flex; justify-content: center; gap: 0.8em; }
-        .btn-ans { font-size: 1.6em; padding: 0.8em 0; width: 18%; background-color: #004080; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .soal-kecermatan { 
+            font-size: 3.5em; letter-spacing: 0.2em; text-align: center; margin: 0.5em 0; 
+            font-weight: bold; background: #f8f9fa; padding: 0.4em; border: 2px dashed #bbb; 
+            font-family: 'Courier New', Courier, monospace; word-wrap: break-word; line-height: 1.2;
+        }
+        
+        /* 4. TOMBOL JAWABAN UNIFORM (SAMA RATA) */
+        .ans-group { 
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; 
+        }
+        @media (max-width: 500px) {
+            .ans-group { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); }
+        }
+        .btn-ans { 
+            font-size: 1.6em; padding: 15px 0; background-color: #004080; color: white; 
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
         .btn-ans:active { transform: scale(0.92); background-color: #002040;}
 
         /* Preview Slider */
@@ -88,97 +123,73 @@
 
 <div class="container" id="app-container">
     
-    <div id="screen-setup" class="screen active-screen">
-        
-        <header class="branding-header">
-            <img src="perkasa-logo.png" alt="Logo Binjas Perkasa" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=LOGO'"/>
-            <div class="branding-text">
-                <h1 class="branding-title">Tes Kecermatan CAT</h1>
-                <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
-            </div>
-        </header>
+    <header class="branding-header no-print">
+        <img src="perkasa-logo.png" alt="Logo" class="branding-logo" onerror="this.src='https://via.placeholder.com/80/0f172a/fde047?text=PM'"/>
+        <div class="branding-text">
+            <h1 class="branding-title">Tes Kecermatan CAT</h1>
+            <h2 class="branding-subtitle">PERKASA MULIA TRAINING CENTER</h2>
+        </div>
+    </header>
 
-        <div id="resume-notif" class="resume-alert">
-            Sesi ujian sebelumnya ditemukan! Anda akan melanjutkan dari titik terakhir.
-            <br><button class="btn btn-danger" style="width:auto; padding:8px 15px; font-size:14px; margin-top:10px;" onclick="clearSessionAndReload()">Hapus Sesi & Mulai Baru</button>
+    <div id="screen-setup" class="screen active-screen">
+        <div class="screen-content">
+            <div id="resume-notif" class="resume-alert">
+                Sesi ujian sebelumnya ditemukan!
+                <br><button class="btn btn-danger" style="width:auto; padding:8px 15px; font-size:14px; margin-top:10px;" onclick="clearSessionAndReload()">Hapus Sesi & Mulai Baru</button>
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap Peserta:</label>
+                <input type="text" id="inputName" placeholder="Masukkan nama..." required>
+            </div>
+            <div class="form-group">
+                <label>Pilih Jenis Karakter Ujian:</label>
+                <select id="inputType">
+                    <option value="angka">Angka Saja (0-9)</option>
+                    <option value="huruf">Huruf Saja (A-Z)</option>
+                    <option value="simbol">Simbol Geometris & Arah</option>
+                    <option value="campuran">Campuran Lengkap</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="goToGuide()">Lanjut ke Tahap Persiapan</button>
         </div>
-        
-        <div class="form-group">
-            <label>Nama Lengkap Peserta:</label>
-            <input type="text" id="inputName" placeholder="Masukkan nama Anda..." required>
-        </div>
-        <div class="form-group">
-            <label>Pilih Jenis Karakter Ujian:</label>
-            <select id="inputType">
-                <option value="angka">Angka Saja (0-9)</option>
-                <option value="huruf">Huruf Saja (A-Z)</option>
-                <option value="simbol">Simbol Geometris & Arah</option>
-                <option value="campuran">Campuran Ekstrem (Angka + Huruf + Simbol)</option>
-            </select>
-        </div>
-        <button class="btn btn-primary" onclick="goToGuide()">Lanjut ke Tahap Persiapan</button>
     </div>
 
     <div id="screen-guide" class="screen">
-        <h2 style="margin-top:0; color:#0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Persiapan & Panduan Ujian</h2>
-        
-        <div class="guide-box">
-            <h3 style="margin-top:0; color:#0f172a;">📚 Tata Cara & Peraturan Tes</h3>
-
-            <b>1. Format Ujian:</b>
-            <ul style="margin-top:5px; margin-bottom:15px; padding-left:20px;">
-                <li>Tes ini terdiri dari <b>10 Kolom (Ronde)</b> secara berturut-turut.</li>
-                <li>Waktu pengerjaan untuk setiap kolom adalah <b>Tepat 60 Detik</b>.</li>
-                <li>Terdapat jeda istirahat singkat selama <b>3 Detik</b> di setiap pergantian kolom. Manfaatkan untuk berkedip dan memulihkan fokus Anda.</li>
-                <li>Tidak ada batasan jumlah soal per kolom. Jawablah sebanyak-banyaknya.</li>
-            </ul>
-
-            <b>2. Cara Mengerjakan (Sistem Karakter Hilang):</b>
-            <ul style="margin-top:5px; margin-bottom:15px; padding-left:20px; list-style-type: decimal;">
-                <li>Perhatikan <b>Tabel Sandi (Petunjuk)</b> di bagian paling atas. Terdapat 5 karakter yang masing-masing diwakili oleh kolom <b>A, B, C, D, dan E</b>.</li>
-                <li>Pada bagian <b>Soal</b> (teks berukuran besar di tengah), hanya akan ditampilkan <b>4 karakter</b> yang diacak letaknya.</li>
-                <li>Tugas Anda: Cari tahu <b>1 karakter apa yang HILANG</b> atau tidak ada pada baris soal tersebut.</li>
-                <li>Klik tombol jawaban (A, B, C, D, atau E) yang letaknya mewakili karakter yang hilang tersebut.</li>
-                <li>Setelah dijawab, soal akan langsung berganti ke soal berikutnya <i>tanpa</i> mengubah tabel sandi (tabel sandi hanya berganti saat pindah ronde/kolom baru).</li>
-            </ul>
-
-            <b>3. Tips Kelulusan (Kriteria Penilaian ):</b>
-            <ul style="margin-top:5px; padding-left:20px; color:#b91c1c;">
-                <li><b>Kecepatan:</b> Pertahankan rata-rata jawaban minimal 30 soal per kolom.</li>
-                <li><b>Ketelitian:</b> Jangan asal tebak! Akurasi (jawaban benar dibanding total menjawab) harus di atas 80%.</li>
-                <li><b>Konsistensi:</b> Psikolog mencari peserta dengan grafik kerja yang stabil atau perlahan naik. <i>Hindari menjawab sangat cepat di awal lalu panik/menurun drastis di detik-detik akhir.</i></li>
-            </ul>
-        </div>
-
-        <div class="preview-box">
-            <div style="text-align:center;">
-                <b style="color:#0f172a; font-size:18px;">Sesuaikan Ukuran Layar Anda!</b><br>
-                <span style="font-size:13px; color:#555;">Geser tombol di bawah agar ukuran soal dan tombol pas di layar HP/PC Anda tanpa perlu <i>zoom</i> manual saat ujian berjalan.</span>
-                
-                <input type="range" id="uiScaleSlider" min="5" max="24" step="1" value="14" oninput="updatePreviewSize(this.value)">
-                <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Ukuran Visual: <span id="scale-indicator">14</span></div>
+        <div class="screen-content">
+            <h2 style="margin-top:0; color:#0f172a;">Persiapan & Panduan Ujian</h2>
+            <div class="guide-box">
+                <b>📚 Cara Mengerjakan:</b><br>
+                1. Perhatikan Tabel Sandi di atas (A, B, C, D, E).<br>
+                2. Cari <b>1 Karakter yang HILANG</b> pada soal di tengah.<br>
+                3. Klik tombol jawaban yang mewakili karakter hilang tersebut.<br>
+                4. Terdapat 10 Ronde, masing-masing 60 detik.
             </div>
-            
-            <div id="preview-area" class="dynamic-wrapper" style="background:white; padding:15px; border-radius:8px; border:1px solid #ccc;">
-                <table class="sandi-table">
-                    <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-                    <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
-                </table>
-                <div class="soal-kecermatan">5 1 7 2</div>
-                <div class="ans-group">
-                    <button class="btn-ans">A</button><button class="btn-ans">B</button><button class="btn-ans">C</button><button class="btn-ans">D</button><button class="btn-ans">E</button>
+
+            <div class="preview-box">
+                <div style="text-align:center;">
+                    <b style="color:#0f172a;">Sesuaikan Ukuran Layar!</b><br>
+                    <input type="range" id="uiScaleSlider" min="5" max="35" step="1" value="14" oninput="updatePreviewSize(this.value)">
+                    <div style="font-weight:bold; color:#dc2626; margin-bottom:15px;">Ukuran Visual: <span id="scale-indicator">14</span></div>
+                </div>
+                <div id="preview-area" class="dynamic-wrapper" style="background:white; padding:15px; border-radius:8px; border:1px solid #ccc;">
+                    <table class="sandi-table">
+                        <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+                        <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
+                    </table>
+                    <div class="soal-kecermatan">5 1 7 2</div>
+                    <div class="ans-group">
+                        <button class="btn-ans">A</button><button class="btn-ans">B</button><button class="btn-ans">C</button><button class="btn-ans">D</button><button class="btn-ans">E</button>
+                    </div>
                 </div>
             </div>
+            <button class="btn btn-success" onclick="startNewSession()">MULAI UJIAN SEKARANG</button>
         </div>
-
-        <button class="btn btn-success" onclick="startNewSession()" style="font-size: 18px; padding: 16px;">SAYA PAHAM & UKURAN SUDAH PAS<br>MULAI UJIAN SEKARANG</button>
-        <button class="btn btn-danger" onclick="switchScreen('screen-setup')">Kembali</button>
     </div>
 
     <div id="screen-break" class="screen">
         <div class="break-screen">
-            <h2>Fokus...</h2>
-            <p>Ronde <span id="next-round-num" style="font-weight:bold; color:#0f172a; font-size:24px;"></span> akan segera dimulai.</p>
+            <h2 id="break-title">Bersiap...</h2>
+            <p>Ronde <span id="next-round-num" style="font-weight:bold; color:#0f172a;">1</span> segera dimulai.</p>
             <div class="break-timer" id="break-timer">3</div>
         </div>
     </div>
@@ -186,61 +197,51 @@
     <div id="screen-game" class="screen">
         <div class="header-info">
             <div>Ronde: <span id="ui-round">1</span> / 10</div>
-            <div>Menjawab: <span id="ui-answered">0</span></div>
             <div class="timer-text">Waktu: <span id="ui-timer">60</span>s</div>
         </div>
-        
-        <div id="game-area" class="dynamic-wrapper">
-            <table class="sandi-table">
-                <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-                <tr id="ui-sandi"></tr>
-            </table>
-            <div class="soal-kecermatan" id="ui-soal"></div>
-            <div class="ans-group">
-                <button class="btn-ans" onclick="answer('A')">A</button>
-                <button class="btn-ans" onclick="answer('B')">B</button>
-                <button class="btn-ans" onclick="answer('C')">C</button>
-                <button class="btn-ans" onclick="answer('D')">D</button>
-                <button class="btn-ans" onclick="answer('E')">E</button>
+        <div class="screen-content">
+            <div id="game-area" class="dynamic-wrapper">
+                <table class="sandi-table">
+                    <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+                    <tr id="ui-sandi"></tr>
+                </table>
+                <div class="soal-kecermatan" id="ui-soal"></div>
+                <div class="ans-group">
+                    <button class="btn-ans" onclick="answer('A')">A</button>
+                    <button class="btn-ans" onclick="answer('B')">B</button>
+                    <button class="btn-ans" onclick="answer('C')">C</button>
+                    <button class="btn-ans" onclick="answer('D')">D</button>
+                    <button class="btn-ans" onclick="answer('E')">E</button>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="screen-result" class="screen">
-        <div id="pdf-content">
-            
-            <div style="text-align:center; border-bottom: 2px solid #0f172a; margin-bottom: 20px; padding-bottom: 10px;">
-                <h2 style="margin:0; color:#0f172a; font-weight:900;">BINJAS PERKASA</h2>
-                <div style="font-size:16px; color:#555; font-weight:bold;">Laporan Asesmen Tes Kecermatan Polri</div>
-            </div>
-            
-            <div class="result-box">
-                <table style="width:100%; font-size:16px; margin-bottom:15px;">
-                    <tr><td width="30%"><b>Nama Peserta</b></td><td>: <span id="res-name"></span></td></tr>
-                    <tr><td><b>Jenis Sandi</b></td><td>: <span id="res-type"></span></td></tr>
-                    <tr><td><b>Waktu Selesai</b></td><td>: <span id="res-date"></span></td></tr>
-                </table>
-                
-                <div style="text-align: center; border-top: 1px dashed #ccc; padding-top: 15px;">
-                    <div style="font-size: 18px; color: #555; font-weight:bold;">KEPUTUSAN KELULUSAN</div>
-                    <div class="status-badge" id="res-status-badge"></div>
+        <div class="screen-content">
+            <div id="pdf-content">
+                <div style="text-align:center; border-bottom: 2px solid #0f172a; margin-bottom: 20px; padding-bottom: 10px;">
+                    <h2 style="margin:0; color:#0f172a; font-weight:900;">BINJAS PERKASA</h2>
+                    <div style="font-size:16px; color:#555; font-weight:bold;">Hasil Tes Kecermatan CAT</div>
+                </div>
+                <div class="result-box">
+                    <p><b>Nama:</b> <span id="res-name"></span></p>
+                    <p><b>Jenis:</b> <span id="res-type"></span></p>
+                    <div style="text-align:center;">
+                        <div class="status-badge" id="res-status-badge"></div>
+                    </div>
+                </div>
+                <div class="result-box">
+                    <ul id="res-analysis" style="line-height: 1.8;"></ul>
+                </div>
+                <div class="result-box">
+                    <div class="chart-container"><canvas id="cerChart"></canvas></div>
                 </div>
             </div>
-
-            <div class="result-box">
-                <h3 style="margin-top:0; color:#0f172a; border-left:4px solid #dc2626; padding-left:10px;">Analisis Kinerja & Ketelitian</h3>
-                <ul id="res-analysis" style="font-size: 15px; line-height: 1.6;"></ul>
+            <div class="no-print" style="display:flex; gap:10px;">
+                <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+                <button class="btn btn-primary" onclick="clearSessionAndReload()">Ulangi Tes</button>
             </div>
-
-            <div class="result-box">
-                <h3 style="margin-top:0; color:#0f172a; border-left:4px solid #dc2626; padding-left:10px;">Grafik Konsistensi Psikomotorik</h3>
-                <div class="chart-container"><canvas id="cerChart"></canvas></div>
-            </div>
-        </div>
-
-        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;">
-            <button class="btn btn-success" onclick="downloadPDF()">Cetak Rapor (PDF)</button>
-            <button class="btn btn-primary" onclick="clearSessionAndReload()">Selesai & Ulangi Latihan</button>
         </div>
     </div>
 
@@ -250,51 +251,30 @@
     const TOTAL_ROUNDS = 10;
     const TIME_PER_ROUND = 60;
     const CACHE_KEY = "binjasPerkasaSession";
-    const SESSION_EXPIRY = 60 * 60 * 1000; 
 
     const arrAngka = ['0','1','2','3','4','5','6','7','8','9'];
     const arrHuruf = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z']; 
-    const arrSimbol = [
-        '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '-', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', "'", '<', '>', ',', '.', '?', '/',
-        '▲', '△', '▼', '▽', '◀', '◁', '▶', '▷', '■', '□', '▣', '▤', '▥', '▦', '▧', '▨', '▩', '●', '○', '◐', '◑', '◒', '◓', '◔', '◕', '⊕', '⊗', '◆', '◇', '◈', '★', '☆', '✡', '✦', '✧',
-        '←', '↑', '→', '↓', '↔', '↕', '↖', '↗', '↘', '↙', '↚', '↛', '↜', '↝',
-        '±', '×', '÷', '≠', '≈', '≤', '≥', '∞', '√', '∑', '∫', 'µ', 'α', 'β', 'γ', 'δ', 'π', 'Ω'
-    ];
+    const arrSimbol = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '▲', '▼', '◀', '▶', '■', '□', '●', '○', '←', '↑', '→', '↓', '±', '×', '÷', '∞'];
 
-    let state = {
-        isActive: false, name: "", type: "", uiScale: 14, 
-        startTime: 0, currentRound: 1, timeLeft: TIME_PER_ROUND,
-        stats: [], currentSandi: [], correctAnswer: ""
-    };
-
-    let timerInterval, breakInterval, answeredThisRound = 0;
+    let state = { isActive: false, name: "", type: "", uiScale: 14, currentRound: 1, timeLeft: TIME_PER_ROUND, stats: [], currentSandi: [], correctAnswer: "" };
+    let timerInterval, breakInterval;
 
     window.onload = function() { checkSession(); };
 
     function checkSession() {
         let saved = localStorage.getItem(CACHE_KEY);
         if (saved) {
-            let parsed = JSON.parse(saved);
-            if (Date.now() - parsed.startTime < SESSION_EXPIRY && parsed.isActive) {
-                state = parsed;
-                document.getElementById('resume-notif').style.display = 'block';
-                document.getElementById('inputName').value = state.name;
-                document.getElementById('inputType').value = state.type;
-                
-                document.getElementById('uiScaleSlider').value = state.uiScale;
-                updatePreviewSize(state.uiScale);
-
-                let btnLanjut = document.querySelector('#screen-setup .btn-primary');
-                btnLanjut.innerText = "Lanjutkan Sesi Sebelumnya";
-                btnLanjut.onclick = resumeSession;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-            }
+            state = JSON.parse(saved);
+            document.getElementById('resume-notif').style.display = 'block';
+            document.getElementById('inputName').value = state.name;
+            document.getElementById('inputType').value = state.type;
+            updatePreviewSize(state.uiScale);
         }
     }
 
     function saveSession() { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); }
     function clearSessionAndReload() { localStorage.removeItem(CACHE_KEY); location.reload(); }
+
     function switchScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
         document.getElementById(id).classList.add('active-screen');
@@ -306,46 +286,54 @@
         state.uiScale = val; 
     }
 
-    function goToGuide() {
-        let name = document.getElementById('inputName').value.trim();
-        if(!name) { alert("Nama lengkap wajib diisi!"); return; }
-        switchScreen('screen-guide');
+    function goToGuide() { 
+        state.name = document.getElementById('inputName').value.trim();
+        if(!state.name) return alert("Masukkan Nama!"); 
+        switchScreen('screen-guide'); 
     }
+
+    function applyScaleToGame() { document.getElementById('game-area').style.fontSize = state.uiScale + 'px'; }
 
     function startNewSession() {
         state.isActive = true;
-        state.name = document.getElementById('inputName').value.trim();
         state.type = document.getElementById('inputType').value;
-        state.startTime = Date.now();
         state.currentRound = 1;
         state.timeLeft = TIME_PER_ROUND;
         state.stats = [];
-        saveSession(); applyScaleToGame(); triggerBreak(1);
+        applyScaleToGame();
+        triggerBreak(1);
     }
 
-    function resumeSession() { applyScaleToGame(); triggerBreak(state.currentRound); }
-    function applyScaleToGame() { document.getElementById('game-area').style.fontSize = state.uiScale + 'px'; }
-
+    // --- FIX COUNTDOWN ---
     function triggerBreak(roundNum) {
+        clearInterval(breakInterval); // Bersihkan interval sebelumnya
         switchScreen('screen-break');
         document.getElementById('next-round-num').innerText = roundNum;
-        let bTime = 3; document.getElementById('break-timer').innerText = bTime;
+        
+        let bTime = 3;
+        document.getElementById('break-timer').innerText = bTime;
+        
         breakInterval = setInterval(() => {
-            bTime--; document.getElementById('break-timer').innerText = bTime;
-            if (bTime <= 0) { clearInterval(breakInterval); startRound(); }
+            bTime--;
+            document.getElementById('break-timer').innerText = bTime;
+            if (bTime <= 0) {
+                clearInterval(breakInterval);
+                startRound();
+            }
         }, 1000);
     }
 
     function startRound() {
+        clearInterval(timerInterval);
         switchScreen('screen-game');
-        document.getElementById('ui-round').innerText = state.currentRound;
+        
         if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
         
-        answeredThisRound = state.stats[state.currentRound - 1].benar + state.stats[state.currentRound - 1].salah;
-        document.getElementById('ui-answered').innerText = answeredThisRound;
+        document.getElementById('ui-round').innerText = state.currentRound;
         document.getElementById('ui-timer').innerText = state.timeLeft;
 
-        generateSandi(); generateSoal();
+        generateSandi();
+        generateSoal();
 
         timerInterval = setInterval(() => {
             state.timeLeft--;
@@ -356,115 +344,86 @@
     }
 
     function endRound() {
-        clearInterval(timerInterval); state.currentRound++; state.timeLeft = TIME_PER_ROUND; saveSession();
-        if (state.currentRound > TOTAL_ROUNDS) finishGame(); else triggerBreak(state.currentRound);
+        clearInterval(timerInterval);
+        state.currentRound++;
+        state.timeLeft = TIME_PER_ROUND;
+        saveSession();
+
+        if (state.currentRound > TOTAL_ROUNDS) finishGame();
+        else triggerBreak(state.currentRound);
     }
 
     function getCharSet() {
         if (state.type === 'angka') return [...arrAngka];
         if (state.type === 'huruf') return [...arrHuruf];
         if (state.type === 'simbol') return [...arrSimbol];
-        return [...arrAngka, ...arrHuruf, ...arrSimbol]; 
+        return [...arrAngka, ...arrHuruf, ...arrSimbol];
     }
 
     function generateSandi() {
-        state.currentSandi = []; let pool = getCharSet();
+        state.currentSandi = [];
+        let pool = getCharSet();
         for (let i = 0; i < 5; i++) {
             let r = Math.floor(Math.random() * pool.length);
-            state.currentSandi.push(pool[r]); pool.splice(r, 1);
+            state.currentSandi.push(pool[r]);
+            pool.splice(r, 1);
         }
-        let html = ""; for (let i = 0; i < 5; i++) html += `<td>${state.currentSandi[i]}</td>`;
+        let html = "";
+        for (let i = 0; i < 5; i++) html += `<td>${state.currentSandi[i]}</td>`;
         document.getElementById('ui-sandi').innerHTML = html;
     }
 
     function generateSoal() {
-        let missing = Math.floor(Math.random() * 5); state.correctAnswer = ['A', 'B', 'C', 'D', 'E'][missing];
-        let arr = []; for (let i = 0; i < 5; i++) if (i !== missing) arr.push(state.currentSandi[i]);
-        arr.sort(() => Math.random() - 0.5); document.getElementById('ui-soal').innerText = arr.join(" ");
+        let missing = Math.floor(Math.random() * 5);
+        state.correctAnswer = ['A', 'B', 'C', 'D', 'E'][missing];
+        let arr = [];
+        for (let i = 0; i < 5; i++) if (i !== missing) arr.push(state.currentSandi[i]);
+        arr.sort(() => Math.random() - 0.5);
+        document.getElementById('ui-soal').innerText = arr.join(" ");
     }
 
     function answer(btn) {
         if(btn === state.correctAnswer) state.stats[state.currentRound - 1].benar++;
         else state.stats[state.currentRound - 1].salah++;
-        answeredThisRound++; document.getElementById('ui-answered').innerText = answeredThisRound; generateSoal(); 
+        generateSoal();
     }
 
     function finishGame() {
-        state.isActive = false; saveSession(); switchScreen('screen-result');
-        let typeDict = { 'angka': 'Angka Saja', 'huruf': 'Huruf Saja', 'simbol': 'Simbol Ekstrem', 'campuran': 'Campuran Lengkap' };
-
+        state.isActive = false;
+        saveSession();
+        switchScreen('screen-result');
+        
         document.getElementById('res-name').innerText = state.name.toUpperCase();
-        document.getElementById('res-type').innerText = typeDict[state.type];
-        document.getElementById('res-date').innerText = new Date().toLocaleString('id-ID');
+        document.getElementById('res-type').innerText = state.type.toUpperCase();
 
-        let totalBenar = 0, totalSalah = 0, minB = 9999, maxB = 0;
-        let labels = [], dataTotal = [], dataBenar = [], dataSalah = [];
-
-        state.stats.forEach((s, idx) => {
-            let tot = s.benar + s.salah;
-            totalBenar += s.benar; totalSalah += s.salah;
-            if (s.benar < minB) minB = s.benar; if (s.benar > maxB) maxB = s.benar;
-            labels.push(`Kol-${idx+1}`); dataTotal.push(tot); dataBenar.push(s.benar); dataSalah.push(s.salah);
-        });
-
-        let avgBenar = totalBenar / TOTAL_ROUNDS; let selisih = maxB - minB;
-        let totalSemua = totalBenar + totalSalah; let akurasi = totalSemua > 0 ? (totalBenar / totalSemua) * 100 : 0;
-
-        let isMS = true; let alasanTMS = [];
-        if (avgBenar < 30) { isMS = false; alasanTMS.push("Kecepatan rata-rata di bawah standar (Minimal 30)."); }
-        if (akurasi < 80) { isMS = false; alasanTMS.push("Akurasi ketelitian di bawah 80%."); }
-        if (selisih > 10) { isMS = false; alasanTMS.push("Ketahanan mental tidak stabil (Grafik selisih > 10)."); }
+        let tB = 0, tS = 0;
+        state.stats.forEach(s => { tB += s.benar; tS += s.salah; });
+        let avg = tB / TOTAL_ROUNDS;
 
         let badge = document.getElementById('res-status-badge');
-        if (isMS) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; } 
+        if(avg >= 35) { badge.innerText = "MEMENUHI SYARAT (MS)"; badge.className = "status-badge ms"; }
         else { badge.innerText = "TIDAK MEMENUHI SYARAT (TMS)"; badge.className = "status-badge tms"; }
 
-        let htmlAnalysis = `
-            <li><b>Total Karakter Dikerjakan:</b> ${totalSemua} Soal</li>
-            <li><b>Rata-rata Kecepatan Kerja:</b> <span style="color:#0f172a; font-weight:bold;">${avgBenar.toFixed(1)} Benar / Kolom</span></li>
-            <li><b>Akurasi Ketelitian:</b> ${akurasi.toFixed(1)}% (Jumlah Error: ${totalSalah})</li>
-            <li><b>Stabilitas Pengerjaan:</b> ${selisih <= 4 ? 'Sangat Stabil' : selisih <= 8 ? 'Cukup Stabil' : 'Tidak Stabil'} (Selisih Min-Max: ${selisih})</li>
+        document.getElementById('res-analysis').innerHTML = `
+            <li>Total Benar: ${tB}</li>
+            <li>Total Salah: ${tS}</li>
+            <li>Rata-rata: ${avg.toFixed(1)} / Ronde</li>
         `;
-        
-        if (!isMS) {
-            htmlAnalysis += `<li style="color:#dc2626; margin-top:10px;"><b>Catatan Evaluasi (TMS):</b> Anda dinyatakan belum memenuhi syarat dikarenakan:<ul>`;
-            alasanTMS.forEach(msg => htmlAnalysis += `<li>${msg}</li>`); htmlAnalysis += `</ul></li>`;
-        } else {
-            htmlAnalysis += `<li style="color:#16a34a; margin-top:10px; font-weight:bold;">Catatan Evaluasi: Performa psikomotorik Anda sangat mumpuni. Pertahankan!</li>`;
-        }
-        document.getElementById('res-analysis').innerHTML = htmlAnalysis;
 
         new Chart(document.getElementById('cerChart').getContext('2d'), {
             type: 'line',
             data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Total Dijawab', data: dataTotal, borderColor: '#3b82f6', borderDash: [5,5], fill:false, tension: 0.3 },
-                    { label: 'Jawaban Benar', data: dataBenar, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.2)', borderWidth: 3, fill: true, tension: 0.3 },
-                    { label: 'Jawaban Salah', data: dataSalah, borderColor: '#dc2626', fill:false, borderWidth: 2, tension: 0.3 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'bottom' } } }
+                labels: [1,2,3,4,5,6,7,8,9,10],
+                datasets: [{ label: 'Benar', data: state.stats.map(s => s.benar), borderColor: '#16a34a', fill: false }]
+            }
         });
-
-        localStorage.removeItem(CACHE_KEY); 
+        localStorage.removeItem(CACHE_KEY);
     }
 
     function downloadPDF() {
-        document.querySelector('.no-print').style.display = 'none'; 
         const element = document.getElementById('pdf-content');
-        const opt = {
-            margin:       0.5,
-            filename:     `Hasil_Kecermatan_BinjasPerkasa_${state.name.replace(/\s+/g, '_')}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.querySelector('.no-print').style.display = 'flex'; 
-        });
+        html2pdf().from(element).save(`Hasil_${state.name}.pdf`);
     }
 </script>
-
 </body>
 </html>
