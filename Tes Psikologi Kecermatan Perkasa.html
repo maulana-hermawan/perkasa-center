@@ -98,22 +98,28 @@
   }
   .soal-kecermatan span { display: inline-block; }
 
-  /* ANSWER BUTTONS — grid 5 kolom agar tidak wrap */
+  /* ANSWER BUTTONS — flex wrap, min 1cm x 1cm */
   .ans-group {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
     width: 100%;
     margin-top: 0.6em;
   }
   .btn-ans {
-    font-size: 1.6em; padding: 0.7em 0.3em;
+    font-size: 1.6em;
+    padding: 0.7em 0.3em;
     background-color: #004080; color: white;
     border: none; border-radius: 8px; font-weight: bold;
     cursor: pointer; font-family: inherit;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.1s, background-color 0.1s;
     touch-action: manipulation;
+    /* Minimum 1cm x 1cm (≈38px pada 96dpi) */
+    min-width: max(1cm, 2.5em);
+    min-height: max(1cm, 2.5em);
+    flex: 1 1 auto;
+    max-width: calc(20% - 8px);
   }
   .btn-ans:active { background-color: #004080; }
 
@@ -144,12 +150,6 @@
     background: #004080; border-radius: 50%; cursor: pointer;
   }
   .scale-label { font-weight: bold; color: #dc2626; min-width: 24px; text-align: center; }
-
-  /* PREVIEW */
-  .preview-wrap {
-    background: #f8f9fa; padding: 14px; border-radius: 8px;
-    border: 1px solid #ddd; margin-top: 4px;
-  }
 
   /* RESUME */
   .resume-alert {
@@ -225,35 +225,36 @@
       <div class="guide-box">
         <b>📚 Aturan Main:</b><br>
         1. Lihat tabel sandi di atas. Cari 1 karakter yang hilang pada soal.<br>
-        2. Tombol jawaban tersusun rapi dalam 1 baris, mudah dijangkau jari.<br>
-        3. Gunakan slider untuk menyesuaikan kenyamanan visual Anda.
+        2. Tombol jawaban tersusun rapi, mudah dijangkau jari.<br>
+        3. Gunakan slider untuk menyesuaikan ukuran tombol sesuai kenyamanan Anda.
       </div>
-      <b style="color:#0f172a;">Atur Ukuran Tombol &amp; Soal!</b>
+
+      <b style="color:#0f172a; display:block; margin-bottom:8px;">Atur Ukuran Tombol Jawaban:</b>
       <div class="slider-row">
         <span style="font-size:13px;color:#555;">Kecil</span>
-        <input type="range" id="uiScaleSlider" min="5" max="35" step="1" value="14" oninput="updatePreviewSize(this.value)">
+        <input type="range" id="uiScaleSlider" min="1" max="10" step="1" value="4" oninput="updatePreviewSize(this.value)">
         <span style="font-size:13px;color:#555;">Besar</span>
-        <span class="scale-label" id="scale-indicator">14</span>
+        <span class="scale-label" id="scale-indicator">4</span>
       </div>
-      <div class="preview-wrap">
-        <div id="preview-area" class="dynamic-wrapper">
-          <table class="sandi-table">
-            <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-            <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
-          </table>
-          <div class="soal-kecermatan">
-            <span>5</span><span>9</span><span>1</span><span>7</span>
-          </div>
-          <div class="ans-group">
-            <button class="btn-ans">A</button>
-            <button class="btn-ans">B</button>
-            <button class="btn-ans">C</button>
-            <button class="btn-ans">D</button>
-            <button class="btn-ans">E</button>
-          </div>
-        </div>
+
+      <!-- PREVIEW LANGSUNG — tabel sandi + soal + tombol -->
+      <p style="font-size:12px;color:#888;margin:0 0 8px;">Preview tombol (ukuran sebenarnya):</p>
+      <table class="sandi-table" style="margin-bottom:0.8em;">
+        <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+        <tr><td>5</td><td>2</td><td>9</td><td>1</td><td>7</td></tr>
+      </table>
+      <div class="soal-kecermatan" style="font-size:2em; margin:0.4em 0;">
+        <span>5</span><span>9</span><span>1</span><span>7</span>
       </div>
-      <button class="btn btn-success" onclick="startNewSession()">MULAI UJIAN SEKARANG</button>
+      <div class="ans-group" id="preview-ans-group">
+        <button class="btn-ans">A</button>
+        <button class="btn-ans">B</button>
+        <button class="btn-ans">C</button>
+        <button class="btn-ans">D</button>
+        <button class="btn-ans">E</button>
+      </div>
+
+      <button class="btn btn-success" style="margin-top:20px;" onclick="startNewSession()">MULAI UJIAN SEKARANG</button>
     </div>
   </div>
 
@@ -321,6 +322,14 @@
 
 </div>
 
+<footer style="background-color:#0f172a; color:#94a3b8; text-align:center; padding:14px 16px; font-size:12px; letter-spacing:0.05em; border-top:1px solid rgba(253,224,71,0.2);">
+  © <span id="footer-year"></span> <span style="color:#fde047; font-weight:700;">PERKASA MULIA TRAINING CENTER</span> &nbsp;·&nbsp; All Rights Reserved &nbsp;·&nbsp; Tes Kecermatan CAT
+</footer>
+
+<script>
+  document.getElementById('footer-year').innerText = new Date().getFullYear();
+</script>
+
 <script>
   const TOTAL_ROUNDS = 10, TIME_PER_ROUND = 60, CACHE_KEY = "binjasPerkasaSession";
 
@@ -335,14 +344,14 @@
 
   ];
 
-  let state = { isActive:false, name:"", type:"", uiScale:14, currentRound:1, timeLeft:TIME_PER_ROUND, stats:[], currentSandi:[], correctAnswer:"" };
+  let state = { isActive:false, name:"", type:"", uiScale:4, currentRound:1, timeLeft:TIME_PER_ROUND, stats:[], currentSandi:[], correctAnswer:"" };
   let timerInterval, breakInterval;
 
   window.onload = () => checkSession();
 
-  // Reapply scale on orientation/resize change
+  // Reapply layout on orientation/resize change
   window.addEventListener('resize', () => {
-    document.querySelectorAll('.dynamic-wrapper').forEach(el => el.style.fontSize = state.uiScale + 'px');
+    updateButtonLayout();
   });
 
   function checkSession() {
@@ -353,7 +362,8 @@
       document.getElementById('inputName').value = state.name;
       document.getElementById('inputType').value = state.type;
       document.getElementById('uiScaleSlider').value = state.uiScale;
-      updatePreviewSize(state.uiScale);
+      document.getElementById('scale-indicator').innerText = state.uiScale;
+      updateButtonLayout();
     }
   }
 
@@ -366,16 +376,45 @@
     window.scrollTo(0, 0);
   }
 
+  // Slider: nilai 1-10, tiap step = +8px di atas minimum 38px
   function updatePreviewSize(val) {
+    val = parseInt(val);
     document.getElementById('scale-indicator').innerText = val;
-    document.querySelectorAll('.dynamic-wrapper').forEach(el => el.style.fontSize = val + 'px');
-    state.uiScale = parseInt(val);
+    state.uiScale = val;
+    updateButtonLayout();
+  }
+
+  function updateButtonLayout() {
+    // Ukuran tombol berdasarkan slider: min 38px (1cm), tiap step +8px
+    const btnSizePx = Math.max(38, 38 + (state.uiScale - 1) * 8);
+    const gap = 8;
+    // Lebar kontainer dari screen-game atau screen-guide
+    const activeContent = document.querySelector('.active-screen .screen-content');
+    const containerW = activeContent
+      ? activeContent.offsetWidth - 32
+      : window.innerWidth - 32;
+    // Berapa tombol yang muat dalam satu baris?
+    const fit = Math.floor((containerW + gap) / (btnSizePx + gap));
+    const cols = Math.min(5, Math.max(1, fit));
+    const btnW = Math.floor((containerW - (cols - 1) * gap) / cols);
+
+    document.querySelectorAll('.btn-ans').forEach(btn => {
+      btn.style.width     = btnW + 'px';
+      btn.style.maxWidth  = btnW + 'px';
+      btn.style.minWidth  = btnSizePx + 'px';
+      btn.style.height    = btnSizePx + 'px';
+      btn.style.minHeight = btnSizePx + 'px';
+      btn.style.fontSize  = Math.max(14, Math.round(btnSizePx * 0.4)) + 'px';
+      btn.style.flex      = '0 0 auto';
+    });
   }
 
   function goToGuide() {
     state.name = document.getElementById('inputName').value.trim();
     if (!state.name) { alert("Masukkan Nama!"); return; }
     switchScreen('screen-guide');
+    // Terapkan ukuran tombol ke preview setelah screen aktif
+    requestAnimationFrame(() => updateButtonLayout());
   }
 
   function startNewSession() {
@@ -384,7 +423,6 @@
     state.currentRound = 1;
     state.timeLeft = TIME_PER_ROUND;
     state.stats = [];
-    document.querySelectorAll('.dynamic-wrapper').forEach(el => el.style.fontSize = state.uiScale + 'px');
     triggerBreak(1);
   }
 
@@ -407,6 +445,7 @@
     if (!state.stats[state.currentRound - 1]) state.stats.push({ benar: 0, salah: 0 });
     document.getElementById('ui-round').innerText = state.currentRound;
     document.getElementById('ui-timer').innerText = state.timeLeft;
+    updateButtonLayout();
     generateSandi();
     generateSoal();
     timerInterval = setInterval(() => {
