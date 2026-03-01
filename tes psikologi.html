@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Aplikasi CAT Psikologi - Perkasa Mulia Training Center</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: #f0f2f5; margin: 0; padding: 0; color: #333; line-height: 1.6; }
+        .container { 
+            width: 100%; 
+            max-width: 100%; 
+            margin: 0; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 0; 
+            min-height: 100vh; 
+            position: relative; 
+        }
+        
+        .screen { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .active-screen { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h2 { color: #004080; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; text-align: center; font-weight: 800; text-transform: uppercase;}
+        
+        .btn { padding: 14px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; display: block; text-align: center; }
+        .btn-primary { background: #004080; color: white; margin-top: 15px; }
+        .btn-success { background: #16a34a; color: white; margin-top: 15px; }
+        .btn-warning { background: #eab308; color: white; margin-top: 15px; }
+        .btn-danger { background: #ef4444; color: white; margin-top: 15px; }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn:disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed; transform: none; }
+        
+        input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
+        
+        .info-box { background: #f8f9fa; border-left: 5px solid #004080; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0; }
+        .info-box ul { margin: 10px 0 0 0; padding-left: 20px; }
+        .info-box li { margin-bottom: 8px; }
+        
+        .countdown-container { text-align: center; background: #0f172a; color: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .cd-timer { font-size: 48px; font-weight: bold; color: #fde047; letter-spacing: 2px; line-height: 1; margin: 10px 0; }
+        
+        .guide-timer-box { background: #fee2e2; color: #991b1b; padding: 15px; text-align: center; border-radius: 8px; font-weight: bold; font-size: 18px; margin-bottom: 20px; border: 2px dashed #f87171; }
+        .guide-timer-box span { font-size: 24px; color: #dc2626; display: inline-block; margin-left: 10px; }
+
+        .header-tes { display: flex; justify-content: space-between; align-items: center; background: #004080; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
+        .timer-badge { background: #dc2626; padding: 5px 12px; border-radius: 5px; }
+        
+        /* --- LAYOUT RESPONSIP KECERDASAN --- */
+        .kecerdasan-layout { display: flex; flex-direction: column; gap: 20px; }
+        .kecerdasan-main { flex: 1; }
+        .kecerdasan-sidebar { width: 100%; order: 2; } 
+        .action-buttons { display: flex; gap: 10px; margin-top: 25px; margin-bottom: 15px; }
+        .action-buttons button { flex: 1; margin-top: 0; padding: 12px 10px; font-size: 14px;}
+        
+        .nav-grid-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; height: 100%;}
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 180px; overflow-y: auto; padding-right: 5px;}
+        .nav-item { padding: 8px 0; text-align: center; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; user-select: none; transition: 0.1s;}
+        .nav-item.answered { background: #16a34a; color: white; border-color: #15803d; }
+        .nav-item.ragu { background: #eab308; color: white; border-color: #ca8a04; }
+        .nav-item.active { border: 3px solid #004080; transform: scale(1.1); font-weight: 900; }
+        
+        @media (min-width: 768px) {
+            .kecerdasan-layout { flex-direction: row; } 
+            .kecerdasan-sidebar { width: 280px; flex-shrink: 0; order: 2; } 
+            .nav-grid { max-height: 450px; } 
+        }
+
+        .soal-text { font-size: 18px; line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
+        .opsi-btn { width: 100%; text-align: left; padding: 15px; margin-bottom: 10px; background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.2s; word-wrap: break-word;}
+        .opsi-btn:hover { background: #e2e6ea; border-color: #cbd3da; }
+        .opsi-btn.selected { background: #dcfce7; border-color: #22c55e; font-weight: bold; }
+        
+        /* --- FLEXBOX KECERMATAN --- */
+        .sandi-table { margin: 0 auto 20px auto; border-collapse: collapse; font-weight: bold; width: 100%; font-size: 24px; text-align: center; table-layout: fixed; }
+        .sandi-table th, .sandi-table td { border: 2px solid #333; padding: 12px; }
+        .sandi-table th { background: #004080; color: white; font-size: 18px; }
+        
+        .soal-cermatan { 
+            display: flex; 
+            justify-content: space-evenly; 
+            width: 100%; 
+            font-size: 45px; 
+            margin: 30px 0; 
+            font-weight: bold; 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border: 2px dashed #ccc; 
+            border-radius: 10px; 
+        }
+        .soal-cermatan span { flex: 1; text-align: center; }
+
+        .ans-group { display: flex; justify-content: center; gap: 10px; }
+        .btn-ans { font-size: 22px; padding: 15px 0; flex: 1; background: #004080; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-ans:active { background: #002040; transform: scale(0.95); }
+
+        .center-msg { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 50vh; }
+        #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index: 10000; font-size: 20px; font-weight: bold; color:#004080; }
+        .resume-banner { background: #fef08a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eab308; text-align: center; display: none; }
+
+        #dev-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: rgba(15, 23, 42, 0.9); color: #fde047; padding: 15px; border-radius: 8px; z-index: 9999; border: 1px solid #fde047; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 14px;}
+        #dev-panel button { background: #334155; color: white; border: none; padding: 8px 12px; border-radius: 5px; margin-top: 10px; cursor: pointer; display: block; width: 100%; font-weight: bold;}
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .soal-cermatan { font-size: 35px; padding: 15px; }
+            .sandi-table { font-size: 20px; }
+            .sandi-table th, .sandi-table td { padding: 8px; }
+        }
+
+        /* --- PDF & Result Styling --- */
+        .result-header { text-align:center; border-bottom:2px solid #004080; margin-bottom:15px; padding-bottom:10px; }
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; margin-bottom: 20px; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 450px; }
+        .result-table th, .result-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .result-table th { background-color: #004080; color: white; text-align: center; }
+        
+        .analysis-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; page-break-inside: avoid; }
+        .analysis-block h4 { color: #004080; margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 5px; font-size: 16px;}
+        .analysis-block p { margin-bottom: 0; font-size: 14px; }
+        .status-badge { display: inline-block; padding: 10px 22px; font-size: 20px; font-weight: bold; color: white; border-radius: 30px; margin: 12px 0; }
+        .ms { background-color: #16a34a; }
+        .tms { background-color: #dc2626; }
+        
+        .chart-container { position: relative; height: 260px; width: 100%; margin-top: 15px; }
+
+        /* KELAS KHUSUS CETAK PDF - LEBIH AMAN, TANPA POSITION ABSOLUTE */
+        .pdf-export-mode {
+            width: 800px !important;
+            max-width: 800px !important;
+            margin: 0 auto !important;
+            padding: 30px !important;
+            background: white !important;
+        }
+        .pdf-export-mode .table-responsive {
+            overflow-x: visible !important;
+        }
+        .pdf-export-mode .result-table {
+            width: 100% !important;
+            table-layout: auto !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay" style="display: none;">
+    <div style="font-size:40px; margin-bottom:15px;">⏳</div>
+    <div id="loading-text">Mengunduh Bank Soal & Pengaturan Server...</div>
+</div>
+
+<div id="dev-panel">
+    <b style="display:block; text-align:center; border-bottom:1px solid #fde047; padding-bottom:5px;">🛠️ DEV MODE</b>
+    <button onclick="devSkipTime()">⏩ Skip Waktu (Selesaikan Fase)</button>
+    <button onclick="devSkipQuestion()">⏭️ Skip Soal / Ronde</button>
+</div>
+
+<div class="container">
+    
+    <div id="screen-login" class="screen active-screen">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <img src="logo-perkasa.png" alt="Logo Perkasa Mulia" style="height: 100px; object-fit: contain;">
+        </div>
+        <h2>PORTAL TES PSIKOLOGI CAT</h2>
+        <p style="text-align:center; color:#555;">Sistem Terpadu: Kecerdasan, Kecermatan, dan Kepribadian.<br><b style="color:#004080; font-size: 18px;">Perkasa Mulia Training Center</b></p>
+        
+        <div id="resume-banner" class="resume-banner">
+            <b>Sesi Ujian Sebelumnya Ditemukan!</b><br>
+            Anda belum menyelesaikan ujian. Waktu dan jawaban Anda tersimpan.
+            <button class="btn btn-warning" onclick="lanjutkanSesi()">Lanjutkan Ujian</button>
+            <button class="btn btn-danger" onclick="hapusSesiDanMulaiBaru()">Hapus Sesi & Mulai Baru</button>
+        </div>
+
+        <div id="login-form" style="margin-top:40px;">
+            <label style="font-weight:bold; display:block; margin-bottom:8px;">Nama Lengkap Peserta:</label>
+            <input type="text" id="namaPeserta" placeholder="Ketik nama Anda di sini..." autocomplete="off">
+            <button class="btn btn-primary" onclick="mulaiSistemBaru()">MASUK & SINKRONISASI DATA</button>
+        </div>
+    </div>
+
+    <div id="screen-general-guide" class="screen">
+        <h2>PANDUAN UMUM UJIAN</h2>
+        <div class="info-box">
+            <p style="margin-top:0;">Selamat datang, <b id="ui-nama-peserta"></b>. Anda akan mengikuti tes berikut secara berurutan:</p>
+            <ul id="list-tes-aktif"></ul>
+        </div>
+        
+        <div class="countdown-container">
+            <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Jadwal Ujian Dimulai Pada</div>
+            <div id="cd-target" style="font-weight: bold; color:#94a3b8; margin-bottom: 10px;">-</div>
+            <div class="cd-timer" id="cd-timer">00:00:00</div>
+            <div style="font-size: 12px; color: #94a3b8;">Klik SAYA SIAP. Tes otomatis dimulai saat waktu mencapai nol.</div>
+        </div>
+
+        <button id="btn-siap" class="btn btn-primary" onclick="klikSiap()">SAYA SIAP MENGHADAPI UJIAN</button>
+    </div>
+
+    <div id="screen-guide-kecerdasan" class="screen">
+        <h2>PANDUAN: TES KECERDASAN</h2>
+        <div class="guide-timer-box">
+            Tes otomatis dimulai dalam: <span id="gt-kecerdasan">00:00</span>
+        </div>
+        <div class="info-box">
+            <b>Instruksi Pengerjaan:</b>
+            <ul>
+                <li>Total Soal: <b id="guide-jml-cerdas"></b> Soal (Sesuai Bank Soal Terpilih).</li>
+                <li>Bobot Penilaian Maksimal: <b>60%</b>.</li>
+                <li>Pilih opsi A, B, C, D, E. Jawaban otomatis tersimpan.</li>
+                <li>Gunakan tombol navigasi untuk berpindah soal.</li>
+                <li>Durasi maksimal adalah <b><span id="ui-guide-waktu-cerdas"></span> menit</b>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="screen-kecerdasan" class="screen">
+        <div class="header-tes">
+            <div>🧠 KECERDASAN | Soal <span id="c-no">1</span></div>
+            <div class="timer-badge" id="c-timer">00:00</div>
+        </div>
+        
+        <div class="kecerdasan-layout">
+            <div class="kecerdasan-main">
+                <div class="soal-text" id="c-soal"></div>
+                <div id="c-opsi-container"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="navKecerdasan(-1)">◀ KEMBALI</button>
+                    <button class="btn btn-warning" onclick="toggleRagu()">FLAG / RAGU</button>
+                    <button class="btn btn-primary" onclick="navKecerdasan(1)">LANJUT ▶</button>
+                </div>
+                <button class="btn btn-danger" onclick="konfirmasiSelesaiKecerdasan()">AKHIRI TES KECERDASAN SEKARANG</button>
+            </div>
+
+            <div class="kecerdasan-sidebar">
+                <div class="nav-grid-container">
+                    <div style="font-size:12px; font-weight:bold; margin-bottom:12px; color:#555; text-align:center; border-bottom:1px solid #ddd; padding-bottom:8px;">NAVIGASI SOAL</div>
+                    <div id="c-nav-grid" class="nav-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-guide-kecermatan" class="screen">
+        <h2>PANDUAN: TES KECERMATAN</h2>
+        <div class="guide-timer-box">
+            Tes otomatis dimulai dalam: <span id="gt-kecermatan">00:00</span>
+        </div>
+        <div class="info-box">
+            <b>Instruksi Pengerjaan (Sikap Kerja):</b>
+            <ul>
+                <li>Target per Kolom: 50 Soal. Bobot Maksimal: <b>20%</b>.</li>
+                <li>Anda akan disajikan <b>Tabel Sandi</b> berisi 5 karakter acak.</li>
+                <li>Temukan 1 karakter yang hilang dari soal yang disajikan.</li>
+                <li>Total ada <b id="ui-guide-ronde-cermat"></b> ronde, masing-masing <b id="ui-guide-waktu-cermat"></b> detik.</li>
+                <li><b>Penting:</b> Tekan/klik tombol di layar untuk menjawab. Keyboard dinonaktifkan.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="screen-kecermatan" class="screen">
+        <div class="header-tes">
+            <div>👁️ KECERMATAN | Kolom <span id="m-round">1</span>/<span id="m-total-round">10</span></div>
+            <div class="timer-badge" id="m-timer">60s</div>
+        </div>
+        <table class="sandi-table">
+            <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+            <tr id="m-sandi"></tr>
+        </table>
+        <div class="soal-cermatan" id="m-soal"></div>
+        <div class="ans-group">
+            <button class="btn-ans" onclick="jawabKecermatan('A')">A</button>
+            <button class="btn-ans" onclick="jawabKecermatan('B')">B</button>
+            <button class="btn-ans" onclick="jawabKecermatan('C')">C</button>
+            <button class="btn-ans" onclick="jawabKecermatan('D')">D</button>
+            <button class="btn-ans" onclick="jawabKecermatan('E')">E</button>
+        </div>
+    </div>
+
+    <div id="screen-break-kolom" class="screen">
+        <div class="center-msg">
+            <h2>Ganti Kolom Sandi</h2>
+            <div class="big-timer" id="break-kolom-timer">3</div>
+        </div>
+    </div>
+
+    <div id="screen-guide-kepribadian" class="screen">
+        <h2>PANDUAN: TES KEPRIBADIAN</h2>
+        <div class="guide-timer-box">
+            Tes otomatis dimulai dalam: <span id="gt-kepribadian">00:00</span>
+        </div>
+        <div class="info-box">
+            <b>Instruksi Pengerjaan:</b>
+            <ul>
+                <li>Total Soal: <b id="guide-jml-pribadi"></b> Soal. Bobot Maksimal: <b>20%</b>.</li>
+                <li>Tes ini bersifat <b>SPONTANITAS</b> (Tidak ada navigasi mundur).</li>
+                <li>Pilihlah opsi yang paling mencerminkan diri Anda.</li>
+                <li>Durasi pengerjaan adalah <b><span id="ui-guide-waktu-pribadi"></span> menit</b>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="screen-kepribadian" class="screen">
+        <div class="header-tes">
+            <div>👤 KEPRIBADIAN | <span id="p-no">1</span>/<span id="p-total">0</span></div>
+            <div class="timer-badge" id="p-timer">00:00</div>
+        </div>
+        <div class="soal-text" id="p-soal"></div>
+        <div id="p-opsi-container"></div>
+    </div>
+
+    <div id="screen-finish" class="screen">
+        
+        <div class="center-msg" id="finish-loading">
+            <h2>🎉 SELURUH TES SELESAI</h2>
+            <p>Data Anda sedang dikalkulasi dan dikirim ke server...</p>
+            <div id="upload-status" style="margin-top:20px; padding:15px; background:#fef08a; border-radius:8px; font-weight:bold; color:#854d0e; width: 100%;">
+                Memproses nilai dan membuat grafik analisa... Mohon tunggu.
+            </div>
+        </div>
+
+        <div id="pdf-content" style="display:none; padding:20px; background:white; color:#333; margin-top:20px; border:1px solid #ccc; border-radius:8px;">
+            <div class="result-header">
+                <img src="logo-perkasa.png" alt="Logo" style="height: 70px; margin-bottom: 10px;">
+                <h2 style="margin:0; color:#004080; font-size:22px;">LEMBAR HASIL PSIKOTES CAT</h2>
+                <p style="margin:5px 0 0 0; font-size:14px; font-weight: bold; color:#555;">PERKASA MULIA TRAINING CENTER</p>
+            </div>
+            
+            <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px; font-size:14px;">
+                <b>Nama Peserta:</b> <span id="res-nama" style="text-transform:uppercase;"></span><br>
+                <b>Waktu Ujian:</b> <span id="res-waktu"></span>
+            </div>
+            
+            <div class="table-responsive" id="pdf-table-container">
+                <table class="result-table">
+                    <tr><th>Jenis Tes</th><th>Nilai Asli<br><small>(Skala 1-100)</small></th><th>Bobot</th><th>Nilai Setelah<br>Pembobotan</th></tr>
+                    <tr id="row-cerdas"><td>1. Tes Kecerdasan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cerdas">0</td><td style="text-align:center;">60%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cerdas">0</td></tr>
+                    <tr id="row-cermat"><td>2. Tes Kecermatan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cermat">0</td><td style="text-align:center;">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cermat">0</td></tr>
+                    <tr id="row-pribadi"><td>3. Tes Kepribadian</td><td style="text-align:center; font-weight:bold;" id="res-asli-pribadi">0</td><td style="text-align:center;">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-pribadi">0</td></tr>
+                    <tr style="background:#f8f9fa;">
+                        <th colspan="3" style="text-align:right; color:#333; background:#f8f9fa;">TOTAL NILAI AKHIR:</th>
+                        <th style="font-size:22px; color:#004080; background:#f8f9fa;" id="res-akhir">0</th>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="text-align:center; margin: 15px 0;">
+                <div id="res-badge" class="status-badge"></div>
+            </div>
+
+            <div id="block-analisa-cerdas" class="analysis-block" style="display:none;">
+                <h4>🧠 Analisis Tes Kecerdasan</h4>
+                <p>Peserta menjawab benar <b id="ana-cerdas-benar"></b> dari total <b id="ana-cerdas-total"></b> soal yang diujikan.</p>
+            </div>
+
+            <div id="block-analisa-pribadi" class="analysis-block" style="display:none;">
+                <h4>👤 Analisis Tes Kepribadian</h4>
+                <p>Total perolehan nilai mentah kepribadian peserta adalah <b id="ana-pribadi-skor"></b> dari maksimal <b id="ana-pribadi-max"></b>.</p>
+            </div>
+
+            <div id="block-analisa-cermat" class="analysis-block" style="display:none;">
+                <h4>👁️ Analisis Tes Kecermatan (Sikap Kerja)</h4>
+                <p>Peserta menjawab total <b id="ana-cermat-total"></b> soal benar (Target Optimal: <b id="ana-cermat-target"></b> soal). Berikut grafik stabilitas ketelitian peserta per kolom:</p>
+                <div class="chart-container">
+                    <canvas id="chartKecermatan"></canvas>
+                </div>
+            </div>
+
+            <p style="text-align:center; font-size:11px; color:#888; margin-top:20px; border-top:1px solid #eee; padding-top:10px;"><i>Dokumen ini di-generate otomatis oleh Sistem CAT Psikologi - Perkasa Mulia Training Center. Validasi sistem.</i></p>
+        </div>
+
+        <button id="btn-download" class="btn btn-primary" style="display:none; margin-top:20px;" onclick="downloadPDF()">📥 DOWNLOAD PDF HASIL TES</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. KONFIGURASI API & CACHE
+    // ==========================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbzvNzqgXyMMPXRuBeERSLES1KK-OUpUofjQk_qadtY6C55QiGffXJaj_1hfv4dFNNVB/exec";
+    
+    const CACHE_KEY = "CAT_PERKASA_SESSION_V9";
+    const CACHE_EXPIRY = 3 * 60 * 60 * 1000;
+
+    // ==========================================
+    // 2. STATE & VARIABEL GLOBAL
+    // ==========================================
+    let db = null; 
+    let state = { 
+        nama: "", phase: "login", timeLeft: 0, isPesertaSiap: false,
+        idxCerdas: 0, jawabanKecerdasan: {}, raguKecerdasan: {},    
+        cermTotal: 0, cermSalah: 0, cermRondeAktif: 1, 
+        cermRondeBenar: 0, cermRondeSalah: 0, cermHistory: [],
+        cermSandiAktif: [], cermKunciBenar: "", cermSoalAktifText: "",
+        idxPribadi: 0, skorKepribadian: 0.0
+    };
+    
+    let timerInterval, cdJadwalInterval;
+    let cermCharSet = [];
+
+    const arrAngka = ['0','1','2','3','4','5','6','7','8','9'];
+    const arrHuruf = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
+    const arrSimbol = ['▲','▼','◀','▶','■','●','±','×','÷','∞','@','#','$','%','&','*','Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω','α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω'];
+
+    window.onload = function() {
+        let savedSession = localStorage.getItem(CACHE_KEY);
+        if(savedSession) {
+            let parsed = JSON.parse(savedSession);
+            if(Date.now() - parsed.timestamp < CACHE_EXPIRY) {
+                document.getElementById('resume-banner').style.display = 'block';
+                document.getElementById('login-form').style.display = 'none';
+            } else localStorage.removeItem(CACHE_KEY);
+        }
+    }
+
+    function cekDeveloperMode() { if(state.nama === "developer-perkasa") document.getElementById('dev-panel').style.display = 'block'; }
+    function devSkipTime() { if(state.timeLeft > 2) state.timeLeft = 2; }
+    function devSkipQuestion() {
+        if(state.phase === "test_kecerdasan") navKecerdasan(1); 
+        else if (state.phase === "test_kecermatan") state.timeLeft = 1; 
+        else if (state.phase === "test_kepribadian") jawabKepribadian(Math.random() > 0.5 ? 0.2 : 0.04); 
+    }
+
+    function simpanSesi() {
+        if(state.phase === "finish" || state.phase === "login") return;
+        let sessionData = { db: db, state: state, timestamp: Date.now() };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(sessionData));
+    }
+
+    function hapusSesiDanMulaiBaru() {
+        localStorage.removeItem(CACHE_KEY);
+        document.getElementById('resume-banner').style.display = 'none';
+        document.getElementById('login-form').style.display = 'block';
+    }
+
+    function lanjutkanSesi() {
+        let parsed = JSON.parse(localStorage.getItem(CACHE_KEY));
+        db = parsed.db; state = parsed.state;
+        setupCharSet(); cekDeveloperMode(); jalankanFaseTersimpan();
+    }
+
+    function tentukanFaseBerikutnya(dariFase) {
+        if (dariFase === "start") {
+            if(db.setting.aktifCerdas) return setFasePanduan("guide_kecerdasan", 'screen-guide-kecerdasan', 'gt-kecerdasan', mulaiKecerdasan);
+            if(db.setting.aktifCermat) return setFasePanduan("guide_kecermatan", 'screen-guide-kecermatan', 'gt-kecermatan', mulaiKecermatan);
+            if(db.setting.aktifPribadi) return setFasePanduan("guide_kepribadian", 'screen-guide-kepribadian', 'gt-kepribadian', mulaiKepribadian);
+            return kalkulasiDanSubmitHasil();
+        }
+        if (dariFase === "kecerdasan") {
+            if(db.setting.aktifCermat) return setFasePanduan("guide_kecermatan", 'screen-guide-kecermatan', 'gt-kecermatan', mulaiKecermatan);
+            if(db.setting.aktifPribadi) return setFasePanduan("guide_kepribadian", 'screen-guide-kepribadian', 'gt-kepribadian', mulaiKepribadian);
+            return kalkulasiDanSubmitHasil();
+        }
+        if (dariFase === "kecermatan") {
+            if(db.setting.aktifPribadi) return setFasePanduan("guide_kepribadian", 'screen-guide-kepribadian', 'gt-kepribadian', mulaiKepribadian);
+            return kalkulasiDanSubmitHasil();
+        }
+    }
+
+    function jalankanFaseTersimpan() {
+        clearInterval(timerInterval); clearInterval(cdJadwalInterval);
+        if(state.phase === "general_guide") tampilGeneralGuide();
+        else if(state.phase === "guide_kecerdasan") jalankanTimerPanduan('screen-guide-kecerdasan', 'gt-kecerdasan', mulaiKecerdasan);
+        else if(state.phase === "test_kecerdasan") lanjutkanTestKecerdasan();
+        else if(state.phase === "guide_kecermatan") jalankanTimerPanduan('screen-guide-kecermatan', 'gt-kecermatan', mulaiKecermatan);
+        else if(state.phase === "test_kecermatan") lanjutkanTestKecermatan();
+        else if(state.phase === "guide_kepribadian") jalankanTimerPanduan('screen-guide-kepribadian', 'gt-kepribadian', mulaiKepribadian);
+        else if(state.phase === "test_kepribadian") lanjutkanTestKepribadian();
+    }
+
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); window.scrollTo(0, 0); }
+    function shuffleArray(array) { let curId = array.length; while (0 !== curId) { let randId = Math.floor(Math.random() * curId); curId -= 1; let tmp = array[curId]; array[curId] = array[randId]; array[randId] = tmp; } return array; }
+    function formatTime(seconds) { let m = Math.floor(seconds / 60); let s = seconds % 60; return (m < 10 ? "0"+m : m) + ":" + (s < 10 ? "0"+s : s); }
+    
+    function setupCharSet() {
+        let j = db.kecermatan.jenis.toLowerCase();
+        if(j === 'angka') cermCharSet = arrAngka;
+        else if(j === 'huruf') cermCharSet = arrHuruf;
+        else if(j === 'simbol') cermCharSet = arrSimbol;
+        else cermCharSet = [...arrAngka, ...arrHuruf, ...arrSimbol];
+    }
+
+    async function mulaiSistemBaru() {
+        state.nama = document.getElementById('namaPeserta').value.trim();
+        if(!state.nama) return alert("Silakan masukkan nama Anda!");
+        
+        cekDeveloperMode();
+        document.getElementById('loading-overlay').style.display = 'flex';
+        try {
+            let res = await fetch(API_URL);
+            db = await res.json();
+            
+            if(db.setting.acakCerdas) db.kecerdasan = shuffleArray(db.kecerdasan);
+            if(db.setting.jmlCerdas > 0 && db.kecerdasan.length > db.setting.jmlCerdas) {
+                db.kecerdasan = db.kecerdasan.slice(0, db.setting.jmlCerdas);
+            }
+
+            if(db.setting.acakPribadi) db.kepribadian = shuffleArray(db.kepribadian);
+            if(db.setting.jmlPribadi > 0 && db.kepribadian.length > db.setting.jmlPribadi) {
+                db.kepribadian = db.kepribadian.slice(0, db.setting.jmlPribadi);
+            }
+
+            setupCharSet();
+            document.getElementById('loading-overlay').style.display = 'none';
+            state.phase = "general_guide";
+            state.isPesertaSiap = false;
+            simpanSesi();
+            tampilGeneralGuide();
+        } catch (err) {
+            alert("Koneksi gagal! Pastikan URL Web App benar dan bisa diakses.");
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+    }
+
+    function tampilGeneralGuide() {
+        switchScreen('screen-general-guide');
+        state.phase = "general_guide";
+        document.getElementById('ui-nama-peserta').innerText = state.nama.toUpperCase();
+        
+        let listHTML = "";
+        if(db.setting.aktifCerdas) listHTML += `<li><b>Tes Kecerdasan</b> (${db.kecerdasan.length} Soal | ${db.setting.waktuKecerdasan} Menit)</li>`;
+        if(db.setting.aktifCermat) listHTML += `<li><b>Tes Kecermatan</b> (${db.kecermatan.ronde} Kolom @ ${db.kecermatan.waktu} Detik)</li>`;
+        if(db.setting.aktifPribadi) listHTML += `<li><b>Tes Kepribadian</b> (${db.kepribadian.length} Soal | ${db.setting.waktuKepribadian} Menit)</li>`;
+        document.getElementById('list-tes-aktif').innerHTML = listHTML;
+        
+        let wMulaiStr = db.setting.waktuMulai.replace(' ', 'T');
+        document.getElementById('cd-target').innerText = db.setting.waktuMulai;
+        let targetTime = new Date(wMulaiStr).getTime();
+        
+        if(state.isPesertaSiap) setTombolSiapState();
+        cdJadwalInterval = setInterval(() => {
+            let distance = targetTime - Date.now();
+            let btnSiap = document.getElementById("btn-siap");
+            if (distance <= 0 || isNaN(distance)) {
+                clearInterval(cdJadwalInterval);
+                document.getElementById("cd-timer").innerHTML = "00:00:00";
+                if(state.isPesertaSiap) tentukanFaseBerikutnya("start");
+                else {
+                    btnSiap.innerText = "WAKTU TIBA - MULAI SEKARANG";
+                    btnSiap.classList.replace('btn-primary', 'btn-success');
+                }
+            } else {
+                let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let s = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById("cd-timer").innerHTML = `${h<10?"0"+h:h}:${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
+            }
+        }, 1000);
+    }
+
+    function klikSiap() {
+        state.isPesertaSiap = true;
+        simpanSesi();
+        setTombolSiapState();
+        let targetTime = new Date(db.setting.waktuMulai.replace(' ', 'T')).getTime();
+        if(targetTime - Date.now() <= 0) {
+            clearInterval(cdJadwalInterval);
+            tentukanFaseBerikutnya("start");
+        }
+    }
+
+    function setTombolSiapState() {
+        let btnSiap = document.getElementById("btn-siap");
+        btnSiap.innerText = "MENUNGGU WAKTU MULAI...";
+        btnSiap.disabled = true;
+        btnSiap.style.background = "#94a3b8";
+    }
+
+    function setFasePanduan(namaFase, screenId, timerUIId, fungsiLanjut) {
+        state.phase = namaFase;
+        state.timeLeft = db.setting.waktuJeda * 60; 
+        simpanSesi();
+        jalankanTimerPanduan(screenId, timerUIId, fungsiLanjut);
+    }
+
+    function jalankanTimerPanduan(screenId, timerUIId, fungsiLanjut) {
+        switchScreen(screenId);
+        if(screenId === 'screen-guide-kecerdasan') {
+            document.getElementById('ui-guide-waktu-cerdas').innerText = db.setting.waktuKecerdasan;
+            document.getElementById('guide-jml-cerdas').innerText = db.kecerdasan.length;
+        }
+        if(screenId === 'screen-guide-kecermatan') {
+            document.getElementById('ui-guide-ronde-cermat').innerText = db.kecermatan.ronde;
+            document.getElementById('ui-guide-waktu-cermat').innerText = db.kecermatan.waktu;
+        }
+        if(screenId === 'screen-guide-kepribadian') {
+            document.getElementById('ui-guide-waktu-pribadi').innerText = db.setting.waktuKepribadian;
+            document.getElementById('guide-jml-pribadi').innerText = db.kepribadian.length;
+        }
+        
+        document.getElementById(timerUIId).innerText = formatTime(state.timeLeft);
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            state.timeLeft--;
+            document.getElementById(timerUIId).innerText = formatTime(state.timeLeft);
+            if(state.timeLeft % 5 === 0) simpanSesi();
+            if(state.timeLeft <= 0) { clearInterval(timerInterval); fungsiLanjut(); }
+        }, 1000);
+    }
+
+    // ==========================================
+    // 6. MODUL KECERDASAN
+    // ==========================================
+    function mulaiKecerdasan() {
+        state.phase = "test_kecerdasan";
+        state.timeLeft = db.setting.waktuKecerdasan * 60;
+        simpanSesi();
+        lanjutkanTestKecerdasan();
+    }
+
+    function lanjutkanTestKecerdasan() {
+        switchScreen('screen-kecerdasan');
+        document.getElementById('c-timer').innerText = formatTime(state.timeLeft);
+        renderGridKecerdasan();
+        renderSoalKecerdasan();
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            state.timeLeft--;
+            document.getElementById('c-timer').innerText = formatTime(state.timeLeft);
+            if(state.timeLeft % 5 === 0) simpanSesi();
+            if(state.timeLeft <= 0) { clearInterval(timerInterval); hitungSkorDanLanjut("kecerdasan"); }
+        }, 1000);
+    }
+
+    function renderGridKecerdasan() {
+        let grid = document.getElementById('c-nav-grid');
+        grid.innerHTML = "";
+        for(let i=0; i < db.kecerdasan.length; i++) {
+            let btn = document.createElement('div');
+            btn.className = "nav-item";
+            if (state.idxCerdas === i) btn.classList.add("active");
+            if (state.raguKecerdasan[i]) btn.classList.add("ragu");
+            else if (state.jawabanKecerdasan[i]) btn.classList.add("answered");
+            btn.innerText = i + 1;
+            btn.onclick = () => { state.idxCerdas = i; renderSoalKecerdasan(); };
+            grid.appendChild(btn);
+        }
+        let activeEl = grid.querySelector('.active');
+        if(activeEl) activeEl.scrollIntoView({behavior: "smooth", block: "nearest"});
+    }
+
+    function renderSoalKecerdasan() {
+        if(state.idxCerdas < 0) state.idxCerdas = 0;
+        if(state.idxCerdas >= db.kecerdasan.length) state.idxCerdas = db.kecerdasan.length - 1;
+        let q = db.kecerdasan[state.idxCerdas];
+        document.getElementById('c-no').innerText = state.idxCerdas + 1;
+        document.getElementById('c-soal').innerText = q.soal;
+        let jwbAktif = state.jawabanKecerdasan[state.idxCerdas];
+        let html = `
+            <button class="opsi-btn ${jwbAktif==='A' ? 'selected' : ''}" onclick="jawabKecerdasan('A')">A. ${q.a}</button>
+            <button class="opsi-btn ${jwbAktif==='B' ? 'selected' : ''}" onclick="jawabKecerdasan('B')">B. ${q.b}</button>
+            <button class="opsi-btn ${jwbAktif==='C' ? 'selected' : ''}" onclick="jawabKecerdasan('C')">C. ${q.c}</button>
+            <button class="opsi-btn ${jwbAktif==='D' ? 'selected' : ''}" onclick="jawabKecerdasan('D')">D. ${q.d}</button>
+            <button class="opsi-btn ${jwbAktif==='E' ? 'selected' : ''}" onclick="jawabKecerdasan('E')">E. ${q.e}</button>
+        `;
+        document.getElementById('c-opsi-container').innerHTML = html;
+        renderGridKecerdasan(); 
+    }
+
+    function jawabKecerdasan(jwb) {
+        state.jawabanKecerdasan[state.idxCerdas] = jwb;
+        state.raguKecerdasan[state.idxCerdas] = false; 
+        simpanSesi();
+        renderSoalKecerdasan();
+    }
+
+    function navKecerdasan(arah) {
+        state.idxCerdas += arah;
+        if(state.idxCerdas < 0) state.idxCerdas = 0;
+        if(state.idxCerdas >= db.kecerdasan.length) state.idxCerdas = db.kecerdasan.length - 1;
+        renderSoalKecerdasan();
+    }
+
+    function toggleRagu() {
+        state.raguKecerdasan[state.idxCerdas] = !state.raguKecerdasan[state.idxCerdas];
+        simpanSesi();
+        renderGridKecerdasan();
+    }
+
+    function konfirmasiSelesaiKecerdasan() {
+        let dijawab = Object.keys(state.jawabanKecerdasan).length;
+        if(dijawab < db.kecerdasan.length) {
+            if(!confirm(`⚠️ Anda baru menjawab ${dijawab} dari ${db.kecerdasan.length} soal.\nYakin ingin mengakhiri tes kecerdasan?`)) return;
+        } else {
+            if(!confirm("Anda sudah menjawab semua soal. Yakin ingin mengakhiri?")) return;
+        }
+        hitungSkorDanLanjut("kecerdasan");
+    }
+
+    function hitungSkorDanLanjut(dariTes) {
+        clearInterval(timerInterval);
+        tentukanFaseBerikutnya(dariTes);
+    }
+
+    // ==========================================
+    // 7. MODUL KECERMATAN
+    // ==========================================
+    function mulaiKecermatan() {
+        state.phase = "test_kecermatan";
+        state.timeLeft = db.kecermatan.waktu; 
+        state.cermRondeBenar = 0; state.cermRondeSalah = 0;
+        buatSandiKecermatan();
+        buatSoalKecermatan();
+        simpanSesi();
+        lanjutkanTestKecermatan();
+    }
+
+    function lanjutkanTestKecermatan() {
+        switchScreen('screen-kecermatan');
+        document.getElementById('m-total-round').innerText = db.kecermatan.ronde;
+        document.getElementById('m-round').innerText = state.cermRondeAktif;
+        document.getElementById('m-timer').innerText = state.timeLeft + "s";
+        
+        let sandiHtml = "";
+        state.cermSandiAktif.forEach(c => sandiHtml += `<td>${c}</td>`);
+        document.getElementById('m-sandi').innerHTML = sandiHtml;
+        document.getElementById('m-soal').innerHTML = state.cermSoalAktifText;
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            state.timeLeft--;
+            document.getElementById('m-timer').innerText = state.timeLeft + "s";
+            if(state.timeLeft % 2 === 0) simpanSesi();
+            
+            if(state.timeLeft <= 0) {
+                clearInterval(timerInterval);
+                state.cermHistory.push({
+                    ronde: state.cermRondeAktif,
+                    benar: state.cermRondeBenar,
+                    salah: state.cermRondeSalah
+                });
+                state.cermRondeAktif++;
+                if(state.cermRondeAktif > db.kecermatan.ronde) {
+                    tentukanFaseBerikutnya("kecermatan");
+                } else {
+                    switchScreen('screen-break-kolom');
+                    let breakCol = 3;
+                    document.getElementById('break-kolom-timer').innerText = breakCol;
+                    let bTimer = setInterval(() => {
+                        breakCol--;
+                        document.getElementById('break-kolom-timer').innerText = breakCol;
+                        if(breakCol <= 0) {
+                            clearInterval(bTimer);
+                            state.timeLeft = db.kecermatan.waktu;
+                            state.cermRondeBenar = 0; 
+                            state.cermRondeSalah = 0;
+                            buatSandiKecermatan();
+                            buatSoalKecermatan();
+                            lanjutkanTestKecermatan();
+                        }
+                    }, 1000);
+                }
+            }
+        }, 1000);
+    }
+
+    function buatSandiKecermatan() {
+        state.cermSandiAktif = [];
+        let pool = [...cermCharSet];
+        for (let i = 0; i < 5; i++) {
+            let r = Math.floor(Math.random() * pool.length);
+            state.cermSandiAktif.push(pool[r]);
+            pool.splice(r, 1);
+        }
+    }
+
+    function buatSoalKecermatan() {
+        let missing = Math.floor(Math.random() * 5);
+        state.cermKunciBenar = ['A','B','C','D','E'][missing];
+        let arr = state.cermSandiAktif.filter((_, i) => i !== missing);
+        arr = shuffleArray(arr); 
+        state.cermSoalAktifText = arr.map(char => `<span>${char}</span>`).join("");
+        if(document.getElementById('m-soal')) {
+            document.getElementById('m-soal').innerHTML = state.cermSoalAktifText;
+        }
+    }
+
+    function jawabKecermatan(btn) {
+        state.cermTotal++;
+        if(btn === state.cermKunciBenar) {
+            state.cermRondeBenar++;
+        } else {
+            state.cermRondeSalah++;
+            state.cermSalah++;
+        }
+        buatSoalKecermatan();
+    }
+
+    // ==========================================
+    // 8. MODUL KEPRIBADIAN
+    // ==========================================
+    function mulaiKepribadian() {
+        state.phase = "test_kepribadian";
+        state.timeLeft = db.setting.waktuKepribadian * 60;
+        simpanSesi();
+        lanjutkanTestKepribadian();
+    }
+
+    function lanjutkanTestKepribadian() {
+        switchScreen('screen-kepribadian');
+        document.getElementById('p-total').innerText = db.kepribadian.length;
+        document.getElementById('p-timer').innerText = formatTime(state.timeLeft);
+        renderSoalKepribadian();
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            state.timeLeft--;
+            document.getElementById('p-timer').innerText = formatTime(state.timeLeft);
+            if(state.timeLeft % 5 === 0) simpanSesi();
+            if(state.timeLeft <= 0) { clearInterval(timerInterval); kalkulasiDanSubmitHasil(); }
+        }, 1000);
+    }
+
+    function renderSoalKepribadian() {
+        if(state.idxPribadi >= db.kepribadian.length) {
+            clearInterval(timerInterval);
+            kalkulasiDanSubmitHasil();
+            return;
+        }
+        let q = db.kepribadian[state.idxPribadi];
+        document.getElementById('p-no').innerText = state.idxPribadi + 1;
+        document.getElementById('p-soal').innerText = q.soal;
+        
+        let html = "";
+        q.opsi.forEach(opt => {
+            if(opt.teks && opt.teks !== "") {
+                html += `<button class="opsi-btn" onclick="jawabKepribadian(${opt.nilai})">${opt.teks}</button>`;
+            }
+        });
+        document.getElementById('p-opsi-container').innerHTML = html;
+    }
+
+    function jawabKepribadian(nilai) {
+        state.skorKepribadian += parseFloat(nilai || 0);
+        state.idxPribadi++;
+        simpanSesi();
+        renderSoalKepribadian();
+    }
+
+    // ==========================================
+    // 9. KALKULASI DINAMIS & PDF 
+    // ==========================================
+    async function kalkulasiDanSubmitHasil() {
+        state.phase = "finish";
+        simpanSesi(); 
+        
+        switchScreen('screen-finish');
+        document.getElementById('finish-loading').style.display = 'flex';
+        
+        let skorCerdasAsli = 0, skorCerdasBobot = 0;
+        let skorCermatAsli = 0, skorCermatBobot = 0;
+        let skorPribadiAsli = 0, skorPribadiBobot = 0;
+
+        // --- 1. Kecerdasan (Bobot 60%) ---
+        if(db.setting.aktifCerdas && db.kecerdasan.length > 0) {
+            let anaCerdasBenar = 0;
+            for (let i = 0; i < db.kecerdasan.length; i++) {
+                if (state.jawabanKecerdasan[i] === db.kecerdasan[i].kunci.toUpperCase()) anaCerdasBenar++;
+            }
+            skorCerdasAsli = (anaCerdasBenar / db.kecerdasan.length) * 100;
+            skorCerdasBobot = skorCerdasAsli * 0.60;
+            
+            document.getElementById('block-analisa-cerdas').style.display = 'block';
+            document.getElementById('ana-cerdas-benar').innerText = anaCerdasBenar;
+            document.getElementById('ana-cerdas-total').innerText = db.kecerdasan.length;
+            
+            document.getElementById('res-asli-cerdas').innerText = skorCerdasAsli.toFixed(2);
+            document.getElementById('res-bobot-cerdas').innerText = skorCerdasBobot.toFixed(2);
+        } else {
+            document.getElementById('row-cerdas').style.display = 'none';
+        }
+
+        // --- 2. Kecermatan (Bobot 20%) ---
+        if(db.setting.aktifCermat && db.kecermatan.ronde > 0) {
+            let targetCermat = db.kecermatan.ronde * 50; 
+            let totalBenarCermat = state.cermTotal - state.cermSalah;
+            skorCermatAsli = Math.min(100, (totalBenarCermat / targetCermat) * 100);
+            skorCermatBobot = skorCermatAsli * 0.20; 
+            
+            document.getElementById('block-analisa-cermat').style.display = 'block';
+            document.getElementById('ana-cermat-total').innerText = totalBenarCermat;
+            document.getElementById('ana-cermat-target').innerText = targetCermat;
+            
+            document.getElementById('res-asli-cermat').innerText = skorCermatAsli.toFixed(2);
+            document.getElementById('res-bobot-cermat').innerText = skorCermatBobot.toFixed(2);
+            
+            let labels = state.cermHistory.map(h => 'Kol. ' + h.ronde);
+            let dataBenar = state.cermHistory.map(h => h.benar);
+            let dataSalah = state.cermHistory.map(h => h.salah);
+            let dataDijawab = state.cermHistory.map(h => h.benar + h.salah);
+
+            let ctx = document.getElementById('chartKecermatan').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Dijawab', data: dataDijawab,
+                            borderColor: '#64748b', backgroundColor: '#64748b', fill: false, tension: 0.3
+                        },
+                        {
+                            label: 'Benar', data: dataBenar,
+                            borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true, tension: 0.3
+                        },
+                        {
+                            label: 'Salah', data: dataSalah,
+                            borderColor: '#dc2626', backgroundColor: '#dc2626', fill: false, tension: 0.3
+                        }
+                    ]
+                },
+                options: { 
+                    animation: false, 
+                    scales: { y: { beginAtZero: true, suggestedMax: 50 } }, 
+                    plugins: { legend: { display: true, position: 'bottom' } } 
+                }
+            });
+        } else {
+            document.getElementById('row-cermat').style.display = 'none';
+        }
+
+        // --- 3. Kepribadian (Bobot 20%) ---
+        if(db.setting.aktifPribadi && db.kepribadian.length > 0) {
+            let maxPribadi = 0;
+            db.kepribadian.forEach(q => {
+                let maxOpt = 0;
+                q.opsi.forEach(o => { if(o.nilai > maxOpt) maxOpt = o.nilai; });
+                maxPribadi += maxOpt;
+            });
+            
+            skorPribadiAsli = (state.skorKepribadian / maxPribadi) * 100;
+            skorPribadiBobot = skorPribadiAsli * 0.20;
+            
+            document.getElementById('block-analisa-pribadi').style.display = 'block';
+            document.getElementById('ana-pribadi-skor').innerText = state.skorKepribadian.toFixed(2);
+            document.getElementById('ana-pribadi-max').innerText = maxPribadi.toFixed(2);
+            
+            document.getElementById('res-asli-pribadi').innerText = skorPribadiAsli.toFixed(2);
+            document.getElementById('res-bobot-pribadi').innerText = skorPribadiBobot.toFixed(2);
+        } else {
+            document.getElementById('row-pribadi').style.display = 'none';
+        }
+
+        // --- TOTAL NILAI AKHIR ---
+        let nilaiAkhir = skorCerdasBobot + skorCermatBobot + skorPribadiBobot;
+        let sts = nilaiAkhir >= 61 ? "MEMENUHI SYARAT (MS)" : "TIDAK MEMENUHI SYARAT (TMS)";
+
+        document.getElementById('res-waktu').innerText = new Date().toLocaleString('id-ID');
+        document.getElementById('res-nama').innerText = state.nama.toUpperCase();
+        document.getElementById('res-akhir').innerText = nilaiAkhir.toFixed(2);
+
+        let badge = document.getElementById('res-badge');
+        badge.innerText = sts;
+        badge.className = nilaiAkhir >= 61 ? "status-badge ms" : "status-badge tms";
+
+        document.getElementById('finish-loading').style.display = 'none';
+        document.getElementById('pdf-content').style.display = 'block';
+        document.getElementById('btn-download').style.display = 'block';
+
+        let payload = {
+            nama: state.nama,
+            skorKecerdasan: db.setting.aktifCerdas ? skorCerdasBobot.toFixed(2) : "0",
+            skorKecermatan: db.setting.aktifCermat ? skorCermatBobot.toFixed(2) : "0",
+            skorKepribadian: db.setting.aktifPribadi ? skorPribadiBobot.toFixed(2) : "0",
+            nilaiAkhir: nilaiAkhir.toFixed(2),
+            status: sts
+        };
+
+        try {
+            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+            let result = await res.json();
+            if(result.status === 'success') localStorage.removeItem(CACHE_KEY); 
+        } catch (err) { console.error("Data berhasil dikalkulasi di PDF, namun gagal sinkron ke DB."); }
+    }
+
+    function downloadPDF() {
+        let btn = document.getElementById('btn-download');
+        btn.disabled = true;
+        btn.innerText = "⏳ SEDANG MEMPROSES PDF...";
+        
+        let element = document.getElementById('pdf-content');
+        element.classList.add('pdf-export-mode');
+        
+        setTimeout(() => {
+            let opt = {
+                margin:       10,
+                filename:     `Hasil_CAT_${state.nama}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 }, 
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.remove('pdf-export-mode');
+                btn.disabled = false;
+                btn.innerText = "📥 DOWNLOAD PDF HASIL TES";
+            }).catch(err => {
+                element.classList.remove('pdf-export-mode');
+                btn.disabled = false;
+                btn.innerText = "📥 DOWNLOAD PDF HASIL TES";
+                alert('Terdapat kesalahan jaringan saat mendownload. Silakan coba lagi.');
+            });
+        }, 500); 
+    }
+</script>
+
+</body>
+</html>
