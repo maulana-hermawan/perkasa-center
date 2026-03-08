@@ -162,7 +162,7 @@
     
     <div id="screen-login" class="screen active-screen">
         <div style="text-align: center; margin-bottom: 15px;">
-            <img src="perkasa-logo-clear.png" alt="Logo Perkasa Mulia" style="height: 100px; object-fit: contain;">
+            <img src="logo-perkasa.png" alt="Logo Perkasa Mulia" style="height: 100px; object-fit: contain;">
         </div>
         <h2>PORTAL TES PSIKOLOGI CAT</h2>
         <p style="text-align:center; color:#555;">Sistem Terpadu: Kecerdasan, Kecermatan, dan Kepribadian.<br><b style="color:#004080; font-size: 18px;">Perkasa Mulia Training Center</b></p>
@@ -323,7 +323,7 @@
 
         <div id="pdf-content" style="display:none; padding:20px; background:white; color:#333; margin-top:20px; border:1px solid #ccc; border-radius:8px;">
             <div class="result-header">
-                <img src="perkasa-logo-clear.png" alt="Logo" style="height: 70px; margin-bottom: 10px;">
+                <img src="logo-perkasa.png" alt="Logo" style="height: 70px; margin-bottom: 10px;">
                 <h2 style="margin:0; color:#004080; font-size:22px;">LEMBAR HASIL PSIKOTES CAT</h2>
                 <p style="margin:5px 0 0 0; font-size:14px; font-weight: bold; color:#555;">PERKASA MULIA TRAINING CENTER</p>
             </div>
@@ -379,9 +379,9 @@
     // ==========================================
     // 1. KONFIGURASI API & CACHE
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbzvNzqgXyMMPXRuBeERSLES1KK-OUpUofjQk_qadtY6C55QiGffXJaj_1hfv4dFNNVB/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxHxXCZr5GMdloQj-q1epoUG7OdfGKz_tiaK1h5PO9B5O9aOAV-AprUe0D2OUL-SpSd/exec";
     
-    const CACHE_KEY = "CAT_PERKASA_SESSION_V9";
+    const CACHE_KEY = "CAT_PERKASA_FINAL_V11";
     const CACHE_EXPIRY = 3 * 60 * 60 * 1000;
 
     // ==========================================
@@ -404,6 +404,29 @@
     const arrHuruf = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
     const arrSimbol = ['▲','▼','◀','▶','■','●','±','×','÷','∞','@','#','$','%','&','*','Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω','α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω'];
 
+    // ==========================================
+    // 3. FUNGSI AUTO-RENDER GAMBAR (G-DRIVE & URL)
+    // ==========================================
+    function formatSoalGambar(teks) {
+        if (!teks) return "";
+        let str = String(teks);
+        
+        // Render Google Drive Links
+        let driveRegex = /https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)(?:\/view.*)?/g;
+        str = str.replace(driveRegex, '<br><img src="https://drive.google.com/thumbnail?id=$1&sz=w1000" style="max-width:100%; max-height:250px; border-radius:8px; margin-top:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><br>');
+        
+        // Render Standard Image Links (.jpg, .png, etc)
+        let imgRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/ig;
+        if(!str.includes('<img')) {
+            str = str.replace(imgRegex, '<br><img src="$1" style="max-width:100%; max-height:250px; border-radius:8px; margin-top:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><br>');
+        }
+
+        // Convert Newlines to HTML breaks
+        str = str.replace(/\n/g, '<br>');
+        
+        return str;
+    }
+
     window.onload = function() {
         let savedSession = localStorage.getItem(CACHE_KEY);
         if(savedSession) {
@@ -420,7 +443,7 @@
     function devSkipQuestion() {
         if(state.phase === "test_kecerdasan") navKecerdasan(1); 
         else if (state.phase === "test_kecermatan") state.timeLeft = 1; 
-        else if (state.phase === "test_kepribadian") jawabKepribadian(Math.random() > 0.5 ? 0.2 : 0.04); 
+        else if (state.phase === "test_kepribadian") jawabKepribadian(Math.random() > 0.5 ? 5 : 1); 
     }
 
     function simpanSesi() {
@@ -644,16 +667,21 @@
     function renderSoalKecerdasan() {
         if(state.idxCerdas < 0) state.idxCerdas = 0;
         if(state.idxCerdas >= db.kecerdasan.length) state.idxCerdas = db.kecerdasan.length - 1;
+        
         let q = db.kecerdasan[state.idxCerdas];
-        document.getElementById('c-no').innerText = state.idxCerdas + 1;
-        document.getElementById('c-soal').innerText = q.soal;
         let jwbAktif = state.jawabanKecerdasan[state.idxCerdas];
+
+        document.getElementById('c-no').innerText = state.idxCerdas + 1;
+        
+        // MENGGUNAKAN AUTO RENDER UNTUK SOAL & OPSI
+        document.getElementById('c-soal').innerHTML = formatSoalGambar(q.soal);
+        
         let html = `
-            <button class="opsi-btn ${jwbAktif==='A' ? 'selected' : ''}" onclick="jawabKecerdasan('A')">A. ${q.a}</button>
-            <button class="opsi-btn ${jwbAktif==='B' ? 'selected' : ''}" onclick="jawabKecerdasan('B')">B. ${q.b}</button>
-            <button class="opsi-btn ${jwbAktif==='C' ? 'selected' : ''}" onclick="jawabKecerdasan('C')">C. ${q.c}</button>
-            <button class="opsi-btn ${jwbAktif==='D' ? 'selected' : ''}" onclick="jawabKecerdasan('D')">D. ${q.d}</button>
-            <button class="opsi-btn ${jwbAktif==='E' ? 'selected' : ''}" onclick="jawabKecerdasan('E')">E. ${q.e}</button>
+            <button class="opsi-btn ${jwbAktif==='A' ? 'selected' : ''}" onclick="jawabKecerdasan('A')">A. ${formatSoalGambar(q.a)}</button>
+            <button class="opsi-btn ${jwbAktif==='B' ? 'selected' : ''}" onclick="jawabKecerdasan('B')">B. ${formatSoalGambar(q.b)}</button>
+            <button class="opsi-btn ${jwbAktif==='C' ? 'selected' : ''}" onclick="jawabKecerdasan('C')">C. ${formatSoalGambar(q.c)}</button>
+            <button class="opsi-btn ${jwbAktif==='D' ? 'selected' : ''}" onclick="jawabKecerdasan('D')">D. ${formatSoalGambar(q.d)}</button>
+            <button class="opsi-btn ${jwbAktif==='E' ? 'selected' : ''}" onclick="jawabKecerdasan('E')">E. ${formatSoalGambar(q.e)}</button>
         `;
         document.getElementById('c-opsi-container').innerHTML = html;
         renderGridKecerdasan(); 
@@ -821,12 +849,14 @@
         }
         let q = db.kepribadian[state.idxPribadi];
         document.getElementById('p-no').innerText = state.idxPribadi + 1;
-        document.getElementById('p-soal').innerText = q.soal;
+        
+        // MENGGUNAKAN AUTO RENDER UNTUK SOAL KEPRIBADIAN
+        document.getElementById('p-soal').innerHTML = formatSoalGambar(q.soal);
         
         let html = "";
         q.opsi.forEach(opt => {
             if(opt.teks && opt.teks !== "") {
-                html += `<button class="opsi-btn" onclick="jawabKepribadian(${opt.nilai})">${opt.teks}</button>`;
+                html += `<button class="opsi-btn" onclick="jawabKepribadian(${opt.nilai})">${formatSoalGambar(opt.teks)}</button>`;
             }
         });
         document.getElementById('p-opsi-container').innerHTML = html;
@@ -1007,6 +1037,4 @@
 </script>
 
 </body>
-
 </html>
-
