@@ -128,7 +128,6 @@
         
         .chart-container { position: relative; height: 260px; width: 100%; margin-top: 15px; }
 
-        /* KELAS KHUSUS CETAK PDF - LEBIH AMAN, TANPA POSITION ABSOLUTE */
         .pdf-export-mode {
             width: 800px !important;
             max-width: 800px !important;
@@ -136,13 +135,8 @@
             padding: 30px !important;
             background: white !important;
         }
-        .pdf-export-mode .table-responsive {
-            overflow-x: visible !important;
-        }
-        .pdf-export-mode .result-table {
-            width: 100% !important;
-            table-layout: auto !important;
-        }
+        .pdf-export-mode .table-responsive { overflow-x: visible !important; }
+        .pdf-export-mode .result-table { width: 100% !important; table-layout: auto !important; }
     </style>
 </head>
 <body>
@@ -162,7 +156,7 @@
     
     <div id="screen-login" class="screen active-screen">
         <div style="text-align: center; margin-bottom: 15px;">
-            <img src="perkasa-logo-clear.png" alt="Logo Perkasa Mulia" style="height: 100px; object-fit: contain;">
+            <img src="logo-perkasa.png" alt="Logo Perkasa Mulia" style="height: 100px; object-fit: contain;">
         </div>
         <h2>PORTAL TES PSIKOLOGI CAT</h2>
         <p style="text-align:center; color:#555;">Sistem Terpadu: Kecerdasan, Kecermatan, dan Kepribadian.<br><b style="color:#004080; font-size: 18px;">Perkasa Mulia Training Center</b></p>
@@ -206,10 +200,10 @@
         <div class="info-box">
             <b>Instruksi Pengerjaan:</b>
             <ul>
-                <li>Total Soal: <b id="guide-jml-cerdas"></b> Soal (Sesuai Bank Soal Terpilih).</li>
-                <li>Bobot Penilaian Maksimal: <b>60%</b>.</li>
+                <li>Total Soal Ditampilkan: <b id="guide-jml-cerdas"></b> Soal.</li>
+                <li><b>Patokan Nilai Maksimal (100%): 100 Soal Benar.</b></li>
+                <li>Bobot Penilaian: <b id="ui-bobot-cerdas-guide">60%</b>.</li>
                 <li>Pilih opsi A, B, C, D, E. Jawaban otomatis tersimpan.</li>
-                <li>Gunakan tombol navigasi untuk berpindah soal.</li>
                 <li>Durasi maksimal adalah <b><span id="ui-guide-waktu-cerdas"></span> menit</b>.</li>
             </ul>
         </div>
@@ -251,10 +245,10 @@
         <div class="info-box">
             <b>Instruksi Pengerjaan (Sikap Kerja):</b>
             <ul>
-                <li>Target per Kolom: 50 Soal. Bobot Maksimal: <b>20%</b>.</li>
-                <li>Anda akan disajikan <b>Tabel Sandi</b> berisi 5 karakter acak.</li>
+                <li>Total Ronde Ditampilkan: <b id="ui-guide-ronde-cermat"></b> Ronde (@ <b id="ui-guide-waktu-cermat"></b> detik).</li>
+                <li><b>Patokan Nilai Maksimal (100%): <span id="ui-target-total-cermat">0</span> Soal Benar (<span id="ui-guide-ronde-cermat2"></span> Ronde x <span id="ui-target-per-kolom">0</span> Soal).</b></li>
+                <li>Bobot Penilaian: <b id="ui-bobot-cermat-guide">20%</b>.</li>
                 <li>Temukan 1 karakter yang hilang dari soal yang disajikan.</li>
-                <li>Total ada <b id="ui-guide-ronde-cermat"></b> ronde, masing-masing <b id="ui-guide-waktu-cermat"></b> detik.</li>
                 <li><b>Penting:</b> Tekan/klik tombol di layar untuk menjawab. Keyboard dinonaktifkan.</li>
             </ul>
         </div>
@@ -294,9 +288,10 @@
         <div class="info-box">
             <b>Instruksi Pengerjaan:</b>
             <ul>
-                <li>Total Soal: <b id="guide-jml-pribadi"></b> Soal. Bobot Maksimal: <b>20%</b>.</li>
+                <li>Total Soal Ditampilkan: <b id="guide-jml-pribadi"></b> Soal.</li>
+                <li><b>Patokan Nilai Maksimal (100%): Setara 100 Soal Penuh.</b></li>
+                <li>Bobot Penilaian: <b id="ui-bobot-pribadi-guide">20%</b>.</li>
                 <li>Tes ini bersifat <b>SPONTANITAS</b> (Tidak ada navigasi mundur).</li>
-                <li>Pilihlah opsi yang paling mencerminkan diri Anda.</li>
                 <li>Durasi pengerjaan adalah <b><span id="ui-guide-waktu-pribadi"></span> menit</b>.</li>
             </ul>
         </div>
@@ -323,9 +318,10 @@
 
         <div id="pdf-content" style="display:none; padding:20px; background:white; color:#333; margin-top:20px; border:1px solid #ccc; border-radius:8px;">
             <div class="result-header">
-                <img src="perkasa-logo-clear.png" alt="Logo" style="height: 70px; margin-bottom: 10px;">
+                <img src="logo-perkasa.png" alt="Logo" style="height: 70px; margin-bottom: 10px;">
                 <h2 style="margin:0; color:#004080; font-size:22px;">LEMBAR HASIL PSIKOTES CAT</h2>
                 <p style="margin:5px 0 0 0; font-size:14px; font-weight: bold; color:#555;">PERKASA MULIA TRAINING CENTER</p>
+                <p style="margin:5px 0 0 0; font-size:12px; color:#888;">(Skoring Adaptif)</p>
             </div>
             
             <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px; font-size:14px;">
@@ -336,9 +332,9 @@
             <div class="table-responsive" id="pdf-table-container">
                 <table class="result-table">
                     <tr><th>Jenis Tes</th><th>Nilai Asli<br><small>(Skala 1-100)</small></th><th>Bobot</th><th>Nilai Setelah<br>Pembobotan</th></tr>
-                    <tr id="row-cerdas"><td>1. Tes Kecerdasan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cerdas">0</td><td style="text-align:center;">60%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cerdas">0</td></tr>
-                    <tr id="row-cermat"><td>2. Tes Kecermatan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cermat">0</td><td style="text-align:center;">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cermat">0</td></tr>
-                    <tr id="row-pribadi"><td>3. Tes Kepribadian</td><td style="text-align:center; font-weight:bold;" id="res-asli-pribadi">0</td><td style="text-align:center;">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-pribadi">0</td></tr>
+                    <tr id="row-cerdas"><td>1. Tes Kecerdasan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cerdas">0</td><td style="text-align:center;" id="res-bobot-persen-cerdas">60%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cerdas">0</td></tr>
+                    <tr id="row-cermat"><td>2. Tes Kecermatan</td><td style="text-align:center; font-weight:bold;" id="res-asli-cermat">0</td><td style="text-align:center;" id="res-bobot-persen-cermat">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-cermat">0</td></tr>
+                    <tr id="row-pribadi"><td>3. Tes Kepribadian</td><td style="text-align:center; font-weight:bold;" id="res-asli-pribadi">0</td><td style="text-align:center;" id="res-bobot-persen-pribadi">20%</td><td style="text-align:center; font-weight:bold; color:#004080;" id="res-bobot-pribadi">0</td></tr>
                     <tr style="background:#f8f9fa;">
                         <th colspan="3" style="text-align:right; color:#333; background:#f8f9fa;">TOTAL NILAI AKHIR:</th>
                         <th style="font-size:22px; color:#004080; background:#f8f9fa;" id="res-akhir">0</th>
@@ -352,17 +348,17 @@
 
             <div id="block-analisa-cerdas" class="analysis-block" style="display:none;">
                 <h4>🧠 Analisis Tes Kecerdasan</h4>
-                <p>Peserta menjawab benar <b id="ana-cerdas-benar"></b> dari total <b id="ana-cerdas-total"></b> soal yang diujikan.</p>
+                <p>Peserta menjawab benar <b id="ana-cerdas-benar"></b> soal. (Patokan Nilai Sempurna: 100 Soal).</p>
             </div>
 
             <div id="block-analisa-pribadi" class="analysis-block" style="display:none;">
                 <h4>👤 Analisis Tes Kepribadian</h4>
-                <p>Total perolehan nilai mentah kepribadian peserta adalah <b id="ana-pribadi-skor"></b> dari maksimal <b id="ana-pribadi-max"></b>.</p>
+                <p>Total perolehan nilai mentah kepribadian peserta adalah <b id="ana-pribadi-skor"></b> dari patokan standar maksimal <b id="ana-pribadi-max"></b>.</p>
             </div>
 
             <div id="block-analisa-cermat" class="analysis-block" style="display:none;">
                 <h4>👁️ Analisis Tes Kecermatan (Sikap Kerja)</h4>
-                <p>Peserta menjawab total <b id="ana-cermat-total"></b> soal benar (Target Optimal: <b id="ana-cermat-target"></b> soal). Berikut grafik stabilitas ketelitian peserta per kolom:</p>
+                <p>Peserta menjawab total <b id="ana-cermat-total"></b> soal benar (Patokan Nilai Sempurna: <b id="ana-cermat-target"></b> soal). Berikut grafik stabilitas ketelitian peserta per kolom:</p>
                 <div class="chart-container">
                     <canvas id="chartKecermatan"></canvas>
                 </div>
@@ -379,9 +375,10 @@
     // ==========================================
     // 1. KONFIGURASI API & CACHE
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbxHxXCZr5GMdloQj-q1epoUG7OdfGKz_tiaK1h5PO9B5O9aOAV-AprUe0D2OUL-SpSd/exec";
+    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbxPN__83UaoAFazmUEp9-n4Ia4ibdxE0eylb4UCRSguaLqX75Xxx-xNnP4aqdUP1Z9z/exec";
     
-    const CACHE_KEY = "CAT_PERKASA_FINAL_V11";
+    const CACHE_KEY = "CAT_PERKASA_FINAL_V12";
     const CACHE_EXPIRY = 3 * 60 * 60 * 1000;
 
     // ==========================================
@@ -405,23 +402,20 @@
     const arrSimbol = ['▲','▼','◀','▶','■','●','±','×','÷','∞','@','#','$','%','&','*','Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω','α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω'];
 
     // ==========================================
-    // 3. FUNGSI AUTO-RENDER GAMBAR (G-DRIVE & URL)
+    // 3. FUNGSI AUTO-RENDER GAMBAR (FIX THUMBNAIL)
     // ==========================================
     function formatSoalGambar(teks) {
         if (!teks) return "";
         let str = String(teks);
         
-        // Render Google Drive Links
         let driveRegex = /https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)(?:\/view.*)?/g;
         str = str.replace(driveRegex, '<br><img src="https://drive.google.com/thumbnail?id=$1&sz=w1000" style="max-width:100%; max-height:250px; border-radius:8px; margin-top:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><br>');
         
-        // Render Standard Image Links (.jpg, .png, etc)
         let imgRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/ig;
         if(!str.includes('<img')) {
             str = str.replace(imgRegex, '<br><img src="$1" style="max-width:100%; max-height:250px; border-radius:8px; margin-top:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><br>');
         }
 
-        // Convert Newlines to HTML breaks
         str = str.replace(/\n/g, '<br>');
         
         return str;
@@ -438,12 +432,12 @@
         }
     }
 
-    function cekDeveloperMode() { if(state.nama === "developer-perkasa") document.getElementById('dev-panel').style.display = 'block'; }
+    function cekDeveloperMode() { if(state.nama.toLowerCase() === "developer-perkasa") document.getElementById('dev-panel').style.display = 'block'; }
     function devSkipTime() { if(state.timeLeft > 2) state.timeLeft = 2; }
     function devSkipQuestion() {
         if(state.phase === "test_kecerdasan") navKecerdasan(1); 
         else if (state.phase === "test_kecermatan") state.timeLeft = 1; 
-        else if (state.phase === "test_kepribadian") jawabKepribadian(Math.random() > 0.5 ? 5 : 1); 
+        else if (state.phase === "test_kepribadian") jawabKepribadian(Math.random() > 0.5 ? 4 : 1); 
     }
 
     function simpanSesi() {
@@ -600,17 +594,30 @@
 
     function jalankanTimerPanduan(screenId, timerUIId, fungsiLanjut) {
         switchScreen(screenId);
+        
         if(screenId === 'screen-guide-kecerdasan') {
             document.getElementById('ui-guide-waktu-cerdas').innerText = db.setting.waktuKecerdasan;
             document.getElementById('guide-jml-cerdas').innerText = db.kecerdasan.length;
+            document.getElementById('ui-bobot-cerdas-guide').innerText = (db.setting.bobotCerdas || 60) + "%";
         }
+        
         if(screenId === 'screen-guide-kecermatan') {
+            // Kalkulasi target dinamis: rasio 50 soal per 60 detik
+            let targetPerKolom = Math.round((db.kecermatan.waktu / 60) * 50);
+            let targetTotalCermat = targetPerKolom * db.kecermatan.ronde;
+
             document.getElementById('ui-guide-ronde-cermat').innerText = db.kecermatan.ronde;
+            document.getElementById('ui-guide-ronde-cermat2').innerText = db.kecermatan.ronde;
             document.getElementById('ui-guide-waktu-cermat').innerText = db.kecermatan.waktu;
+            document.getElementById('ui-target-per-kolom').innerText = targetPerKolom;
+            document.getElementById('ui-target-total-cermat').innerText = targetTotalCermat;
+            document.getElementById('ui-bobot-cermat-guide').innerText = (db.setting.bobotCermat || 20) + "%";
         }
+        
         if(screenId === 'screen-guide-kepribadian') {
             document.getElementById('ui-guide-waktu-pribadi').innerText = db.setting.waktuKepribadian;
             document.getElementById('guide-jml-pribadi').innerText = db.kepribadian.length;
+            document.getElementById('ui-bobot-pribadi-guide').innerText = (db.setting.bobotPribadi || 20) + "%";
         }
         
         document.getElementById(timerUIId).innerText = formatTime(state.timeLeft);
@@ -672,8 +679,6 @@
         let jwbAktif = state.jawabanKecerdasan[state.idxCerdas];
 
         document.getElementById('c-no').innerText = state.idxCerdas + 1;
-        
-        // MENGGUNAKAN AUTO RENDER UNTUK SOAL & OPSI
         document.getElementById('c-soal').innerHTML = formatSoalGambar(q.soal);
         
         let html = `
@@ -849,8 +854,6 @@
         }
         let q = db.kepribadian[state.idxPribadi];
         document.getElementById('p-no').innerText = state.idxPribadi + 1;
-        
-        // MENGGUNAKAN AUTO RENDER UNTUK SOAL KEPRIBADIAN
         document.getElementById('p-soal').innerHTML = formatSoalGambar(q.soal);
         
         let html = "";
@@ -870,7 +873,7 @@
     }
 
     // ==========================================
-    // 9. KALKULASI DINAMIS & PDF 
+    // 9. KALKULASI ADAPTIF (PATOKAN TETAP) & PDF 
     // ==========================================
     async function kalkulasiDanSubmitHasil() {
         state.phase = "finish";
@@ -883,18 +886,27 @@
         let skorCermatAsli = 0, skorCermatBobot = 0;
         let skorPribadiAsli = 0, skorPribadiBobot = 0;
 
-        // --- 1. Kecerdasan (Bobot 60%) ---
+        let bCerdas = parseFloat(db.setting.bobotCerdas) || 60;
+        let bCermat = parseFloat(db.setting.bobotCermat) || 20;
+        let bPribadi = parseFloat(db.setting.bobotPribadi) || 20;
+
+        document.getElementById('res-bobot-persen-cerdas').innerText = bCerdas + "%";
+        document.getElementById('res-bobot-persen-cermat').innerText = bCermat + "%";
+        document.getElementById('res-bobot-persen-pribadi').innerText = bPribadi + "%";
+
+        // --- 1. Kecerdasan (PATOKAN 100 SOAL BENAR) ---
         if(db.setting.aktifCerdas && db.kecerdasan.length > 0) {
             let anaCerdasBenar = 0;
             for (let i = 0; i < db.kecerdasan.length; i++) {
                 if (state.jawabanKecerdasan[i] === db.kecerdasan[i].kunci.toUpperCase()) anaCerdasBenar++;
             }
-            skorCerdasAsli = (anaCerdasBenar / db.kecerdasan.length) * 100;
-            skorCerdasBobot = skorCerdasAsli * 0.60;
+            
+            // Raw max is exactly the count out of 100.
+            skorCerdasAsli = Math.min(100, (anaCerdasBenar / 100) * 100);
+            skorCerdasBobot = skorCerdasAsli * (bCerdas / 100);
             
             document.getElementById('block-analisa-cerdas').style.display = 'block';
             document.getElementById('ana-cerdas-benar').innerText = anaCerdasBenar;
-            document.getElementById('ana-cerdas-total').innerText = db.kecerdasan.length;
             
             document.getElementById('res-asli-cerdas').innerText = skorCerdasAsli.toFixed(2);
             document.getElementById('res-bobot-cerdas').innerText = skorCerdasBobot.toFixed(2);
@@ -902,12 +914,16 @@
             document.getElementById('row-cerdas').style.display = 'none';
         }
 
-        // --- 2. Kecermatan (Bobot 20%) ---
+        // --- 2. Kecermatan (ADAPTIF TARGET) ---
         if(db.setting.aktifCermat && db.kecermatan.ronde > 0) {
-            let targetCermat = db.kecermatan.ronde * 50; 
+            // Kalkulasi target dinamis: rasio 50 soal per 60 detik dikali total ronde
+            let targetPerRonde = Math.round((db.kecermatan.waktu / 60) * 50);
+            let targetCermat = db.kecermatan.ronde * targetPerRonde; 
+            
             let totalBenarCermat = state.cermTotal - state.cermSalah;
+            
             skorCermatAsli = Math.min(100, (totalBenarCermat / targetCermat) * 100);
-            skorCermatBobot = skorCermatAsli * 0.20; 
+            skorCermatBobot = skorCermatAsli * (bCermat / 100); 
             
             document.getElementById('block-analisa-cermat').style.display = 'block';
             document.getElementById('ana-cermat-total').innerText = totalBenarCermat;
@@ -951,21 +967,27 @@
             document.getElementById('row-cermat').style.display = 'none';
         }
 
-        // --- 3. Kepribadian (Bobot 20%) ---
+        // --- 3. Kepribadian (PATOKAN 100 SOAL) ---
         if(db.setting.aktifPribadi && db.kepribadian.length > 0) {
-            let maxPribadi = 0;
+            let maxPribadiTested = 0;
             db.kepribadian.forEach(q => {
                 let maxOpt = 0;
                 q.opsi.forEach(o => { if(o.nilai > maxOpt) maxOpt = o.nilai; });
-                maxPribadi += maxOpt;
+                maxPribadiTested += maxOpt;
             });
             
-            skorPribadiAsli = (state.skorKepribadian / maxPribadi) * 100;
-            skorPribadiBobot = skorPribadiAsli * 0.20;
+            // Hitung rata-rata nilai opsi maksimal yang dipakai di soal
+            let rataRataMaxOpt = db.kepribadian.length > 0 ? (maxPribadiTested / db.kepribadian.length) : 4;
+            
+            // Patokan absolut 100 soal
+            let targetMaxPribadi = 100 * rataRataMaxOpt; 
+            
+            skorPribadiAsli = Math.min(100, (state.skorKepribadian / targetMaxPribadi) * 100);
+            skorPribadiBobot = skorPribadiAsli * (bPribadi / 100);
             
             document.getElementById('block-analisa-pribadi').style.display = 'block';
             document.getElementById('ana-pribadi-skor').innerText = state.skorKepribadian.toFixed(2);
-            document.getElementById('ana-pribadi-max').innerText = maxPribadi.toFixed(2);
+            document.getElementById('ana-pribadi-max').innerText = targetMaxPribadi.toFixed(2);
             
             document.getElementById('res-asli-pribadi').innerText = skorPribadiAsli.toFixed(2);
             document.getElementById('res-bobot-pribadi').innerText = skorPribadiBobot.toFixed(2);
@@ -1038,5 +1060,3 @@
 
 </body>
 </html>
-
-
